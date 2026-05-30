@@ -1,0 +1,174 @@
+{
+  "tasks": [
+    {
+      "id": "20260530080907-c2cz",
+      "title": "월 500을 달성할 수 있는 AI자동화 사업 아이템",
+      "description": "자동 등록 (현빈 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "business"
+      ],
+      "createdAt": "2026-05-30T08:09:07.507Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-07",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-07/_report.md\n- 영숙: 최근 의사결정 로그와 메모를 검토합니다.\n- 현빈: 현재 가치 있는 작업을 결정하고, 적절한 1~2명 에이전트에게 분배해서 실행하세요.\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 📱 영숙 _(비서 · Personal Assistant)_\n> 📋 **지시**: 최근 의사결정 로그와 메모를 검토합니다.\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 💡 **핵심 산출**: 최근 의사결정 로그를 검토하고, 회사 목표와 개인 목표를 파악했습니다. / 📊 평가: 진행중 ",
+      "completedAt": "2026-05-30T08:11:56.980Z"
+    },
+    {
+      "id": "20260530080907-jh97",
+      "title": "수익화 모델 1개 가설 검증",
+      "description": "자동 등록 (현빈 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "business"
+      ],
+      "createdAt": "2026-05-30T08:09:07.516Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-07",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-07/_report.md\n- 영숙: 최근 의사결정 로그와 메모를 검토합니다.\n- 현빈: 현재 가치 있는 작업을 결정하고, 적절한 1~2명 에이전트에게 분배해서 실행하세요.\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 📱 영숙 _(비서 · Personal Assistant)_\n> 📋 **지시**: 최근 의사결정 로그와 메모를 검토합니다.\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 💡 **핵심 산출**: 최근 의사결정 로그를 검토하고, 회사 목표와 개인 목표를 파악했습니다. / 📊 평가: 진행중 ",
+      "completedAt": "2026-05-30T08:11:56.988Z"
+    },
+    {
+      "id": "20260530080907-knfc",
+      "title": "수익화 모델 테스트 및 데이터 수집",
+      "description": "자동 등록 (현빈 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "business"
+      ],
+      "createdAt": "2026-05-30T08:09:07.523Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-07",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-07/_report.md\n- 영숙: 최근 의사결정 로그와 메모를 검토합니다.\n- 현빈: 현재 가치 있는 작업을 결정하고, 적절한 1~2명 에이전트에게 분배해서 실행하세요.\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 📱 영숙 _(비서 · Personal Assistant)_\n> 📋 **지시**: 최근 의사결정 로그와 메모를 검토합니다.\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 💡 **핵심 산출**: 최근 의사결정 로그를 검토하고, 회사 목표와 개인 목표를 파악했습니다. / 📊 평가: 진행중 ",
+      "completedAt": "2026-05-30T08:11:56.994Z"
+    },
+    {
+      "id": "20260530080907-s3xt",
+      "title": "수익화 모델 학습 및 예측",
+      "description": "자동 등록 (현빈 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "business"
+      ],
+      "createdAt": "2026-05-30T08:09:07.530Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-07",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-07/_report.md\n- 영숙: 최근 의사결정 로그와 메모를 검토합니다.\n- 현빈: 현재 가치 있는 작업을 결정하고, 적절한 1~2명 에이전트에게 분배해서 실행하세요.\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 📱 영숙 _(비서 · Personal Assistant)_\n> 📋 **지시**: 최근 의사결정 로그와 메모를 검토합니다.\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 💡 **핵심 산출**: 최근 의사결정 로그를 검토하고, 회사 목표와 개인 목표를 파악했습니다. / 📊 평가: 진행중 ",
+      "completedAt": "2026-05-30T08:11:57.001Z"
+    },
+    {
+      "id": "20260530080907-dc4s",
+      "title": "경쟁사 목표 파악",
+      "description": "자동 등록 (현빈 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "business"
+      ],
+      "createdAt": "2026-05-30T08:09:07.537Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-07",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-07/_report.md\n- 영숙: 최근 의사결정 로그와 메모를 검토합니다.\n- 현빈: 현재 가치 있는 작업을 결정하고, 적절한 1~2명 에이전트에게 분배해서 실행하세요.\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 📱 영숙 _(비서 · Personal Assistant)_\n> 📋 **지시**: 최근 의사결정 로그와 메모를 검토합니다.\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 💡 **핵심 산출**: 최근 의사결정 로그를 검토하고, 회사 목표와 개인 목표를 파악했습니다. / 📊 평가: 진행중 ",
+      "completedAt": "2026-05-30T08:11:57.007Z"
+    },
+    {
+      "id": "20260530085436-wd8e",
+      "title": "경쟁사 ROI 분석 → 산출물 sessions/2026-05-30T08-47/business.md",
+      "description": "자동 등록 (현빈 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "business"
+      ],
+      "createdAt": "2026-05-30T08:54:36.965Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-52",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-52/_report.md\n- 현빈: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n- Writer: AI 아이템 찾기 시작\n- 영숙: AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까?\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 📊 **수집 데이터**: PayPal 매출 분석 (게임·프로젝트별, 실제 거래 데이터) _(e",
+      "completedAt": "2026-05-30T08:59:42.441Z"
+    },
+    {
+      "id": "20260530085546-40p2",
+      "title": "경쟁사 ROI 분석 → 산출물 sessions/2026-05-30T08-47/business.md",
+      "description": "자동 등록 (Writer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "writer"
+      ],
+      "createdAt": "2026-05-30T08:55:46.300Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-52",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-52/_report.md\n- 현빈: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n- Writer: AI 아이템 찾기 시작\n- 영숙: AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까?\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 📊 **수집 데이터**: PayPal 매출 분석 (게임·프로젝트별, 실제 거래 데이터) _(e",
+      "completedAt": "2026-05-30T08:59:42.448Z"
+    },
+    {
+      "id": "20260530085546-v6tu",
+      "title": "AI 아이템 찾기 → 산출물 sessions/2026-05-30T08-37/writer.md",
+      "description": "자동 등록 (Writer 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "writer"
+      ],
+      "createdAt": "2026-05-30T08:55:46.307Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-52",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-52/_report.md\n- 현빈: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n- Writer: AI 아이템 찾기 시작\n- 영숙: AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까?\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 📊 **수집 데이터**: PayPal 매출 분석 (게임·프로젝트별, 실제 거래 데이터) _(e",
+      "completedAt": "2026-05-30T08:59:42.454Z"
+    },
+    {
+      "id": "20260530085903-d645",
+      "title": "경쟁사 ROI 분석 → 산출물 sessions/2026-05-30T08-47/business.md",
+      "description": "자동 등록 (Researcher 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "researcher"
+      ],
+      "createdAt": "2026-05-30T08:59:03.329Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-52",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-52/_report.md\n- 현빈: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n- Writer: AI 아이템 찾기 시작\n- 영숙: AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까?\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 📊 **수집 데이터**: PayPal 매출 분석 (게임·프로젝트별, 실제 거래 데이터) _(e",
+      "completedAt": "2026-05-30T08:59:42.460Z"
+    },
+    {
+      "id": "20260530085903-uqd1",
+      "title": "AI 아이템 찾기 → 산출물 sessions/2026-05-30T08-37/writer.md",
+      "description": "자동 등록 (Researcher 산출물에서 추출)",
+      "owner": "agent",
+      "agentIds": [
+        "researcher"
+      ],
+      "createdAt": "2026-05-30T08:59:03.337Z",
+      "status": "done",
+      "sessionDir": "2026-05-30T08-52",
+      "nudges": 0,
+      "priority": "normal",
+      "preAlarmsSent": [],
+      "evidence": "완료: sessions/2026-05-30T08-52/_report.md\n- 현빈: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n- Writer: AI 아이템 찾기 시작\n- 영숙: AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까?\n\nCEO 종합 요점: ## 🗂 작업 라운드 — 누가 뭐 했나\n\n### 💼 현빈 _(비즈니스 전략가 · Head of Business)_\n> 📋 **지시**: 회사 목표와 개인 목표 검토하여 가치 있는 단일 작업 결정\n> 🔧 **도구 실행**: _(없음 — LLM 추론만)_\n> 📊 **수집 데이터**: PayPal 매출 분석 (게임·프로젝트별, 실제 거래 데이터) _(e",
+      "completedAt": "2026-05-30T08:59:42.466Z"
+    }
+  ]
+}
