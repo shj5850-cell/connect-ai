@@ -9,3 +9,5 @@ _Researcher 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 
 - [2026-05-30] AI 자동화로 수익 창출을 위한 아이템 찾기 → 산출물 sessions/2026-05-30T09-22/researcher.md
 - [2026-05-30] AI 자동화로 수익 창출을 위한 아이템 찾아보기 → 산출물 sessions/2026-05-30T09-52/researcher.md
 - [2026-05-30] AI 자동화로 수익 창출을 위한 AI 아이템 찾기 시작 → 산출물 sessions/2026-05-30T10-07/researcher.md
+- [2026-05-31] AI 자동화로 수익 창출을 위한 AI 아이템 찾기 시작 → 산출물 sessions/2026-05-31T02-38/researcher.md
+- [2026-05-31] AI 자동화를 통해 수익 창출을 위한 AI 아이템 찾기 시작 → 산출물 sessions/2026-05-31T02-52/researcher.md

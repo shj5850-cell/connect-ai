@@ -1,0 +1,12 @@
+{
+  "ceo": "qwen2.5-coder:3b",
+  "secretary": "myungchul-coder:latest",
+  "youtube": "myungchul-coder:latest",
+  "researcher": "myungchul-coder:latest",
+  "business": "myungchul-coder:latest",
+  "writer": "myungchul-coder:latest",
+  "editor": "myungchul-coder:latest",
+  "designer": "myungchul-coder:latest",
+  "developer": "myungchul-coder:latest",
+  "instagram": "myungchul-coder:latest"
+}
