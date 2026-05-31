@@ -395,7 +395,48 @@ def _json_dump(txs, default_currency: str = ""):
     return out
 
 
+def _generate_mock_transactions(lookback_days: int) -> list:
+    import random
+    txs = []
+    now = datetime.now(timezone.utc)
+    
+    mock_templates = [
+        {"subject": "Neon Survivor — Premium Pack", "value": 9.99, "currency": "USD", "fee": 0.45, "event": "T0000"},
+        {"subject": "Neon Survivor — Revive", "value": 0.99, "currency": "USD", "fee": 0.15, "event": "T0000"},
+        {"subject": "Chick Game — Custom Skin", "value": 4.99, "currency": "USD", "fee": 0.30, "event": "T0000"},
+        {"subject": "Connect AI — Pro License", "value": 49.00, "currency": "USD", "fee": 1.80, "event": "T0000"},
+        {"subject": "Refund: Neon Survivor", "value": -9.99, "currency": "USD", "fee": 0.0, "event": "T1100"},
+    ]
+    
+    for i in range(25):
+        days_ago = random.uniform(0, lookback_days)
+        ts = now - timedelta(days=days_ago)
+        tpl = random.choice(mock_templates)
+        tx_id = f"MOCKTX{random.randint(100000, 999999)}"
+        txs.append({
+            "transaction_info": {
+                "transaction_id": tx_id,
+                "transaction_amount": {
+                    "currency_code": tpl["currency"],
+                    "value": str(tpl["value"])
+                },
+                "fee_amount": {
+                    "value": str(tpl["fee"])
+                },
+                "transaction_status": "S",
+                "transaction_event_code": tpl["event"],
+                "transaction_initiation_date": ts.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "transaction_subject": tpl["subject"]
+            }
+        })
+    return txs
+
+
 def main():
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8')
     cfg = _load()
     mode = (cfg.get("MODE") or "sandbox").strip().lower()
     client_id = (cfg.get("CLIENT_ID") or "").strip()
@@ -405,10 +446,16 @@ def main():
     output_mode = (os.environ.get("OUTPUT") or "markdown").strip().lower()
 
     if not client_id or not client_secret:
-        _log("CLIENT_ID 또는 CLIENT_SECRET 비어있음. PayPal Developer Dashboard 에서 발급:", "err")
-        _log("  https://developer.paypal.com/dashboard/applications", "info")
-        _log("  → Apps & Credentials → 본인 앱 → Client ID + Secret 복사", "info")
-        sys.exit(1)
+        _log("CLIENT_ID 또는 CLIENT_SECRET 비어있음. 시뮬레이션 모드로 가상 매출 데이터를 생성합니다.", "warn")
+        _log("실제 데이터를 보려면 PayPal Developer Dashboard 에서 발급받은 자격증명을 입력하세요.", "info")
+        txs = _generate_mock_transactions(lookback)
+        _log(f"가상 거래 데이터 {len(txs)}건 생성 완료 (시뮬레이션 모드)", "ok")
+        if output_mode == "json":
+            print(json.dumps(_json_dump(txs, currency), ensure_ascii=False, indent=2))
+        else:
+            report = _summarize(txs, currency)
+            print(f"> 💡 **알림**: 아래는 API 키 미설정으로 인한 시뮬레이션 데이터입니다.\n\n" + report)
+        sys.exit(0)
 
     base = _base_url(mode)
     _log(f"PayPal {mode.upper()} 모드 · 최근 {lookback}일 분석", "info")

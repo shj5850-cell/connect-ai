@@ -22,14 +22,13 @@ AUTONOMY_LEVEL: 2
 
 ## 사용 가능한 도구
 
-_⚠️ 이 에이전트의 도구는 모두 로드맵 단계입니다. 현재 LLM 추론만 가능하고, 외부 API 호출이나 파일 생성은 아직 동작하지 않습니다._
+### `web_search`
+Brave/DuckDuckGo 검색 및 경쟁사 데이터 수집 (Connected/Mock 지원)
+
+- `enabled`: true
+- `requires_credentials`: `config.md` 참조
 
 ## 로드맵 (예정)
-
-### `web_search` _(예정)_
-Brave/DuckDuckGo 검색 (Connected)
-
-- 아직 구현되지 않은 도구입니다. 로드맵에 있으며 향후 버전에서 추가 예정.
 
 ### `page_fetcher` _(예정)_
 본문 추출 + 출처 인용
