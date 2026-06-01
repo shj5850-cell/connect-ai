@@ -3,12 +3,31 @@
 import { useState, useEffect } from 'react';
 import { 
   Scissors, Video, FileText, Play, Copy, Check, 
-  Sparkles, Loader2, RefreshCw, AlertCircle, ArrowLeft, ExternalLink
+  Sparkles, Loader2, RefreshCw, AlertCircle, ArrowLeft, ExternalLink,
+  ShoppingBag, Key, HelpCircle
 } from 'lucide-react';
 import Link from 'next/link';
 
+const YoutubeIcon = ({ size = 16, color = "currentColor", ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke={color} 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    {...props}
+  >
+    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
+    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" />
+  </svg>
+);
+
 export default function LongToShortPage() {
-  const [mode, setMode] = useState('video'); // 'video' (trending shorts) or 'text' (script editor)
+  const [mode, setMode] = useState('video'); // 'video', 'text', 'coupang'
   const [longText, setLongText] = useState('');
   const [shortsCount, setShortsCount] = useState(3);
   const [loading, setLoading] = useState(false);
@@ -21,6 +40,25 @@ export default function LongToShortPage() {
   const [viralLoading, setViralLoading] = useState(false);
   const [extractingId, setExtractingId] = useState(null);
   const [playingId, setPlayingId] = useState(null);
+
+  // AI Stock Shorts states
+  const [keyword, setKeyword] = useState('');
+  const [voice, setVoice] = useState('female');
+  const [affiliateLink, setAffiliateLink] = useState('');
+  const [imageSourceMode, setImageSourceMode] = useState('stock_only');
+  const [directImageUrl, setDirectImageUrl] = useState('');
+  const [localImageBase64, setLocalImageBase64] = useState('');
+  const [localImageFileName, setLocalImageFileName] = useState('');
+  const [coupangLoading, setCoupangLoading] = useState(false);
+  const [coupangResult, setCoupangResult] = useState(null);
+  const [videoRendering, setVideoRendering] = useState(false);
+  const [renderedVideoUrl, setRenderedVideoUrl] = useState('');
+  const [ytUploadLoading, setYtUploadLoading] = useState(false);
+  const [ytUploadedUrl, setYtUploadedUrl] = useState('');
+  const [ytAuth, setYtAuth] = useState({ authenticated: false, clientId: '', clientSecret: '', hasRefreshToken: false });
+  const [showYtConfig, setShowYtConfig] = useState(false);
+  const [ytClientId, setYtClientId] = useState('');
+  const [ytClientSecret, setYtClientSecret] = useState('');
 
   const fetchViralShorts = async () => {
     setViralLoading(true);
@@ -41,8 +79,36 @@ export default function LongToShortPage() {
     }
   };
 
+  const checkYtAuth = async () => {
+    try {
+      const res = await fetch('/api/upload-youtube');
+      const data = await res.json();
+      if (data.success) {
+        setYtAuth(data);
+        if (data.clientId) {
+          setYtClientId(data.clientId);
+        }
+      }
+    } catch (e) {
+      console.error('Error checking YouTube auth status:', e);
+    }
+  };
+
   useEffect(() => {
     fetchViralShorts();
+    checkYtAuth();
+  }, []);
+
+  useEffect(() => {
+    const handleAuthMessage = (event) => {
+      if (event.data?.type === 'YOUTUBE_AUTH_SUCCESS') {
+        checkYtAuth();
+        setErrorMsg('');
+        alert('🎉 유튜브 계정 연동이 완료되었습니다!');
+      }
+    };
+    window.addEventListener('message', handleAuthMessage);
+    return () => window.removeEventListener('message', handleAuthMessage);
   }, []);
 
   const handleTextGenerate = async (e) => {
@@ -72,6 +138,171 @@ export default function LongToShortPage() {
       setErrorMsg('네트워크 통신 오류가 발생했습니다.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCoupangGenerate = async (e) => {
+    e.preventDefault();
+    if (!keyword.trim()) return;
+
+    setCoupangLoading(true);
+    setErrorMsg('');
+    setCoupangResult(null);
+    setRenderedVideoUrl('');
+    setYtUploadedUrl('');
+
+    try {
+      const response = await fetch('/api/generate-shorts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          keyword, 
+          voice, 
+          affiliateLink,
+          imageSourceMode,
+          directImageUrl,
+          localImageBase64,
+          localImageFileName
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setCoupangResult({
+          product: {
+            title: data.title,
+            image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500',
+            price: '무료 스톡 라이선스',
+            affiliateLink: affiliateLink || '#'
+          },
+          shorts: {
+            title: data.title,
+            hook: '30초 스톡 쇼츠 자동 제작 완료',
+            script: data.script,
+            visualCues: `스톡 검색어: ${data.searchKeywords.join(', ')}`,
+            estimatedDuration: '30s'
+          }
+        });
+        setRenderedVideoUrl(data.videoUrl);
+      } else {
+        setErrorMsg(data.error || '쇼츠 기획 및 비디오 렌더링에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('네트워크 통신 오류가 발생했습니다.');
+    } finally {
+      setCoupangLoading(false);
+    }
+  };
+
+  const handleGenerateVideo = async () => {
+    if (!coupangResult || !coupangResult.shorts) return;
+
+    setVideoRendering(true);
+    setErrorMsg('');
+    setRenderedVideoUrl('');
+
+    try {
+      const response = await fetch('/api/generate-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          script: coupangResult.shorts.script,
+          image: coupangResult.product.image,
+          title: coupangResult.shorts.title
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setRenderedVideoUrl(data.videoUrl);
+      } else {
+        setErrorMsg(data.error || '비디오 렌더링에 실패했습니다. Python 스크립트 로그를 확인해 주세요.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('비디오 생성 중 네트워크 통신 오류가 발생했습니다.');
+    } finally {
+      setVideoRendering(false);
+    }
+  };
+
+  const handleYoutubeUpload = async () => {
+    if (!renderedVideoUrl || !coupangResult) return;
+
+    setYtUploadLoading(true);
+    setErrorMsg('');
+    setYtUploadedUrl('');
+
+    try {
+      // Build description with affiliate link
+      const productPriceStr = coupangResult.product.price ? `\n🏷️ 가격: ${coupangResult.product.price}` : '';
+      const buyLinkStr = coupangResult.product.affiliateLink ? `\n🛒 최저가 구매 링크: ${coupangResult.product.affiliateLink}` : '';
+      const description = `${coupangResult.shorts.title}\n\n${coupangResult.shorts.script.slice(0, 500)}\n\n---${productPriceStr}${buyLinkStr}\n\n#쿠팡파트너스 #추천템 #내돈내산 #쇼츠 #자동화`;
+
+      const response = await fetch('/api/upload-youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'upload',
+          videoUrl: renderedVideoUrl,
+          title: coupangResult.shorts.title,
+          description: description
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setYtUploadedUrl(data.videoUrl);
+      } else {
+        setErrorMsg(data.error || '유튜브 업로드 중 오류가 발생했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('유튜브 업로드 API 호출 중 네트워크 오류가 발생했습니다.');
+    } finally {
+      setYtUploadLoading(false);
+    }
+  };
+
+  const handleSaveYtCredentials = async (e) => {
+    e.preventDefault();
+    if (!ytClientId.trim() || !ytClientSecret.trim()) return;
+
+    setErrorMsg('');
+    try {
+      const response = await fetch('/api/upload-youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'save_credentials',
+          clientId: ytClientId,
+          clientSecret: ytClientSecret
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success && data.redirectUrl) {
+        // Open authorization screen in popup
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        window.open(
+          data.redirectUrl,
+          'youtube_auth',
+          `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes`
+        );
+      } else {
+        setErrorMsg(data.error || '인증 URL 생성에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('인증 요청 중 네트워크 오류가 발생했습니다.');
     }
   };
 
@@ -135,7 +366,7 @@ export default function LongToShortPage() {
             <span>🔥 실시간 인기 숏폼 트렌드 분석 & 기획기</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.95rem' }}>
-            유튜브에서 가장 핫한 최신 인기 숏폼들을 실시간으로 모니터링하고, 원클릭으로 자막을 추출해 나만의 숏폼 대본으로 재창작(모델링)할 수 있습니다.
+            유튜브 인기 숏폼 분석뿐만 아니라, 쿠팡 파트너스 링크만 넣으면 영상 렌더링부터 유튜브 업로드까지 자동으로 구현하는 올인원 워크플로우를 제공합니다.
           </p>
         </div>
       </header>
@@ -156,10 +387,32 @@ export default function LongToShortPage() {
           <FileText size={18} />
           <span>✍️ 대본/텍스트 기반 숏폼 기획</span>
         </button>
+        <button 
+          className={`mode-tab ${mode === 'coupang' ? 'active' : ''}`}
+          onClick={() => { setMode('coupang'); setErrorMsg(''); }}
+          style={{ position: 'relative' }}
+        >
+          <Sparkles size={18} color="#fbbf24" />
+          <span>🛍️ AI 스톡 쇼츠 자동 제작기</span>
+          <span style={{
+            position: 'absolute',
+            top: '-8px',
+            right: '-10px',
+            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+            color: '#000000',
+            fontSize: '0.65rem',
+            padding: '1px 5px',
+            borderRadius: '20px',
+            fontWeight: 800,
+            boxShadow: '0 0 8px rgba(251,191,36,0.5)'
+          }}>NEW</span>
+        </button>
       </div>
 
+      {errorMsg && <div className="error-message-box" style={{ marginBottom: '1.5rem' }}><AlertCircle size={14} />{errorMsg}</div>}
+
       {/* Dynamic View rendering based on mode */}
-      {mode === 'video' ? (
+      {mode === 'video' && (
         // Trending Shorts Feed Dashboard (Full-width grid)
         <div className="trending-shorts-dashboard glass-panel" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -182,8 +435,6 @@ export default function LongToShortPage() {
               <span>실시간 새로고침</span>
             </button>
           </div>
-
-          {errorMsg && <div className="error-message-box" style={{ marginBottom: '1.5rem' }}><AlertCircle size={14} />{errorMsg}</div>}
 
           {viralLoading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 0', gap: '1rem' }}>
@@ -285,7 +536,9 @@ export default function LongToShortPage() {
             </div>
           )}
         </div>
-      ) : (
+      )}
+
+      {mode === 'text' && (
         // 2-Column Script Generator Workspace
         <div className="long-to-short-grid">
           
@@ -338,8 +591,6 @@ export default function LongToShortPage() {
                   <span style={{ fontWeight: 700, color: '#00d2ff' }}>{shortsCount}개</span>
                 </div>
               </div>
-
-              {errorMsg && <div className="error-message-box"><AlertCircle size={14} />{errorMsg}</div>}
 
               <button 
                 type="submit" 
@@ -424,7 +675,439 @@ export default function LongToShortPage() {
               )}
             </div>
           </div>
+        </div>
+      )}
 
+      {mode === 'coupang' && (
+        <div className="long-to-short-grid">
+          
+          {/* Left Column: Keyword Input and Actions */}
+          <div className="glass-panel input-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto' }}>
+            <form onSubmit={handleCoupangGenerate} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ fontWeight: 650, fontSize: '1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Sparkles size={18} color="#fbbf24" />
+                  <span>AI 스톡 쇼츠 자동 제작기</span>
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">제작할 쇼츠 키워드</span>
+                <input
+                  type="text"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  placeholder="예: 차돌박이 맛집, 스마트폰 꿀팁, 매일 1시간 공부법"
+                  className="coupang-input-field"
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">수익화 단축 링크 (선택)</span>
+                <input
+                  type="text"
+                  value={affiliateLink}
+                  onChange={(e) => setAffiliateLink(e.target.value)}
+                  placeholder="유튜브 쇼츠 설명란에 들어갈 제휴/홍보 링크"
+                  className="coupang-input-field"
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">이미지 수집 및 매칭 방식</span>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setImageSourceMode('stock_only')}
+                    style={{
+                      padding: '0.75rem',
+                      background: imageSourceMode === 'stock_only' ? 'rgba(16, 185, 129, 0.06)' : 'rgba(0, 0, 0, 0.25)',
+                      border: imageSourceMode === 'stock_only' ? '1px solid #10b981' : '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      color: imageSourceMode === 'stock_only' ? '#10b981' : 'var(--text-secondary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 650,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>🖼️ 감성 스톡 B-Roll만</span>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>Unsplash 저작권 안전 스톡 사용</span>
+                    <span style={{ fontSize: '0.62rem', color: '#10b981', fontWeight: 800 }}>✅ 100% 저작권 안전 (상업용 무료)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setImageSourceMode('direct')}
+                    style={{
+                      padding: '0.75rem',
+                      background: imageSourceMode === 'direct' ? 'rgba(16, 185, 129, 0.06)' : 'rgba(0, 0, 0, 0.25)',
+                      border: imageSourceMode === 'direct' ? '1px solid #10b981' : '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      color: imageSourceMode === 'direct' ? '#10b981' : 'var(--text-secondary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 650,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>🎯 대표 이미지 직접 지정</span>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>이미지 URL 또는 파일 등록</span>
+                    <span style={{ fontSize: '0.62rem', color: '#10b981', fontWeight: 800 }}>✅ 저작권 안전 (본인 소유 이미지)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setImageSourceMode('stock_naver')}
+                    style={{
+                      padding: '0.75rem',
+                      background: imageSourceMode === 'stock_naver' ? 'rgba(245, 158, 11, 0.06)' : 'rgba(0, 0, 0, 0.25)',
+                      border: imageSourceMode === 'stock_naver' ? '1px solid #f59e0b' : '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      color: imageSourceMode === 'stock_naver' ? '#f59e0b' : 'var(--text-secondary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 650,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>📸 실물 매칭 + 스톡 B-Roll</span>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>실물 사진 + 감성 B-Roll 혼합</span>
+                    <span style={{ fontSize: '0.62rem', color: '#f59e0b', fontWeight: 800 }}>⚠️ 저작권 주의 (블로그 후기 사진)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setImageSourceMode('naver_only')}
+                    style={{
+                      padding: '0.75rem',
+                      background: imageSourceMode === 'naver_only' ? 'rgba(239, 68, 68, 0.06)' : 'rgba(0, 0, 0, 0.25)',
+                      border: imageSourceMode === 'naver_only' ? '1px solid #ef4444' : '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      color: imageSourceMode === 'naver_only' ? '#ef4444' : 'var(--text-secondary)',
+                      fontSize: '0.78rem',
+                      fontWeight: 650,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>🔍 네이버 실물 이미지 검색</span>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>블로그/리뷰 사진으로만 제작</span>
+                    <span style={{ fontSize: '0.62rem', color: '#ef4444', fontWeight: 800 }}>⚠️ 저작권 주의 (개인 저작물 수집)</span>
+                  </button>
+                </div>
+              </div>
+
+              {imageSourceMode === 'direct' && (
+                <div style={{
+                  background: 'rgba(255, 255, 255, 0.01)',
+                  border: '1px dashed var(--border-color)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.8rem',
+                  marginTop: '0.2rem'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>대표 이미지 URL 입력</span>
+                    <input
+                      type="text"
+                      value={directImageUrl}
+                      onChange={(e) => {
+                        setDirectImageUrl(e.target.value);
+                        if (e.target.value.trim()) {
+                          setLocalImageBase64('');
+                          setLocalImageFileName('');
+                        }
+                      }}
+                      placeholder="https://example.com/product-image.jpg"
+                      className="coupang-input-field"
+                      style={{ fontSize: '0.8rem' }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', flex: 1 }}></div>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>또는 파일 업로드</span>
+                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', flex: 1 }}></div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>PC에서 이미지 파일 선택</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setLocalImageFileName(file.name);
+                          setDirectImageUrl('');
+                          
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setLocalImageBase64(reader.result);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--text-secondary)',
+                        background: 'rgba(0, 0, 0, 0.4)',
+                        padding: '0.5rem',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-color)',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    {localImageFileName && (
+                      <span style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 600 }}>
+                        ✓ 업로드된 파일: {localImageFileName}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">성우 목소리 선택 (Neural TTS)</span>
+                <select 
+                  value={voice} 
+                  onChange={(e) => setVoice(e.target.value)}
+                  className="coupang-select-field"
+                >
+                  <option value="female">🧐 여성 성우 (선희 - 차분하고 신뢰형)</option>
+                  <option value="male">👨‍💼 남성 성우 (인준 - 명확하고 설득력있음)</option>
+                </select>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={coupangLoading || !keyword.trim()} 
+                className="btn generate-submit-btn-coupang"
+                style={{
+                  background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                  color: 'black',
+                  fontWeight: 'bold'
+                }}
+              >
+                {coupangLoading ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
+                <span>{coupangLoading ? 'AI 기획 & 이미지 스크래핑 & 비디오 합성 중 (약 30초)...' : '⚡ 쇼츠 영상 자동 제작하기 (30초 이내)'}</span>
+              </button>
+            </form>
+
+            {/* Video preview section */}
+            {renderedVideoUrl && (
+              <div className="media-creation-section" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1.5rem' }}>
+                <h3 className="sub-section-title">🎬 제작 완료된 쇼츠 동영상</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
+                  <div className="video-player-container">
+                    <video src={renderedVideoUrl} controls className="rendered-video-player" style={{ borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                  </div>
+                  <span style={{ fontSize: '0.75rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
+                    <Check size={14} /> 영상 렌더링 완료 (/public/shorts에 저장됨)
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* YouTube account status & credentials configuration block */}
+            {coupangResult && renderedVideoUrl && (
+              <div className="youtube-upload-section">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <h3 className="sub-section-title" style={{ margin: 0 }}>🚀 유튜브 쇼츠 바로 게시</h3>
+                  <button 
+                    onClick={() => setShowYtConfig(!showYtConfig)} 
+                    className="btn-link"
+                    style={{ fontSize: '0.75rem', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.2rem', cursor: 'pointer', background: 'none', border: 'none' }}
+                  >
+                    <Key size={12} />
+                    <span>{showYtConfig ? '연동 패널 숨기기' : 'API 키/인증 정보 수정'}</span>
+                  </button>
+                </div>
+
+                {/* Show OAuth registration if not authenticated or toggled */}
+                {(showYtConfig || !ytAuth.authenticated) && (
+                  <form onSubmit={handleSaveYtCredentials} className="yt-credentials-box">
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', color: '#f59e0b', fontSize: '0.75rem', marginBottom: '0.5rem', background: 'rgba(245,158,11,0.05)', padding: '0.6rem', borderRadius: '6px' }}>
+                      <HelpCircle size={14} style={{ marginTop: '2px', flexShrink: 0 }} />
+                      <span>Google API 콘솔에서 OAuth 클라이언트 ID를 발급받은 후 등록하고 구글 계정을 연동해 주세요. (Redirect URI: http://localhost:3000/api/upload-youtube/callback)</span>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Google OAuth Client ID</span>
+                      <input 
+                        type="text" 
+                        value={ytClientId}
+                        onChange={(e) => setYtClientId(e.target.value)}
+                        className="coupang-input-field" 
+                        style={{ fontSize: '0.75rem', padding: '0.4rem 0.6rem' }}
+                        placeholder="773040580705-xxxxxxx.apps.googleusercontent.com"
+                        required
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.5rem' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Google OAuth Client Secret</span>
+                      <input 
+                        type="password" 
+                        value={ytClientSecret}
+                        onChange={(e) => setYtClientSecret(e.target.value)}
+                        className="coupang-input-field" 
+                        style={{ fontSize: '0.75rem', padding: '0.4rem 0.6rem' }}
+                        placeholder={ytAuth.authenticated ? '••••••••' : 'OAuth 클라이언트 비밀번호'}
+                        required={!ytAuth.authenticated}
+                      />
+                    </div>
+                    <button 
+                      type="submit" 
+                      className="btn yt-connect-btn"
+                    >
+                      <Key size={14} />
+                      <span>Google 계정 연동 및 로그인</span>
+                    </button>
+                  </form>
+                )}
+
+                {ytAuth.authenticated ? (
+                  <div style={{ marginTop: '0.75rem' }}>
+                    {ytUploadedUrl ? (
+                      <div className="yt-success-box">
+                        <span className="success-txt">✓ 쇼츠 자동 업로드 성공!</span>
+                        <a href={ytUploadedUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary yt-visit-btn">
+                          유튜브에서 쇼츠 보기 <ExternalLink size={14} />
+                        </a>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleYoutubeUpload}
+                        disabled={ytUploadLoading}
+                        className="btn yt-upload-run-btn"
+                      >
+                        {ytUploadLoading ? <Loader2 className="animate-spin" size={16} /> : <YoutubeIcon size={16} />}
+                        <span>{ytUploadLoading ? '동영상 바이너리 전송 및 발행 중...' : '유튜브 쇼츠로 즉시 업로드 (설명란에 파트너스 링크 삽입)'}</span>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '1rem', border: '1px dashed var(--border-color)', borderRadius: '10px', background: 'rgba(255,255,255,0.01)', color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.5rem' }}>
+                    ⚠️ 유튜브 업로드를 위해 위의 패널에서 Google 계정 연동을 먼저 진행해 주세요.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Previews and drafts */}
+          <div className="glass-panel output-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem', margin: 0 }}>
+              <Video size={20} color="var(--accent-secondary)" />
+              <span>🛍️ AI 스톡 쇼츠 기획 정보</span>
+            </h2>
+
+            <div className="shorts-scroll-area">
+              {!coupangResult ? (
+                <div className="empty-state">
+                  <Sparkles size={48} color="rgba(255,255,255,0.05)" />
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '1rem', textAlign: 'center' }}>
+                    {coupangLoading ? 'Gemini 1.5 Flash와 Python 비디오 렌더러가 이미지 수집, 고음질 목소리 생성 및 영상 제작을 함께 진행하고 있습니다. 잠시만 기다려주세요...' : '왼쪽 입력창에 제작할 키워드를 입력하고 [쇼츠 영상 자동 제작하기]를 클릭해 주세요.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="shorts-cards-list">
+                  
+                  {/* Scraped Product Metadata Info Card */}
+                  <div className="product-scraped-info-card">
+                    <img src={coupangResult.product.image} alt={coupangResult.product.title} className="product-scraped-img" />
+                    <div className="product-scraped-details">
+                      <h4 className="product-scraped-title">{coupangResult.product.title}</h4>
+                      <div className="product-scraped-price-row">
+                        <span className="product-scraped-price-label">판매가</span>
+                        <span className="product-scraped-price-val">{coupangResult.product.price}</span>
+                      </div>
+                      <a href={coupangResult.product.affiliateLink} target="_blank" rel="noopener noreferrer" className="product-scraped-link">
+                        <span>상품 정보 원본 확인</span>
+                        <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Generated Shorts Card */}
+                  <div className="shorts-preview-card">
+                    <div className="card-top-row">
+                      <span className="shorts-badge" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>COUPANG SHORTS</span>
+                      <span className="duration-badge">{coupangResult.shorts.estimatedDuration || '45s'}</span>
+                    </div>
+
+                    <h3 className="shorts-card-title">{coupangResult.shorts.title}</h3>
+
+                    <div className="shorts-hook-box">
+                      <span className="hook-label">3초 오프닝 훅 (Opening Hook)</span>
+                      <p className="hook-text">"{coupangResult.shorts.hook}"</p>
+                    </div>
+
+                    <div className="shorts-script-box">
+                      <span className="script-label">나레이션 대본 (Script)</span>
+                      <div className="script-content" style={{ maxHeight: '180px' }}>{coupangResult.shorts.script}</div>
+                    </div>
+
+                    <div className="shorts-cues-box">
+                      <span className="cues-label">비주얼 연출 지시</span>
+                      <p className="cues-text">{coupangResult.shorts.visualCues}</p>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                      <button
+                        onClick={() => handleCopyScript('coupang_copy', `제목: ${coupangResult.shorts.title}\n훅: ${coupangResult.shorts.hook}\n\n[대본]\n${coupangResult.shorts.script}`)}
+                        className={`btn ${copiedId === 'coupang_copy' ? 'copied' : ''}`}
+                        style={{
+                          flex: 1,
+                          padding: '0.65rem',
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.4rem',
+                          background: copiedId === 'coupang_copy' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.03)',
+                          border: copiedId === 'coupang_copy' ? 'none' : '1px solid var(--border-color)',
+                          color: 'white',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {copiedId === 'coupang_copy' ? <Check size={14} /> : <Copy size={14} />}
+                        <span>{copiedId === 'coupang_copy' ? '복사 완료!' : '대본 복사'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -511,6 +1194,282 @@ export default function LongToShortPage() {
           box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
           color: white;
           cursor: pointer;
+        }
+
+        .generate-submit-btn-coupang {
+          width: 100%; 
+          padding: 0.9rem; 
+          font-weight: 700; 
+          border-radius: 10px;
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.6rem;
+          box-shadow: 0 0 15px rgba(251, 191, 36, 0.15);
+          color: #000000;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .generate-submit-btn-coupang:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 0 20px rgba(251, 191, 36, 0.25);
+        }
+
+        .generate-submit-btn-coupang:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .coupang-input-field {
+          background: rgba(0, 0, 0, 0.3);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 0.7rem 0.9rem;
+          color: white;
+          font-size: 0.85rem;
+          outline: none;
+          transition: border 0.3s;
+        }
+
+        .coupang-input-field:focus {
+          border-color: rgba(251, 191, 36, 0.5);
+        }
+
+        .coupang-select-field {
+          background: rgba(0, 0, 0, 0.3);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 0.7rem 0.9rem;
+          color: white;
+          font-size: 0.85rem;
+          outline: none;
+          cursor: pointer;
+        }
+
+        .coupang-select-field option {
+          background-color: #0f0f15;
+          color: white;
+        }
+
+        .input-title-label {
+          font-size: 0.78rem;
+          color: var(--text-secondary);
+          font-weight: 600;
+        }
+
+        .media-creation-section {
+          border-top: 1px solid rgba(255,255,255,0.05);
+          padding-top: 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+
+        .sub-section-title {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: white;
+          margin: 0 0 0.2rem 0;
+        }
+
+        .video-generation-btn {
+          width: 100%;
+          padding: 0.85rem;
+          background: rgba(0, 210, 255, 0.08);
+          border: 1px dashed rgba(0, 210, 255, 0.3);
+          color: #00d2ff;
+          border-radius: 8px;
+          font-weight: 700;
+          font-size: 0.8rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .video-generation-btn:hover {
+          background: rgba(0, 210, 255, 0.15);
+          border-color: #00d2ff;
+        }
+
+        .video-player-container {
+          background: #000;
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          overflow: hidden;
+          width: 180px;
+          aspect-ratio: 9/16;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .rendered-video-player {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .youtube-upload-section {
+          border-top: 1px solid rgba(255,255,255,0.05);
+          padding-top: 1.25rem;
+        }
+
+        .yt-credentials-box {
+          background: rgba(255, 255, 255, 0.01);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 1rem;
+          margin-top: 0.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+
+        .yt-connect-btn {
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
+          color: black;
+          border: none;
+          font-weight: 750;
+          padding: 0.6rem;
+          border-radius: 6px;
+          font-size: 0.78rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        }
+
+        .yt-connect-btn:hover {
+          opacity: 0.9;
+        }
+
+        .yt-upload-run-btn {
+          width: 100%;
+          padding: 0.85rem;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          border: none;
+          color: white;
+          border-radius: 8px;
+          font-weight: 700;
+          font-size: 0.82rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+          transition: all 0.3s;
+        }
+
+        .yt-upload-run-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(239,68,68,0.35);
+        }
+
+        .yt-success-box {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.8rem;
+          background: rgba(16, 185, 129, 0.08);
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          border-radius: 8px;
+          padding: 1rem;
+        }
+
+        .success-txt {
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #10b981;
+        }
+
+        .yt-visit-btn {
+          background: #10b981 !important;
+          color: white !important;
+          border: none !important;
+          font-size: 0.78rem !important;
+          padding: 0.5rem 1rem !important;
+          border-radius: 6px !important;
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+
+        /* Scraped Product Metadata styling */
+        .product-scraped-info-card {
+          display: flex;
+          gap: 1rem;
+          padding: 1rem;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          margin-bottom: 1.25rem;
+        }
+
+        .product-scraped-img {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 8px;
+          background: #fff;
+          border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .product-scraped-details {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        .product-scraped-title {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: white;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          line-height: 1.4;
+        }
+
+        .product-scraped-price-row {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0.2rem 0;
+        }
+
+        .product-scraped-price-label {
+          font-size: 0.7rem;
+          color: var(--text-secondary);
+        }
+
+        .product-scraped-price-val {
+          font-size: 0.85rem;
+          font-weight: 800;
+          color: #fbbf24;
+        }
+
+        .product-scraped-link {
+          font-size: 0.72rem;
+          color: var(--text-secondary);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.2rem;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+
+        .product-scraped-link:hover {
+          color: white;
         }
 
         .error-message-box {
