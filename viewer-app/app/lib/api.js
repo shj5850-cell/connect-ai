@@ -39,6 +39,93 @@ export function getSessionFiles(sessionId) {
   return files;
 }
 
+export function getSessionMindmap(sessionId) {
+  const files = getSessionFiles(sessionId);
+  const briefFile = files.find(f => f.name === '_brief.md');
+  
+  let globalGoal = '';
+  if (briefFile) {
+    const goalMatch = briefFile.content.match(/\*\*원 명령:\*\*\s*(.*?)(?:\n|$)/);
+    if (goalMatch && goalMatch[1]) {
+      globalGoal = goalMatch[1].trim();
+    } else {
+      const summaryMatch = briefFile.content.match(/## 요약\s*([\s\S]*?)(?:##|$)/);
+      if (summaryMatch && summaryMatch[1]) {
+        globalGoal = summaryMatch[1].trim();
+      }
+    }
+  }
+
+  const agentNodes = [];
+  files.forEach(file => {
+    if (file.name.startsWith('_')) return;
+
+    const content = file.content;
+    const agentName = file.name.replace('.md', '');
+
+    let displayName = agentName;
+    let role = '';
+    const headerMatch = content.match(/^#\s*(.*?)\s*—\s*(.*?)$/m);
+    if (headerMatch) {
+      displayName = headerMatch[1].trim();
+      role = headerMatch[2].trim();
+    }
+
+    const deliverables = [];
+    const sectionRegex = /^###\s+(.+)$/gm;
+    let match;
+    while ((match = sectionRegex.exec(content)) !== null) {
+      const secName = match[1].trim();
+      if (!['이달의 목표 및 현재 상태', '최근의 이벤트 및 데이터', '관련 두뇌 지식', '인용 가능한 1차 자료 라이브러리 구축'].some(s => secName.includes(s))) {
+        deliverables.push(secName);
+      }
+    }
+
+    const nextActions = [];
+    const nextStepMatch = content.match(/(?:📝 다음 단계:|## 다음 단계)[\s\S]*?(?:\n\n|\n---|#|$)/);
+    if (nextStepMatch) {
+      const actionText = nextStepMatch[0].replace(/📝 다음 단계:|## 다음 단계/g, '').trim();
+      if (actionText) {
+        actionText.split('\n').forEach(line => {
+          const clean = line.replace(/^[-*+\d.\s<>#\s]+/, '').trim();
+          if (clean && clean.length > 2) {
+            nextActions.push(clean);
+          }
+        });
+      }
+    }
+
+    const insights = [];
+    const lines = content.split('\n');
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('-') || trimmed.startsWith('*') || /^\d+\./.test(trimmed)) {
+        const clean = trimmed.replace(/^[-*+\d.\s]+/, '').trim();
+        if (clean.length > 6 && !clean.includes('http') && !clean.includes('다음 단계') && insights.length < 4) {
+          if (!nextActions.some(a => a.includes(clean)) && !deliverables.some(d => d.includes(clean))) {
+            insights.push(clean);
+          }
+        }
+      }
+    });
+
+    agentNodes.push({
+      agent: agentName,
+      displayName,
+      role,
+      deliverables: deliverables.length > 0 ? deliverables : ['기본 작업 보고서'],
+      insights: insights.length > 0 ? insights : ['세부 업무 내용 진행 완료'],
+      nextActions: nextActions.length > 0 ? nextActions : ['후속 지침 검토 및 승인 대기']
+    });
+  });
+
+  return {
+    sessionId,
+    globalGoal: globalGoal || '세션 자율 작업 수행',
+    agents: agentNodes
+  };
+}
+
 export function getAgents() {
   const agentsDir = path.join(COMPANY_DIR, 'agents');
   if (!fs.existsSync(agentsDir)) {
@@ -186,3 +273,41 @@ export function getRecentTasks() {
     return [];
   }
 }
+
+export function getSessionDirection(sessionId) {
+  const files = getSessionFiles(sessionId);
+  const briefFile = files.find(f => f.name === '_brief.md');
+  
+  let summary = '이 세션에 대한 요약 브리프가 없습니다.';
+  let originalCommand = '자율 사이클 운영 중';
+  
+  if (briefFile) {
+    const summaryMatch = briefFile.content.match(/## 요약([\s\S]*?)(?:##|$)/);
+    if (summaryMatch && summaryMatch[1]) {
+      summary = summaryMatch[1].trim();
+    }
+    const commandMatch = briefFile.content.match(/\*\*원 명령:\*\*\s*(.*?)(?:\n|$)/);
+    if (commandMatch && commandMatch[1]) {
+      originalCommand = commandMatch[1].trim();
+    }
+  }
+
+  const companyDirection = getCompanyDirection();
+  const mindmap = getSessionMindmap(sessionId);
+  
+  const roadmapSteps = mindmap.agents.map(agentData => ({
+    agent: agentData.displayName,
+    role: agentData.role,
+    mainDeliverable: agentData.deliverables[0] || '기본 성과물',
+    nextAction: agentData.nextActions[0] || '다음 작업 대기 중'
+  }));
+
+  return {
+    sessionId,
+    summary,
+    originalCommand,
+    companyGoals: companyDirection.goals,
+    roadmap: roadmapSteps
+  };
+}
+

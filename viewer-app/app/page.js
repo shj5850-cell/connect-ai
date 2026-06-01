@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import AutoRefresh from './components/AutoRefresh';
+import DynamicIdentity from './components/DynamicIdentity';
 
 function getAgentIcon(agentName) {
   switch (agentName.toLowerCase()) {
@@ -76,7 +77,7 @@ export default function Home() {
       <AutoRefresh interval={3000} />
       <header className="header" style={{ marginBottom: '2rem' }}>
         <div>
-          <h1 className="title gradient-text">Connect AI Company</h1>
+          <h1 className="title gradient-text">맹칠컴퍼니</h1>
           <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
             에이전트 작업물 및 세션 실시간 대시보드
           </p>
@@ -123,6 +124,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <DynamicIdentity />
 
       {/* 실시간 관제 센터 대시보드 (Live Control Center) */}
       <section style={{ marginBottom: '3rem' }}>
