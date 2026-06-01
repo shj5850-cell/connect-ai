@@ -84,17 +84,17 @@ ${filesContext}`;
     const headers = { 'Content-Type': 'application/json' };
     let requestBody = {};
 
-    if (apiKey.startsWith('AQ')) {
+    if (apiKey.startsWith('ya29.')) {
       const projectNumber = process.env.GEMINI_PROJECT_NUMBER || '773040580705';
       const region = 'us-central1';
-      geminiUrl = `https://${region}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${region}/publishers/google/models/gemini-1.5-flash:generateContent`;
+      geminiUrl = `https://${region}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${region}/publishers/google/models/gemini-2.5-flash:generateContent`;
       headers['Authorization'] = `Bearer ${apiKey}`;
       requestBody = {
         contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
         generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
       };
     } else {
-      geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
       requestBody = {
         contents: [{ parts: [{ text: userPrompt }] }],
         generationConfig: { temperature: 0.7, topP: 0.95 }

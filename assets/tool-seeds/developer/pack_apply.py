@@ -233,6 +233,12 @@ def _find_brain_root():
         ep = os.path.expanduser(env)
         if os.path.exists(ep):
             return ep
+    
+    # 4 levels up from script location is brain root if it contains 40_템플릿
+    parent_c = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
+    if os.path.exists(os.path.join(parent_c, "40_템플릿")):
+        return parent_c
+
     cands = [
         os.path.expanduser("~/Downloads/지식메모리"),
         os.path.expanduser("~/.connect-ai-brain"),

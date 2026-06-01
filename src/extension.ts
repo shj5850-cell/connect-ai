@@ -610,7 +610,11 @@ function runCommandCaptured(
         const child = spawn(cmd, {
             cwd,
             shell: true,
-            env: process.env,
+            env: {
+                ...process.env,
+                BRAIN_ROOT: _getBrainDir(),
+                COMPANY_DIR: getCompanyDir()
+            },
             stdio: ['ignore', 'pipe', 'pipe']
         });
         let buf = '';
@@ -7513,6 +7517,7 @@ function buildSpecialistPrompt(agentId: string): string {
   const personaBlock = a.persona
     ? `\n\n[당신의 톤·말투 — 항상 이 페르소나 유지]\n${a.persona}`
     : '';
+  const displayCompanyPath = getCompanyDir().replace(os.homedir(), '~').replace(/\\/g, '/');
   return `당신은 ${company}의 ${a.emoji} ${a.name} (${a.role}) 에이전트입니다.
 
 [전문 영역]
@@ -7543,7 +7548,7 @@ OS 차이: 백그라운드 프로세스는 맥/리눅스에선 \`nohup ... &\`, 
 - 이전 turn 에서 파일을 만들었다면 그 **절대 경로 그대로** 다시 쓰세요. 추측 금지.
 - 시스템이 system prompt 아래쪽에 "당신이 최근 작업한 파일들" 블록으로 정확한 경로를 알려줍니다. 그걸 신뢰하세요.
 - 당신의 도구 폴더 (\`_agents/<id>/tools/\`) 와 사용자 프로젝트 폴더는 다릅니다. 사용자가 "이 프로젝트에 ..."라고 했으면 그 폴더는 도구 폴더 안이 아닙니다.
-- 경로가 헷갈리면 추측하지 말고 \`<list_files path="~/Downloads/지식메모리/_company"/>\` 처럼 상위 폴더부터 탐색하세요.
+- 경로가 헷갈리면 추측하지 말고 \`<list_files path="${displayCompanyPath}"/>\` 처럼 상위 폴더부터 탐색하세요.
 
 [출력 규칙]
 - 한국어 마크다운으로 작성

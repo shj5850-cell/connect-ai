@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temporary media & progress files
+temp_*
+progress_*.txt
+*.webm
+*.mp4
+*.mp3

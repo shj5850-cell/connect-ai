@@ -1,70 +1,49 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Scissors, Video, FileText, Play, Copy, Check, 
-  Sparkles, Loader2, RefreshCw, AlertCircle, ArrowLeft, Download, Terminal
+  Sparkles, Loader2, RefreshCw, AlertCircle, ArrowLeft, ExternalLink
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LongToShortPage() {
-  const [mode, setMode] = useState('video'); // Default to video to showcase the new feature!
+  const [mode, setMode] = useState('video'); // 'video' (trending shorts) or 'text' (script editor)
   const [longText, setLongText] = useState('');
-  const [videoUrl, setVideoUrl] = useState('');
   const [shortsCount, setShortsCount] = useState(3);
   const [loading, setLoading] = useState(false);
   const [shortsList, setShortsList] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
-  
-  // Real-time video cutting logs states
-  const [jobId, setJobId] = useState('');
-  const [progressLogs, setProgressLogs] = useState('');
-  const [pollingActive, setPollingActive] = useState(false);
-  const consoleEndRef = useRef(null);
 
-  // Auto scroll console logs to the bottom
-  useEffect(() => {
-    if (consoleEndRef.current) {
-      consoleEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [progressLogs]);
+  // Viral Shorts states
+  const [viralShorts, setViralShorts] = useState([]);
+  const [viralLoading, setViralLoading] = useState(false);
+  const [extractingId, setExtractingId] = useState(null);
+  const [playingId, setPlayingId] = useState(null);
 
-  // Polling for video cutting logs and status
-  useEffect(() => {
-    if (!pollingActive || !jobId) return;
-
-    let active = true;
-    const interval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/video-shorts?jobId=${jobId}`);
-        const data = await response.json();
-
-        if (active && data.success) {
-          setProgressLogs(data.progress || '작업 대기 중...');
-          
-          if (data.completed) {
-            clearInterval(interval);
-            setPollingActive(false);
-            setLoading(false);
-            
-            if (data.isSuccess && data.shorts && data.shorts.length > 0) {
-              setShortsList(data.shorts);
-            } else {
-              setErrorMsg('영상 숏폼 분할 및 편집 과정 중 실패했습니다. 콘솔 로그를 확인하세요.');
-            }
-          }
-        }
-      } catch (err) {
-        console.error('Polling error:', err);
+  const fetchViralShorts = async () => {
+    setViralLoading(true);
+    setErrorMsg('');
+    try {
+      const response = await fetch('/api/viral-shorts');
+      const data = await response.json();
+      if (data.success) {
+        setViralShorts(data.shorts || []);
+      } else {
+        setErrorMsg('유튜브 인기 숏폼 목록을 불러오는 도중 오류가 발생했습니다.');
       }
-    }, 1500);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('유튜브 인기 숏폼 API 호출 중 네트워크 오류가 발생했습니다.');
+    } finally {
+      setViralLoading(false);
+    }
+  };
 
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, [pollingActive, jobId]);
+  useEffect(() => {
+    fetchViralShorts();
+  }, []);
 
   const handleTextGenerate = async (e) => {
     e.preventDefault();
@@ -96,45 +75,24 @@ export default function LongToShortPage() {
     }
   };
 
-  const handleVideoGenerate = async (e) => {
-    e.preventDefault();
-    if (!videoUrl.trim()) return;
-
-    setLoading(true);
+  const handleExtractTranscript = async (short) => {
+    setExtractingId(short.id);
     setErrorMsg('');
-    setShortsList([]);
-    setJobId('');
-    setProgressLogs('[INIT] 동영상 변환 대기열에 진입 중...\n');
-    setPollingActive(false);
-
     try {
-      const response = await fetch('/api/video-shorts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: videoUrl, count: shortsCount })
-      });
-
+      const response = await fetch(`/api/analyze-viral-short?url=${encodeURIComponent(short.url || 'https://www.youtube.com/shorts/' + short.id)}`);
       const data = await response.json();
-
-      if (response.ok && data.success) {
-        setJobId(data.jobId);
-        if (data.cached) {
-          // Cached results load immediately without polling
-          setProgressLogs('[SUCCESS] 기존 분석 완료 데이터 캐시를 성공적으로 로드했습니다.\n');
-          setShortsList(data.shorts);
-          setLoading(false);
-        } else {
-          // Start polling dynamic logs
-          setPollingActive(true);
-        }
+      if (data.success && data.transcript) {
+        setLongText(data.transcript);
+        setMode('text'); // Switch tab to text mode
+        window.scrollTo({ top: 300, behavior: 'smooth' });
       } else {
-        setErrorMsg(data.error || '작업 시작 도중 오류가 발생했습니다.');
-        setLoading(false);
+        setErrorMsg(data.error || '이 영상에서 자막을 추출하는 데 실패했습니다. (자막이 비활성화된 영상일 수 있습니다)');
       }
     } catch (err) {
       console.error(err);
-      setErrorMsg('비디오 분석 요청에 실패했습니다.');
-      setLoading(false);
+      setErrorMsg('자막 분석 API 호출 중 오류가 발생했습니다.');
+    } finally {
+      setExtractingId(null);
     }
   };
 
@@ -152,6 +110,17 @@ export default function LongToShortPage() {
 이 4가지 단계가 한 세션 안에서 유기적으로 움직일 때 비로소 1인 AI 컴퍼니의 톱니바퀴가 굴러가기 시작합니다. 가만히 공부만 하는 것은 사업이 아닙니다. AI들이 뽑아낸 결과물 중에서 내가 당장 오늘 복사해서 게시할 대본이 있는지 확인하고, 고객의 댓글을 모아 반응을 체크하는 즉각적인 실행만이 매출 500만 원, 1000만 원을 달성하게 만듭니다. 여러분도 공부를 멈추고 에이전트들의 성과를 기반으로 한 사업 아이템 실행에 당장 집중하세요.`);
   };
 
+  const formatViewCount = (views) => {
+    if (!views) return '조회수 없음';
+    if (views >= 100000000) {
+      return `${(views / 100000000).toFixed(1)}억회`;
+    }
+    if (views >= 10000) {
+      return `${(views / 10000).toFixed(0)}만회`;
+    }
+    return `${views.toLocaleString()}회`;
+  };
+
   return (
     <div className="container" style={{ padding: '2rem', maxWidth: '1200px' }}>
       
@@ -163,10 +132,10 @@ export default function LongToShortPage() {
           </Link>
           <h1 className="title gradient-text" style={{ fontSize: '2.2rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <Scissors size={28} color="#00d2ff" style={{ filter: 'drop-shadow(0 0 8px rgba(0,210,255,0.4))' }} />
-            <span>롱폼 ➔ 숏폼 비디오 크리에이터 (Long to Shorts)</span>
+            <span>🔥 실시간 인기 숏폼 트렌드 분석 & 기획기</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.95rem' }}>
-            롱폼 영상 링크를 넣거나 글을 입력하면, AI가 재미있는 구간을 선별하여 모바일 세로형 9:16 비디오로 자동 크롭 편집 및 자막 스크립트를 즉시 생성합니다.
+            유튜브에서 가장 핫한 최신 인기 숏폼들을 실시간으로 모니터링하고, 원클릭으로 자막을 추출해 나만의 숏폼 대본으로 재창작(모델링)할 수 있습니다.
           </p>
         </div>
       </header>
@@ -175,27 +144,153 @@ export default function LongToShortPage() {
       <div className="mode-tabs">
         <button 
           className={`mode-tab ${mode === 'video' ? 'active' : ''}`}
-          onClick={() => { setMode('video'); setShortsList([]); setErrorMsg(''); }}
+          onClick={() => { setMode('video'); setErrorMsg(''); }}
         >
           <Video size={18} />
-          <span>🎥 유튜브 영상 자동 자르기 & 편집</span>
+          <span>🔥 실시간 인기 숏폼 분석 & 모델링</span>
         </button>
         <button 
           className={`mode-tab ${mode === 'text' ? 'active' : ''}`}
-          onClick={() => { setMode('text'); setShortsList([]); setErrorMsg(''); }}
+          onClick={() => { setMode('text'); setErrorMsg(''); }}
         >
           <FileText size={18} />
           <span>✍️ 대본/텍스트 기반 숏폼 기획</span>
         </button>
       </div>
 
-      {/* Main Workspace Grid */}
-      <div className="long-to-short-grid">
-        
-        {/* Left Column: Inputs */}
-        <div className="glass-panel input-panel" style={{ padding: '2rem' }}>
-          {mode === 'text' ? (
-            // Text Input Form
+      {/* Dynamic View rendering based on mode */}
+      {mode === 'video' ? (
+        // Trending Shorts Feed Dashboard (Full-width grid)
+        <div className="trending-shorts-dashboard glass-panel" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.3rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ffffff' }}>
+                <Sparkles size={20} color="#fbbf24" style={{ filter: 'drop-shadow(0 0 6px rgba(251,191,36,0.3))' }} />
+                <span>유튜브 실시간 급상승 인기 숏폼</span>
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0 0 0', fontSize: '0.82rem' }}>
+                현재 조회수가 잘나오는 쇼츠를 재생해보고, 마음에 드는 쇼츠의 [⚡ 대본 추출] 버튼을 눌러보세요.
+              </p>
+            </div>
+            <button 
+              onClick={fetchViralShorts} 
+              disabled={viralLoading}
+              className="btn btn-secondary"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', padding: '0.5rem 1rem' }}
+            >
+              <RefreshCw size={14} className={viralLoading ? 'animate-spin' : ''} />
+              <span>실시간 새로고침</span>
+            </button>
+          </div>
+
+          {errorMsg && <div className="error-message-box" style={{ marginBottom: '1.5rem' }}><AlertCircle size={14} />{errorMsg}</div>}
+
+          {viralLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 0', gap: '1rem' }}>
+              <Loader2 className="animate-spin" size={40} color="#00d2ff" />
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>실시간 조회수 높은 숏폼을 검색하고 캐싱하는 중...</p>
+            </div>
+          ) : viralShorts.length === 0 ? (
+            <div className="empty-state">
+              <Video size={48} color="rgba(255,255,255,0.05)" />
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '1rem' }}>불러온 인기 숏폼이 없습니다. 새로고침을 눌러보세요.</p>
+            </div>
+          ) : (
+            <div className="shorts-trending-grid">
+              {viralShorts.map((short) => (
+                <div key={short.id} className="viral-short-card">
+                  
+                  {/* Video Thumbnail or Embed Player */}
+                  <div className="video-thumbnail-container">
+                    {playingId === short.id ? (
+                      <iframe 
+                        src={`https://www.youtube.com/embed/${short.id}?autoplay=1`} 
+                        title={short.title}
+                        className="shorts-iframe" 
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowFullScreen 
+                      />
+                    ) : (
+                      <div className="thumbnail-wrapper" onClick={() => setPlayingId(short.id)}>
+                        <img src={short.thumbnail} alt={short.title} className="thumbnail-img" />
+                        <div className="play-btn-overlay">
+                          <div className="play-icon-circle">
+                            <Play size={22} fill="white" style={{ marginLeft: '4px' }} />
+                          </div>
+                        </div>
+                        <span className="duration-tag">{short.duration}s</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Short Details */}
+                  <div className="card-info-section">
+                    <h3 className="short-title-text" title={short.title}>{short.title}</h3>
+                    <div className="short-meta-row">
+                      <span className="channel-name">{short.channel}</span>
+                      <span className="dot">•</span>
+                      <span className="views-count">{formatViewCount(short.viewCount)}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="card-action-row">
+                    <button
+                      onClick={() => handleExtractTranscript(short)}
+                      disabled={extractingId === short.id}
+                      className="btn extract-btn"
+                      style={{
+                        background: extractingId === short.id ? 'var(--border-color)' : 'var(--accent-gradient)',
+                        border: 'none',
+                        color: 'white',
+                        fontWeight: 650,
+                        fontSize: '0.8rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.4rem',
+                        padding: '0.6rem',
+                        borderRadius: '8px',
+                        flex: 1.5,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {extractingId === short.id ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
+                      <span>{extractingId === short.id ? '대본 추출 중...' : '⚡ 대본 추출하여 기획'}</span>
+                    </button>
+                    
+                    <a 
+                      href={short.url || `https://www.youtube.com/shorts/${short.id}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="btn btn-secondary link-btn"
+                      style={{
+                        padding: '0.6rem',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-color)',
+                        flex: 0.5
+                      }}
+                      title="유튜브에서 직접 보기"
+                    >
+                      <ExternalLink size={14} />
+                    </a>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        // 2-Column Script Generator Workspace
+        <div className="long-to-short-grid">
+          
+          {/* Left Column: Input Text Area */}
+          <div className="glass-panel input-panel" style={{ padding: '2rem' }}>
             <form onSubmit={handleTextGenerate} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ fontWeight: 650, fontSize: '1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -215,7 +310,7 @@ export default function LongToShortPage() {
               <textarea
                 value={longText}
                 onChange={(e) => setLongText(e.target.value)}
-                placeholder="여기에 동영상의 전체 자막 텍스트나 긴 원고 글을 붙여넣으세요..."
+                placeholder="여기에 동영상의 전체 자막 텍스트나 긴 원고 글을 붙여넣으세요. 실시간 급상승 숏폼 탭에서 추출된 자막도 여기에 자동으로 들어옵니다..."
                 style={{
                   width: '100%',
                   height: '280px',
@@ -252,157 +347,57 @@ export default function LongToShortPage() {
                 className="btn generate-submit-btn"
               >
                 {loading ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
-                <span>{loading ? '분석 중...' : '⚡ 숏폼 분할 및 대본 생성'}</span>
+                <span>{loading ? '기획서 구성 중...' : '⚡ 숏폼 분할 및 대본 생성'}</span>
               </button>
             </form>
-          ) : (
-            // YouTube Link Input Form
-            <form onSubmit={handleVideoGenerate} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <label style={{ fontWeight: 650, fontSize: '1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Video size={18} color="#00d2ff" />
-                <span>유튜브 동영상 링크 (URL) 입력</span>
-              </label>
+          </div>
 
-              <input 
-                type="url"
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="예: https://www.youtube.com/watch?v=XXXXXX"
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '10px',
-                  color: 'white',
-                  fontSize: '0.9rem'
-                }}
-              />
+          {/* Right Column: Previews and drafts */}
+          <div className="glass-panel output-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem', margin: 0 }}>
+              <Video size={20} color="var(--accent-secondary)" />
+              <span>📱 숏폼 모바일 편집 기획서 ({shortsList.length}개)</span>
+            </h2>
 
-              <div className="options-row">
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>선출할 숏폼 영상 개수</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
-                  <input 
-                    type="range" min="1" max="4" value={shortsCount}
-                    onChange={(e) => setShortsCount(parseInt(e.target.value))}
-                    style={{ flex: 1, accentColor: '#00d2ff' }}
-                  />
-                  <span style={{ fontWeight: 700, color: '#00d2ff' }}>{shortsCount}개</span>
+            <div className="shorts-scroll-area">
+              {shortsList.length === 0 ? (
+                <div className="empty-state">
+                  <Video size={48} color="rgba(255,255,255,0.05)" />
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '1rem', textAlign: 'center' }}>
+                    {loading ? 'AI 에이전트가 롱폼 대본을 분석하고 기획하고 있습니다. 잠시만 기다려주세요...' : '왼쪽 입력창에 대본을 입력하고 변환을 클릭해 주세요.'}
+                  </p>
                 </div>
-              </div>
-
-              {errorMsg && <div className="error-message-box"><AlertCircle size={14} />{errorMsg}</div>}
-
-              <button 
-                type="submit" 
-                disabled={loading || !videoUrl.trim()} 
-                className="btn generate-submit-btn"
-              >
-                {loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
-                <span>{loading ? '비디오 다운로드 및 렌더링 중...' : '⚡ 비디오 분석 및 자동 컷팅 편집 시작'}</span>
-              </button>
-
-              {/* Progress Console Logs */}
-              {loading && (
-                <div className="terminal-box">
-                  <div className="terminal-header">
-                    <Terminal size={14} color="#34d399" />
-                    <span>실시간 숏폼 편집기 콘솔 로그 (Live Logs)</span>
-                  </div>
-                  <div className="terminal-logs">
-                    {progressLogs}
-                    <div ref={consoleEndRef} />
-                  </div>
-                </div>
-              )}
-            </form>
-          )}
-        </div>
-
-        {/* Right Column: Previews and Video player */}
-        <div className="glass-panel output-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
-          <h2 style={{ fontSize: '1.2rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem', margin: 0 }}>
-            <Video size={20} color="var(--accent-secondary)" />
-            <span>📱 숏폼 모바일 편집 기획서 ({shortsList.length}개)</span>
-          </h2>
-
-          <div className="shorts-scroll-area">
-            {shortsList.length === 0 ? (
-              <div className="empty-state">
-                <Video size={48} color="rgba(255,255,255,0.05)" />
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '1rem', textAlign: 'center' }}>
-                  {loading ? 'AI 에이전트가 롱폼 비디오를 변환하고 있습니다. 좌측 콘솔창에서 실시간 작업 진행 과정을 확인하세요.' : '왼쪽 입력창에서 작업을 시작해 주세요.'}
-                </p>
-              </div>
-            ) : (
-              <div className="shorts-cards-list">
-                {shortsList.map((shorts) => (
-                  <div key={shorts.id} className="shorts-preview-card">
-                    <div className="card-top-row">
-                      <span className="shorts-badge">SHORTS #{shorts.id}</span>
-                      <span className="duration-badge">{shorts.estimatedDuration || '45s'}</span>
-                      {shorts.start && <span className="time-badge">{shorts.start} ➔ {shorts.end}</span>}
-                    </div>
-
-                    <h3 className="shorts-card-title">{shorts.title}</h3>
-
-                    {/* Dynamic Video Player rendering if videoUrl exists */}
-                    {shorts.videoUrl && (
-                      <div className="shorts-video-wrapper">
-                        <video 
-                          src={shorts.videoUrl} 
-                          controls 
-                          playsInline
-                          className="shorts-video-player"
-                        />
+              ) : (
+                <div className="shorts-cards-list">
+                  {shortsList.map((shorts) => (
+                    <div key={shorts.id} className="shorts-preview-card">
+                      <div className="card-top-row">
+                        <span className="shorts-badge">SHORTS #{shorts.id}</span>
+                        <span className="duration-badge">{shorts.estimatedDuration || '45s'}</span>
                       </div>
-                    )}
 
-                    <div className="shorts-hook-box">
-                      <span className="hook-label">3초 오프닝 훅 (Opening Hook)</span>
-                      <p className="hook-text">"{shorts.hook}"</p>
-                    </div>
+                      <h3 className="shorts-card-title">{shorts.title}</h3>
 
-                    <div className="shorts-script-box">
-                      <span className="script-label">대본 (Script)</span>
-                      <div className="script-content">{shorts.script}</div>
-                    </div>
+                      <div className="shorts-hook-box">
+                        <span className="hook-label">3초 오프닝 훅 (Opening Hook)</span>
+                        <p className="hook-text">"{shorts.hook}"</p>
+                      </div>
 
-                    <div className="shorts-cues-box">
-                      <span className="cues-label">비주얼 연출 지시</span>
-                      <p className="cues-text">{shorts.visualCues}</p>
-                    </div>
+                      <div className="shorts-script-box">
+                        <span className="script-label">대본 (Script)</span>
+                        <div className="script-content">{shorts.script}</div>
+                      </div>
 
-                    {/* Action buttons */}
-                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                      <button
-                        onClick={() => handleCopyFeedback(shorts.id, `제목: ${shorts.title}\n훅: ${shorts.hook}\n\n[대본]\n${shorts.script}`)}
-                        className={`btn ${copiedId === shorts.id ? 'copied' : ''}`}
-                        style={{
-                          flex: 1.2,
-                          padding: '0.65rem',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '0.4rem',
-                          background: copiedId === shorts.id ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.03)',
-                          border: copiedId === shorts.id ? 'none' : '1px solid var(--border-color)',
-                          color: 'white',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {copiedId === shorts.id ? <Check size={14} /> : <Copy size={14} />}
-                        <span>{copiedId === shorts.id ? '복사 완료!' : '대본 복사'}</span>
-                      </button>
+                      <div className="shorts-cues-box">
+                        <span className="cues-label">비주얼 연출 지시</span>
+                        <p className="cues-text">{shorts.visualCues}</p>
+                      </div>
 
-                      {shorts.videoUrl && (
-                        <a 
-                          href={shorts.videoUrl} 
-                          download={`shorts_${shorts.id}.mp4`}
-                          className="btn btn-secondary"
+                      {/* Action buttons */}
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                        <button
+                          onClick={() => handleCopyScript(shorts.id, `제목: ${shorts.title}\n훅: ${shorts.hook}\n\n[대본]\n${shorts.script}`)}
+                          className={`btn ${copiedId === shorts.id ? 'copied' : ''}`}
                           style={{
                             flex: 1,
                             padding: '0.65rem',
@@ -413,24 +408,25 @@ export default function LongToShortPage() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '0.4rem',
-                            background: 'rgba(0, 210, 255, 0.08)',
-                            border: '1px solid rgba(0, 210, 255, 0.2)',
-                            color: '#00d2ff'
+                            background: copiedId === shorts.id ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.03)',
+                            border: copiedId === shorts.id ? 'none' : '1px solid var(--border-color)',
+                            color: 'white',
+                            transition: 'all 0.3s ease'
                           }}
                         >
-                          <Download size={14} />
-                          <span>다운로드</span>
-                        </a>
-                      )}
+                          {copiedId === shorts.id ? <Check size={14} /> : <Copy size={14} />}
+                          <span>{copiedId === shorts.id ? '복사 완료!' : '대본 복사'}</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
-      </div>
+        </div>
+      )}
 
       <style jsx>{`
         .mode-tabs {
@@ -504,8 +500,8 @@ export default function LongToShortPage() {
         .generate-submit-btn {
           width: 100%; 
           padding: 1rem; 
-          fontWeight: 700; 
-          borderRadius: 10px;
+          font-weight: 700; 
+          border-radius: 10px;
           background: var(--accent-gradient);
           border: none;
           display: flex;
@@ -513,6 +509,8 @@ export default function LongToShortPage() {
           justify-content: center;
           gap: 0.6rem;
           box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+          color: white;
+          cursor: pointer;
         }
 
         .error-message-box {
@@ -527,39 +525,164 @@ export default function LongToShortPage() {
           font-size: 0.82rem;
         }
 
-        /* Terminal Console Logs */
-        .terminal-box {
-          background: #06080c;
-          border: 1px solid rgba(52, 211, 153, 0.2);
-          border-radius: 10px;
-          overflow: hidden;
+        /* Trending grid and cards */
+        .shorts-trending-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 1.5rem;
           margin-top: 1rem;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
-        .terminal-header {
-          background: #0f131a;
-          padding: 0.5rem 1rem;
+        .viral-short-card {
+          background: rgba(255, 255, 255, 0.01);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .viral-short-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(0, 210, 255, 0.25);
+          box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        .video-thumbnail-container {
+          width: 100%;
+          aspect-ratio: 9/16;
+          background: #000;
+          position: relative;
+        }
+
+        .thumbnail-wrapper {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          cursor: pointer;
+        }
+
+        .thumbnail-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+
+        .thumbnail-wrapper:hover .thumbnail-img {
+          transform: scale(1.05);
+        }
+
+        .play-btn-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.3);
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          border-bottom: 1px solid rgba(255,255,255,0.03);
-          font-size: 0.75rem;
-          color: #34d399;
-          font-family: monospace;
+          justify-content: center;
+          transition: background 0.3s ease;
         }
 
-        .terminal-logs {
+        .thumbnail-wrapper:hover .play-btn-overlay {
+          background: rgba(0, 0, 0, 0.15);
+        }
+
+        .play-icon-circle {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: rgba(0, 210, 255, 0.85);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+          transition: all 0.3s ease;
+        }
+
+        .thumbnail-wrapper:hover .play-icon-circle {
+          transform: scale(1.1);
+          background: #00d2ff;
+        }
+
+        .duration-tag {
+          position: absolute;
+          bottom: 10px;
+          right: 10px;
+          background: rgba(0, 0, 0, 0.7);
+          color: white;
+          font-size: 0.65rem;
+          font-weight: 700;
+          padding: 0.25rem 0.4rem;
+          border-radius: 4px;
+        }
+
+        .shorts-iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+
+        .card-info-section {
           padding: 1rem;
-          font-family: 'Fira Code', 'Courier New', Courier, monospace;
-          font-size: 0.78rem;
-          color: #34d399;
-          line-height: 1.5;
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
+          flex-grow: 1;
+        }
+
+        .short-title-text {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: white;
           margin: 0;
-          height: 180px;
-          overflow-y: auto;
-          white-space: pre-wrap;
-          word-break: break-all;
+          line-height: 1.4;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          height: 2.4rem;
+        }
+
+        .short-meta-row {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.72rem;
+          color: var(--text-secondary);
+        }
+
+        .channel-name {
+          font-weight: 600;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 110px;
+        }
+
+        .views-count {
+          font-weight: 500;
+        }
+
+        .card-action-row {
+          padding: 0.8rem 1rem 1rem 1rem;
+          display: flex;
+          gap: 0.5rem;
+          border-top: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .extract-btn:hover {
+          box-shadow: 0 0 10px rgba(0,210,255,0.3);
+        }
+
+        .link-btn:hover {
+          color: white !important;
+          border-color: var(--text-secondary) !important;
         }
 
         /* Output Shorts list */
@@ -631,40 +754,11 @@ export default function LongToShortPage() {
           border-radius: 4px;
         }
 
-        .time-badge {
-          font-size: 0.65rem;
-          font-weight: 700;
-          color: #fb923c;
-          background: rgba(251, 146, 60, 0.08);
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-          font-family: monospace;
-        }
-
         .shorts-card-title {
           font-size: 1.1rem;
           font-weight: 700;
           color: #ffffff;
           margin: 0;
-        }
-
-        /* Video Player Wrapper */
-        .shorts-video-wrapper {
-          width: 100%;
-          max-width: 250px;
-          aspect-ratio: 9/16;
-          border-radius: 12px;
-          overflow: hidden;
-          align-self: center;
-          border: 1px solid rgba(255,255,255,0.06);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-          background: #000;
-        }
-
-        .shorts-video-player {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
         }
 
         .shorts-hook-box {

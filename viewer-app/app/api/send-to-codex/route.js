@@ -66,11 +66,11 @@ ${filesContext}
     };
     let requestBody = {};
 
-    if (apiKey.startsWith('AQ')) {
+    if (apiKey.startsWith('ya29.')) {
       // GCP Vertex AI OAuth Access Token 방식
       const projectNumber = process.env.GEMINI_PROJECT_NUMBER || '773040580705';
       const region = 'us-central1'; // GCP Vertex AI 기본 리전
-      geminiUrl = `https://${region}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${region}/publishers/google/models/gemini-1.5-flash:generateContent`;
+      geminiUrl = `https://${region}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${region}/publishers/google/models/gemini-2.5-flash:generateContent`;
       headers['Authorization'] = `Bearer ${apiKey}`;
       
       requestBody = {
@@ -88,7 +88,7 @@ ${filesContext}
       console.log(`[Gemini API] GCP Vertex AI 엔드포인트를 호출합니다. (프로젝트 번호: ${projectNumber})`);
     } else {
       // 일반 구글 AI Studio API Key 방식
-      geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
       requestBody = {
         contents: [
           {
