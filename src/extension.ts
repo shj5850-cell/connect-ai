@@ -19816,15 +19816,64 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             const originalTasks = [...plan.tasks];
             plan.tasks = plan.tasks
                 .map(t => {
-                    const raw = String(t.agent || '').trim();
-                    const direct = idLookup.get(raw) || idLookup.get(raw.toLowerCase());
-                    if (direct) return { ...t, agent: direct };
-                    if (koreanAlias[raw]) return { ...t, agent: koreanAlias[raw] };
-                    // partial: any specialist id that appears as substring
-                    const lower = raw.toLowerCase();
-                    const hit = SPECIALIST_IDS.find(id => lower.includes(id));
-                    if (hit) return { ...t, agent: hit };
-                    return null;
+                    const agentField = String((t as any).agent || '').trim();
+                    const taskContent = String((t as any).task || (t as any).description || (t as any).name || '작업 수행').trim();
+                    
+                    if (agentField) {
+                        const direct = idLookup.get(agentField) || idLookup.get(agentField.toLowerCase());
+                        if (direct) return { agent: direct, task: taskContent };
+                        if (koreanAlias[agentField]) return { agent: koreanAlias[agentField], task: taskContent };
+                        
+                        const lower = agentField.toLowerCase();
+                        const hit = SPECIALIST_IDS.find(id => lower.includes(id));
+                        if (hit) return { agent: hit, task: taskContent };
+                    }
+
+                    // Fallback keyword-based agent identification
+                    const searchTexts: string[] = [];
+                    if ((t as any).agent) searchTexts.push(String((t as any).agent));
+                    if ((t as any).name) searchTexts.push(String((t as any).name));
+                    if ((t as any).description) searchTexts.push(String((t as any).description));
+                    if ((t as any).task) searchTexts.push(String((t as any).task));
+                    const combinedText = searchTexts.join(' ').toLowerCase();
+
+                    // Check for direct agent ID mentions in text
+                    for (const id of SPECIALIST_IDS) {
+                        if (combinedText.includes(id)) {
+                            return { agent: id, task: taskContent };
+                        }
+                    }
+
+                    // Check for Korean alias mentions in text
+                    for (const [kAlias, id] of Object.entries(koreanAlias)) {
+                        if (combinedText.includes(kAlias.toLowerCase())) {
+                            return { agent: id, task: taskContent };
+                        }
+                    }
+
+                    // Keyword lists
+                    const keywordMap: Record<string, string[]> = {
+                        youtube: ['유튜브', 'youtube', '쇼츠', 'shorts', '쇨츠', '영상', '채널', '동영상'],
+                        instagram: ['인스타', 'instagram', '릴스', 'reels', '피드', 'feed'],
+                        designer: ['디자인', '디자이너', 'design', 'designer', '썸네일', 'thumbnail', '비주얼', 'visual', '색상', '컬러'],
+                        developer: ['개발', '개발자', 'develop', 'developer', '코드', 'code', '버그', 'debug', '스크립트', 'script', '프로그램'],
+                        business: ['비즈니스', '수익', '수익화', '가격', '매출', 'business', 'monetize', 'sales', 'paypal', '페이팔'],
+                        secretary: ['비서', 'secretary', '텔레그램', 'telegram', '일정', '캘린더', 'calendar', '미팅', 'meeting', '브리핑', 'brief'],
+                        editor: ['편집', '편집자', 'editor', 'bgm', '음악', 'music', '사운드', 'sound', '오디오', 'audio', '합성'],
+                        writer: ['작가', 'writer', '카피라이터', 'copywriter', '글', '작성', '원고', '스크립트 초안', '블로그', 'post'],
+                        researcher: ['리서처', 'researcher', '연구원', '리서치', 'research', '조사', '검색', 'search', '자료', '웹']
+                    };
+
+                    for (const [id, keywords] of Object.entries(keywordMap)) {
+                        for (const kw of keywords) {
+                            if (combinedText.includes(kw)) {
+                                return { agent: id, task: taskContent };
+                            }
+                        }
+                    }
+
+                    // Default fallback
+                    return { agent: 'researcher', task: taskContent };
                 })
                 .filter((t): t is { agent: string; task: string } => !!t);
             /* v2.89.103+107 — 채용·활성 게이트 backend 보호. CEO가 프롬프트 무시하고
@@ -19845,7 +19894,7 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                 post({ type: 'systemNote', value: `🔒 다음 에이전트는 사용 불가라 제외됐어요: ${droppedSummary}\n👥 직원 패널에서 활성화 후 다시 시도하세요.` });
             }
             if (plan.tasks.length === 0) {
-                const wantedIds = originalTasks.map(t => `"${t.agent}"`).join(', ');
+                const wantedIds = originalTasks.map(t => `"${t.agent || (t as any).name || 'undefined'}"`).join(', ');
                 if (droppedTasks.length > 0) {
                     post({ type: 'error', value: `⚠️ CEO가 비활성 에이전트만 호출했어요. 직원 패널에서 활성화 후 다시 시도해주세요.` });
                 } else {
