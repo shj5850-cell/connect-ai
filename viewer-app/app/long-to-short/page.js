@@ -66,6 +66,9 @@ export default function LongToShortPage() {
   const [pexelsApiKey, setPexelsApiKey] = useState('');
   const [pixabayApiKey, setPixabayApiKey] = useState('');
   const [templateStyle, setTemplateStyle] = useState('classic');
+  const [coupangUrl, setCoupangUrl] = useState('');
+  const [coupangTone, setCoupangTone] = useState('trusted');
+  const [coupangProductTitle, setCoupangProductTitle] = useState('');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -168,6 +171,49 @@ export default function LongToShortPage() {
       setErrorMsg('네트워크 통신 오류가 발생했습니다.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExtractCoupangShorts = async (e) => {
+    e.preventDefault();
+    if (!coupangProductTitle.trim()) {
+      setErrorMsg('제작할 상품명 또는 핵심 키워드를 입력해 주세요.');
+      return;
+    }
+
+    setCoupangLoading(true);
+    setErrorMsg('');
+    setCoupangResult(null);
+    setRenderedVideoUrl('');
+
+    const requestUrl = coupangUrl.trim() || 'https://www.coupang.com';
+
+    try {
+      const response = await fetch('/api/coupang-shorts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: requestUrl,
+          affiliateLink: affiliateLink,
+          tone: coupangTone,
+          manualTitle: coupangProductTitle
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setCustomScript(data.shorts.script);
+        setKeyword(data.product.title);
+        setCoupangResult(data);
+      } else {
+        setErrorMsg(data.error || '쿠팡 상품 정보 크롤링 및 대본 생성에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('쿠팡 API 호출 중 네트워크 오류가 발생했습니다.');
+    } finally {
+      setCoupangLoading(false);
     }
   };
 
@@ -746,20 +792,105 @@ export default function LongToShortPage() {
           
           {/* Left Column: Keyword Input and Actions */}
           <div className="glass-panel input-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', overflowY: 'auto' }}>
-            <form onSubmit={handleCoupangGenerate} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+            
+            {/* [1단계] 쿠팡 링크로 대본 기획 */}
+            <form onSubmit={handleExtractCoupangShorts} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={{ fontWeight: 650, fontSize: '1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontWeight: 700, fontSize: '0.95rem', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Sparkles size={18} color="#fbbf24" />
-                  <span>✍️ 맞춤형 쇼츠 자동 제작기</span>
+                  <span>🛒 1단계: 쿠팡 파트너스 링크 기획</span>
                 </label>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <span className="input-title-label">쇼츠 대본 문장 입력 (한 줄에 한 장면)</span>
+                <span className="input-title-label" style={{ color: 'white', fontWeight: 600 }}>제작할 상품명 / 검색어 입력 (필수)</span>
+                <input
+                  type="text"
+                  value={coupangProductTitle}
+                  onChange={(e) => setCoupangProductTitle(e.target.value)}
+                  placeholder="예: 곰곰 대패삼겹살 1kg"
+                  className="coupang-input-field"
+                  style={{ fontSize: '0.85rem', padding: '0.6rem 0.8rem', border: '1px solid rgba(251,191,36,0.3)' }}
+                  required
+                />
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                  * 쿠팡의 봇 감지 방화벽을 우회하기 위해 정확한 상품명을 적어주세요. AI가 구글 검색으로 실시간 정보를 가져옵니다.
+                </span>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">쿠팡 상품 URL (선택)</span>
+                <input
+                  type="url"
+                  value={coupangUrl}
+                  onChange={(e) => setCoupangUrl(e.target.value)}
+                  placeholder="예: https://www.coupang.com/vp/products/..."
+                  className="coupang-input-field"
+                  style={{ fontSize: '0.85rem', padding: '0.6rem 0.8rem' }}
+                />
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                  * 쿠팡 상품 링크를 함께 넣으면 추가 크롤링을 시도합니다 (차단 시 건너뜀).
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <span className="input-title-label">대본 톤앤매너 설정</span>
+                  <select
+                    value={coupangTone}
+                    onChange={(e) => setCoupangTone(e.target.value)}
+                    className="coupang-select-field"
+                    style={{ fontSize: '0.8rem', padding: '0.5rem' }}
+                  >
+                    <option value="trusted">🧐 신뢰감 넘치는 톤 (전문 리뷰어)</option>
+                    <option value="funny">😆 유머러스하고 위트있는 톤</option>
+                    <option value="bold">🔥 자극적이고 솔직 장단점 톤</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                  <button 
+                    type="submit" 
+                    disabled={coupangLoading || !coupangProductTitle.trim()} 
+                    className="btn"
+                    style={{
+                      width: '100%',
+                      background: 'rgba(251, 191, 36, 0.1)',
+                      border: '1px solid rgba(251, 191, 36, 0.4)',
+                      color: '#fbbf24',
+                      fontWeight: 'bold',
+                      padding: '0.65rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.4rem',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.82rem',
+                      height: '42px'
+                    }}
+                  >
+                    {coupangLoading ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
+                    <span>{coupangLoading ? '대본 기획 중...' : '🔍 AI 쇼츠 대본 추출'}</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* [2단계] 대본 최종 편집 & 영상 제작 */}
+            <form onSubmit={handleCoupangGenerate} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ fontWeight: 700, fontSize: '0.95rem', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span>🎬 2단계: 대본 최종 검토 및 영상 제작</span>
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">쇼츠 대본 문장 편집 (한 줄에 한 장면)</span>
                 <textarea
                   value={customScript}
                   onChange={(e) => setCustomScript(e.target.value)}
-                  placeholder="예시:&#13;삼겹살은 왜 맛있을까?&#13;고기가 익어가며 마이야르 반응이 발생한다.&#13;이 반응이 고소한 향을 만든다.&#13;그래서 우리는 더 맛있다고 느낀다."
+                  placeholder="쿠팡 링크를 통해 추출하거나 직접 쇼츠 대본을 입력해 주세요.&#13;예시:&#13;삼겹살은 왜 맛있을까?&#13;고기가 익어가며 마이야르 반응이 발생한다.&#13;이 반응이 고소한 향을 만든다.&#13;그래서 우리는 더 맛있다고 느낀다."
                   className="coupang-input-field"
                   style={{ height: '180px', padding: '0.75rem', fontSize: '0.85rem', lineHeight: '1.5', resize: 'none' }}
                   required

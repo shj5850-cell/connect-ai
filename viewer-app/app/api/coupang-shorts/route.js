@@ -293,10 +293,11 @@ Return your response as a JSON object inside a code block:
     }
 
     const systemPrompt = `당신은 쿠팡 파트너스(Coupang Partners) 제휴 마케팅에 최적화된 고효율 유튜브 쇼츠 및 인스타그램 릴스 스크립트를 기획하는 전문 마케터입니다.
-사용자가 입력한 상품명, 가격, 설명 특징을 바탕으로, 시청자들의 지갑을 열게 만들 매력적이고 몰입감 넘치는 1분 미만의 숏폼 대본을 작성해 주세요.
+당신은 구글 실시간 검색 도구(Google Search Tool)를 사용할 수 있습니다. 사용자가 입력한 상품명을 바탕으로, 반드시 구글 검색을 수행하여 해당 상품의 실제 상세 스펙(예: 용량, 크기, 성분, 전자기기의 사양 수치 등)과 실사용자들이 꼽는 진짜 장단점 및 특징을 조사하세요.
 
 작성 지침:
 - **말투(톤앤매너)**: 반드시 다음 말투 지침을 따라야 합니다: "${toneInstruction}".
+- **구글 검색 정보 강제 반영**: 검색을 통해 수집한 실제 상품의 스펙 수치나 구체적인 제품만의 고유 기능 특징을 대본(script)에 반드시 1개 이상 명확하고 구체적으로 언급하세요. 사실에 기반하지 않은 무조건적인 찬사나 가상의 설명은 절대 금지합니다.
 - **3초 오프닝 훅**: 스크롤을 즉시 멈추게 할 만큼 자극적이거나 공감대를 자아내는 호기심 유발형 훅이어야 합니다.
 - **음성 나레이션 대본 (script)**: 오디오 가이드를 제외하고 성우나 AI 나레이션(TTS)이 **읽을 텍스트만** 깔끔하게 문장으로 출력해 주세요. 시간은 35초~50초 분량이어야 합니다.
 - **비주얼 연출 지시 (visualCues)**: 화면 전환, 상품 대표 이미지 모션(줌인/줌아웃), 하단 강조 자막 연출 등을 타임라인 형식(예: "0~3초: ...")으로 상세하게 기획해 주세요.
@@ -331,13 +332,15 @@ Return your response as a JSON object inside a code block:
       headers['Authorization'] = `Bearer ${apiKey}`;
       requestBody = {
         contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.8, maxOutputTokens: 2048 }
+        tools: [{ googleSearchRetrieval: {} }],
+        generationConfig: { temperature: 0.5, maxOutputTokens: 2048 }
       };
     } else {
       geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
       requestBody = {
         contents: [{ parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.8, topP: 0.95 }
+        tools: [{ googleSearch: {} }],
+        generationConfig: { temperature: 0.5, topP: 0.95 }
       };
     }
 
