@@ -27,13 +27,18 @@ const YoutubeIcon = ({ size = 16, color = "currentColor", ...props }) => (
 );
 
 export default function LongToShortPage() {
-  const [mode, setMode] = useState('video'); // 'video', 'text', 'coupang'
+  const [mode, setMode] = useState('video'); // 'video', 'coupang'
   const [longText, setLongText] = useState('');
   const [shortsCount, setShortsCount] = useState(3);
   const [loading, setLoading] = useState(false);
   const [shortsList, setShortsList] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Custom Script Generation states
+  const [customScript, setCustomScript] = useState('');
+  const [bgmType, setBgmType] = useState('정보형');
+  const [hookOption, setHookOption] = useState({ enabled: false, mode: 'auto', text: '' });
 
   // Viral Shorts states
   const [viralShorts, setViralShorts] = useState([]);
@@ -51,10 +56,34 @@ export default function LongToShortPage() {
   const [localImageFileName, setLocalImageFileName] = useState('');
   const [coupangLoading, setCoupangLoading] = useState(false);
   const [coupangResult, setCoupangResult] = useState(null);
+  const [activeResultTab, setActiveResultTab] = useState('video');
   const [videoRendering, setVideoRendering] = useState(false);
   const [renderedVideoUrl, setRenderedVideoUrl] = useState('');
   const [ytUploadLoading, setYtUploadLoading] = useState(false);
   const [ytUploadedUrl, setYtUploadedUrl] = useState('');
+  
+  // API Keys states for Pexels and Pixabay
+  const [pexelsApiKey, setPexelsApiKey] = useState('');
+  const [pixabayApiKey, setPixabayApiKey] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPexels = localStorage.getItem('pexels_api_key');
+      const savedPixabay = localStorage.getItem('pixabay_api_key');
+      if (savedPexels) setPexelsApiKey(savedPexels);
+      if (savedPixabay) setPixabayApiKey(savedPixabay);
+    }
+  }, []);
+
+  const handlePexelsKeyChange = (val) => {
+    setPexelsApiKey(val);
+    localStorage.setItem('pexels_api_key', val);
+  };
+
+  const handlePixabayKeyChange = (val) => {
+    setPixabayApiKey(val);
+    localStorage.setItem('pixabay_api_key', val);
+  };
   const [ytAuth, setYtAuth] = useState({ authenticated: false, clientId: '', clientSecret: '', hasRefreshToken: false });
   const [showYtConfig, setShowYtConfig] = useState(false);
   const [ytClientId, setYtClientId] = useState('');
@@ -143,7 +172,10 @@ export default function LongToShortPage() {
 
   const handleCoupangGenerate = async (e) => {
     e.preventDefault();
-    if (!keyword.trim()) return;
+    if (!customScript.trim()) {
+      setErrorMsg('제작할 쇼츠 대본 문장을 직접 입력해 주세요.');
+      return;
+    }
 
     setCoupangLoading(true);
     setErrorMsg('');
@@ -151,38 +183,73 @@ export default function LongToShortPage() {
     setRenderedVideoUrl('');
     setYtUploadedUrl('');
 
+    const derivedKeyword = keyword.trim() || customScript.trim().split('\n')[0].slice(0, 15) || '맞춤형 쇼츠';
+
     try {
       const response = await fetch('/api/generate-shorts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          keyword, 
+          sentencesText: customScript,
+          bgmType,
+          hookOption,
+          keyword: derivedKeyword, 
           voice, 
           affiliateLink,
           imageSourceMode,
           directImageUrl,
           localImageBase64,
-          localImageFileName
+          localImageFileName,
+          pexelsApiKey,
+          pixabayApiKey
         })
       });
 
       const data = await response.json();
 
       if (response.ok && data.success) {
+        let displayImage = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500';
+        if (imageSourceMode === 'direct' && localImageBase64) {
+          displayImage = localImageBase64;
+        } else if (data.assets && data.assets.length > 0) {
+          const firstImg = data.assets.find(a => a.type === 'image');
+          if (firstImg) displayImage = firstImg.url;
+        }
+
+        const modeLabels = {
+          stock_only: '감성 스톡 B-Roll만',
+          direct: '대표 이미지 직접 지정',
+          stock_naver: '실물 매칭 + 스톡 B-Roll',
+          naver_only: '네이버 실물 이미지 검색'
+        };
+        const modeLabel = modeLabels[imageSourceMode] || 'AI 매칭';
+
         setCoupangResult({
           product: {
-            title: data.title,
-            image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500',
-            price: '무료 스톡 라이선스',
+            title: derivedKeyword,
+            image: displayImage,
+            price: modeLabel,
             affiliateLink: affiliateLink || '#'
           },
           shorts: {
             title: data.title,
-            hook: '30초 스톡 쇼츠 자동 제작 완료',
+            hook: data.script ? (data.script.split('.')[0] || '쇼츠 자동 제작 완료') : '쇼츠 자동 제작 완료',
             script: data.script,
-            visualCues: `스톡 검색어: ${data.searchKeywords.join(', ')}`,
-            estimatedDuration: '30s'
-          }
+            visualCues: `매칭 방식: ${modeLabel}\n스톡 키워드: ${data.searchKeywords ? data.searchKeywords.join(', ') : ''}`,
+            estimatedDuration: `${data.scenes ? data.scenes.length * 2 : 30}s`
+          },
+          analysis: data.analysis,
+          strategy: data.strategy,
+          titles: data.titles,
+          ttsScript: data.ttsScript,
+          bgmRecommendation: data.bgmRecommendation,
+          uploadDescription: data.uploadDescription,
+          hashtags: data.hashtags,
+          expectedReaction: data.expectedReaction,
+          retentionPoints: data.retentionPoints,
+          scenes: data.scenes,
+          productAnalysis: data.productAnalysis,
+          assets: data.assets
         });
         setRenderedVideoUrl(data.videoUrl);
       } else {
@@ -313,8 +380,8 @@ export default function LongToShortPage() {
       const response = await fetch(`/api/analyze-viral-short?url=${encodeURIComponent(short.url || 'https://www.youtube.com/shorts/' + short.id)}`);
       const data = await response.json();
       if (data.success && data.transcript) {
-        setLongText(data.transcript);
-        setMode('text'); // Switch tab to text mode
+        setCustomScript(data.transcript);
+        setMode('coupang'); // Switch tab to custom script generator mode
         window.scrollTo({ top: 300, behavior: 'smooth' });
       } else {
         setErrorMsg(data.error || '이 영상에서 자막을 추출하는 데 실패했습니다. (자막이 비활성화된 영상일 수 있습니다)');
@@ -378,14 +445,7 @@ export default function LongToShortPage() {
           onClick={() => { setMode('video'); setErrorMsg(''); }}
         >
           <Video size={18} />
-          <span>🔥 실시간 인기 숏폼 분석 & 모델링</span>
-        </button>
-        <button 
-          className={`mode-tab ${mode === 'text' ? 'active' : ''}`}
-          onClick={() => { setMode('text'); setErrorMsg(''); }}
-        >
-          <FileText size={18} />
-          <span>✍️ 대본/텍스트 기반 숏폼 기획</span>
+          <span>🔥 실시간 인기 숏폼 트렌드</span>
         </button>
         <button 
           className={`mode-tab ${mode === 'coupang' ? 'active' : ''}`}
@@ -393,7 +453,7 @@ export default function LongToShortPage() {
           style={{ position: 'relative' }}
         >
           <Sparkles size={18} color="#fbbf24" />
-          <span>🛍️ AI 스톡 쇼츠 자동 제작기</span>
+          <span>✍️ 맞춤형 쇼츠 자동 제작기</span>
           <span style={{
             position: 'absolute',
             top: '-8px',
@@ -687,19 +747,107 @@ export default function LongToShortPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ fontWeight: 650, fontSize: '1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Sparkles size={18} color="#fbbf24" />
-                  <span>AI 스톡 쇼츠 자동 제작기</span>
+                  <span>✍️ 맞춤형 쇼츠 자동 제작기</span>
                 </label>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <span className="input-title-label">제작할 쇼츠 키워드</span>
+                <span className="input-title-label">쇼츠 대본 문장 입력 (한 줄에 한 장면)</span>
+                <textarea
+                  value={customScript}
+                  onChange={(e) => setCustomScript(e.target.value)}
+                  placeholder="예시:&#13;삼겹살은 왜 맛있을까?&#13;고기가 익어가며 마이야르 반응이 발생한다.&#13;이 반응이 고소한 향을 만든다.&#13;그래서 우리는 더 맛있다고 느낀다."
+                  className="coupang-input-field"
+                  style={{ height: '180px', padding: '0.75rem', fontSize: '0.85rem', lineHeight: '1.5', resize: 'none' }}
+                  required
+                />
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                  * 각 문장마다 개별적으로 검색어 생성, 미디어 매칭, TTS(음성) 및 자막이 생성됩니다.
+                </span>
+              </div>
+
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.01)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '8px',
+                padding: '0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem'
+              }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold', color: 'white' }}>
+                  <input
+                    type="checkbox"
+                    checked={hookOption.enabled}
+                    onChange={(e) => setHookOption({ ...hookOption, enabled: e.target.checked })}
+                    style={{ width: '15px', height: '15px', accentColor: '#fbbf24' }}
+                  />
+                  <span>첫 부분에 후킹(Hook) 추가하기</span>
+                </label>
+                
+                {hookOption.enabled && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginTop: '0.25rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="hookMode"
+                          checked={hookOption.mode === 'auto'}
+                          onChange={() => setHookOption({ ...hookOption, mode: 'auto' })}
+                          style={{ accentColor: '#fbbf24' }}
+                        />
+                        <span>AI 자동 생성</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="hookMode"
+                          checked={hookOption.mode === 'manual'}
+                          onChange={() => setHookOption({ ...hookOption, mode: 'manual' })}
+                          style={{ accentColor: '#fbbf24' }}
+                        />
+                        <span>직접 입력</span>
+                      </label>
+                    </div>
+
+                    {hookOption.mode === 'manual' && (
+                      <input
+                        type="text"
+                        value={hookOption.text}
+                        onChange={(e) => setHookOption({ ...hookOption, text: e.target.value })}
+                        placeholder="예: 아직도 삼겹살을 대충 굽고 계신가요?"
+                        className="coupang-input-field"
+                        style={{ fontSize: '0.78rem', padding: '0.4rem 0.6rem' }}
+                        required
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">배경음악 추천 유형</span>
+                <select
+                  value={bgmType}
+                  onChange={(e) => setBgmType(e.target.value)}
+                  className="coupang-select-field"
+                >
+                  <option value="정보형">📚 정보형 (차분하고 설명적인 톤)</option>
+                  <option value="감성형">🌱 감성형 (부드럽고 따뜻한 톤)</option>
+                  <option value="동기부여형">🔥 동기부여형 (힘차고 에너제틱한 톤)</option>
+                  <option value="리뷰형">⭐️ 리뷰형 (경쾌하고 직관적인 톤)</option>
+                  <option value="음식형">🍖 음식형 (군침 도는 리듬감 있는 톤)</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">영상 제목 / 키워드 (선택)</span>
                 <input
                   type="text"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="예: 차돌박이 맛집, 스마트폰 꿀팁, 매일 1시간 공부법"
+                  placeholder="예: 삼겹살이 맛있는 이유 (미입력 시 첫 문장 기준 자동 생성)"
                   className="coupang-input-field"
-                  required
                 />
               </div>
 
@@ -715,183 +863,6 @@ export default function LongToShortPage() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <span className="input-title-label">이미지 수집 및 매칭 방식</span>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.65rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => setImageSourceMode('stock_only')}
-                    style={{
-                      padding: '0.75rem',
-                      background: imageSourceMode === 'stock_only' ? 'rgba(16, 185, 129, 0.06)' : 'rgba(0, 0, 0, 0.25)',
-                      border: imageSourceMode === 'stock_only' ? '1px solid #10b981' : '1px solid var(--border-color)',
-                      borderRadius: '8px',
-                      color: imageSourceMode === 'stock_only' ? '#10b981' : 'var(--text-secondary)',
-                      fontSize: '0.78rem',
-                      fontWeight: 650,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      textAlign: 'center',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>🖼️ 감성 스톡 B-Roll만</span>
-                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>Unsplash 저작권 안전 스톡 사용</span>
-                    <span style={{ fontSize: '0.62rem', color: '#10b981', fontWeight: 800 }}>✅ 100% 저작권 안전 (상업용 무료)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setImageSourceMode('direct')}
-                    style={{
-                      padding: '0.75rem',
-                      background: imageSourceMode === 'direct' ? 'rgba(16, 185, 129, 0.06)' : 'rgba(0, 0, 0, 0.25)',
-                      border: imageSourceMode === 'direct' ? '1px solid #10b981' : '1px solid var(--border-color)',
-                      borderRadius: '8px',
-                      color: imageSourceMode === 'direct' ? '#10b981' : 'var(--text-secondary)',
-                      fontSize: '0.78rem',
-                      fontWeight: 650,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      textAlign: 'center',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>🎯 대표 이미지 직접 지정</span>
-                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>이미지 URL 또는 파일 등록</span>
-                    <span style={{ fontSize: '0.62rem', color: '#10b981', fontWeight: 800 }}>✅ 저작권 안전 (본인 소유 이미지)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setImageSourceMode('stock_naver')}
-                    style={{
-                      padding: '0.75rem',
-                      background: imageSourceMode === 'stock_naver' ? 'rgba(245, 158, 11, 0.06)' : 'rgba(0, 0, 0, 0.25)',
-                      border: imageSourceMode === 'stock_naver' ? '1px solid #f59e0b' : '1px solid var(--border-color)',
-                      borderRadius: '8px',
-                      color: imageSourceMode === 'stock_naver' ? '#f59e0b' : 'var(--text-secondary)',
-                      fontSize: '0.78rem',
-                      fontWeight: 650,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      textAlign: 'center',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>📸 실물 매칭 + 스톡 B-Roll</span>
-                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>실물 사진 + 감성 B-Roll 혼합</span>
-                    <span style={{ fontSize: '0.62rem', color: '#f59e0b', fontWeight: 800 }}>⚠️ 저작권 주의 (블로그 후기 사진)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setImageSourceMode('naver_only')}
-                    style={{
-                      padding: '0.75rem',
-                      background: imageSourceMode === 'naver_only' ? 'rgba(239, 68, 68, 0.06)' : 'rgba(0, 0, 0, 0.25)',
-                      border: imageSourceMode === 'naver_only' ? '1px solid #ef4444' : '1px solid var(--border-color)',
-                      borderRadius: '8px',
-                      color: imageSourceMode === 'naver_only' ? '#ef4444' : 'var(--text-secondary)',
-                      fontSize: '0.78rem',
-                      fontWeight: 650,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '0.25rem',
-                      textAlign: 'center',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>🔍 네이버 실물 이미지 검색</span>
-                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400 }}>블로그/리뷰 사진으로만 제작</span>
-                    <span style={{ fontSize: '0.62rem', color: '#ef4444', fontWeight: 800 }}>⚠️ 저작권 주의 (개인 저작물 수집)</span>
-                  </button>
-                </div>
-              </div>
-
-              {imageSourceMode === 'direct' && (
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.01)',
-                  border: '1px dashed var(--border-color)',
-                  borderRadius: '8px',
-                  padding: '1rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.8rem',
-                  marginTop: '0.2rem'
-                }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>대표 이미지 URL 입력</span>
-                    <input
-                      type="text"
-                      value={directImageUrl}
-                      onChange={(e) => {
-                        setDirectImageUrl(e.target.value);
-                        if (e.target.value.trim()) {
-                          setLocalImageBase64('');
-                          setLocalImageFileName('');
-                        }
-                      }}
-                      placeholder="https://example.com/product-image.jpg"
-                      className="coupang-input-field"
-                      style={{ fontSize: '0.8rem' }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', flex: 1 }}></div>
-                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontWeight: 600 }}>또는 파일 업로드</span>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', flex: 1 }}></div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>PC에서 이미지 파일 선택</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setLocalImageFileName(file.name);
-                          setDirectImageUrl('');
-                          
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setLocalImageBase64(reader.result);
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                      style={{
-                        fontSize: '0.75rem',
-                        color: 'var(--text-secondary)',
-                        background: 'rgba(0, 0, 0, 0.4)',
-                        padding: '0.5rem',
-                        borderRadius: '6px',
-                        border: '1px solid var(--border-color)',
-                        cursor: 'pointer'
-                      }}
-                    />
-                    {localImageFileName && (
-                      <span style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 600 }}>
-                        ✓ 업로드된 파일: {localImageFileName}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <span className="input-title-label">성우 목소리 선택 (Neural TTS)</span>
                 <select 
                   value={voice} 
@@ -903,9 +874,52 @@ export default function LongToShortPage() {
                 </select>
               </div>
 
+              {/* 스톡 비디오 API 연동 설정 */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.01)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '8px',
+                padding: '0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.65rem'
+              }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'white', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <Key size={13} color="#fbbf24" />
+                  <span>스톡 비디오 API 연동 (선택사항)</span>
+                </span>
+                <p style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                  Pexels/Pixabay API 키가 입력되면 고품질의 B-roll 비디오 클립을 수집하며, 미입력 시 Unsplash 스톡 이미지로 대체됩니다.
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)' }}>Pexels API Key</span>
+                    <input 
+                      type="password"
+                      value={pexelsApiKey}
+                      onChange={(e) => handlePexelsKeyChange(e.target.value)}
+                      placeholder="Pexels Key"
+                      className="coupang-input-field"
+                      style={{ fontSize: '0.72rem', padding: '0.4rem 0.6rem' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)' }}>Pixabay API Key</span>
+                    <input 
+                      type="password"
+                      value={pixabayApiKey}
+                      onChange={(e) => handlePixabayKeyChange(e.target.value)}
+                      placeholder="Pixabay Key"
+                      className="coupang-input-field"
+                      style={{ fontSize: '0.72rem', padding: '0.4rem 0.6rem' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
               <button 
                 type="submit" 
-                disabled={coupangLoading || !keyword.trim()} 
+                disabled={coupangLoading || !customScript.trim()} 
                 className="btn generate-submit-btn-coupang"
                 style={{
                   background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
@@ -914,7 +928,7 @@ export default function LongToShortPage() {
                 }}
               >
                 {coupangLoading ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
-                <span>{coupangLoading ? 'AI 기획 & 이미지 스크래핑 & 비디오 합성 중 (약 30초)...' : '⚡ 쇼츠 영상 자동 제작하기 (30초 이내)'}</span>
+                <span>{coupangLoading ? '장면 분석 및 비디오 합성 중 (약 30초)...' : '⚡ 쇼츠 영상 자동 제작하기 (30초 이내)'}</span>
               </button>
             </form>
 
@@ -1038,72 +1052,333 @@ export default function LongToShortPage() {
                 <div className="shorts-cards-list">
                   
                   {/* Scraped Product Metadata Info Card */}
-                  <div className="product-scraped-info-card">
-                    <img src={coupangResult.product.image} alt={coupangResult.product.title} className="product-scraped-img" />
-                    <div className="product-scraped-details">
-                      <h4 className="product-scraped-title">{coupangResult.product.title}</h4>
-                      <div className="product-scraped-price-row">
-                        <span className="product-scraped-price-label">판매가</span>
-                        <span className="product-scraped-price-val">{coupangResult.product.price}</span>
+                  <div className="product-scraped-info-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1rem', marginBottom: '1.2rem' }}>
+                    <img src={coupangResult.product.image} alt={coupangResult.product.title} className="product-scraped-img" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }} />
+                    <div className="product-scraped-details" style={{ flex: 1 }}>
+                      <h4 className="product-scraped-title" style={{ margin: '0 0 0.35rem 0', fontSize: '0.9rem', color: 'var(--text-primary)' }}>{coupangResult.product.title}</h4>
+                      <div className="product-scraped-price-row" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <span className="product-scraped-price-label" style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>매칭 모드:</span>
+                        <span className="product-scraped-price-val" style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 800 }}>{coupangResult.product.price}</span>
                       </div>
-                      <a href={coupangResult.product.affiliateLink} target="_blank" rel="noopener noreferrer" className="product-scraped-link">
-                        <span>상품 정보 원본 확인</span>
-                        <ExternalLink size={12} />
-                      </a>
                     </div>
                   </div>
 
-                  {/* Generated Shorts Card */}
-                  <div className="shorts-preview-card">
-                    <div className="card-top-row">
-                      <span className="shorts-badge" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>COUPANG SHORTS</span>
-                      <span className="duration-badge">{coupangResult.shorts.estimatedDuration || '45s'}</span>
-                    </div>
-
-                    <h3 className="shorts-card-title">{coupangResult.shorts.title}</h3>
-
-                    <div className="shorts-hook-box">
-                      <span className="hook-label">3초 오프닝 훅 (Opening Hook)</span>
-                      <p className="hook-text">"{coupangResult.shorts.hook}"</p>
-                    </div>
-
-                    <div className="shorts-script-box">
-                      <span className="script-label">나레이션 대본 (Script)</span>
-                      <div className="script-content" style={{ maxHeight: '180px' }}>{coupangResult.shorts.script}</div>
-                    </div>
-
-                    <div className="shorts-cues-box">
-                      <span className="cues-label">비주얼 연출 지시</span>
-                      <p className="cues-text">{coupangResult.shorts.visualCues}</p>
-                    </div>
-
-                    {/* Action buttons */}
-                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                      <button
-                        onClick={() => handleCopyScript('coupang_copy', `제목: ${coupangResult.shorts.title}\n훅: ${coupangResult.shorts.hook}\n\n[대본]\n${coupangResult.shorts.script}`)}
-                        className={`btn ${copiedId === 'coupang_copy' ? 'copied' : ''}`}
-                        style={{
-                          flex: 1,
-                          padding: '0.65rem',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '0.4rem',
-                          background: copiedId === 'coupang_copy' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.03)',
-                          border: copiedId === 'coupang_copy' ? 'none' : '1px solid var(--border-color)',
-                          color: 'white',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {copiedId === 'coupang_copy' ? <Check size={14} /> : <Copy size={14} />}
-                        <span>{copiedId === 'coupang_copy' ? '복사 완료!' : '대본 복사'}</span>
-                      </button>
-                    </div>
+                  {/* Tabs navigation */}
+                  <div className="result-tabs" style={{ display: 'flex', gap: '0.3rem', marginBottom: '1.2rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', flexWrap: 'wrap' }}>
+                    <button 
+                      type="button"
+                      onClick={() => setActiveResultTab('productAnalysis')} 
+                      className={`result-tab-btn ${activeResultTab === 'productAnalysis' ? 'active' : ''}`}
+                      style={{
+                        background: activeResultTab === 'productAnalysis' ? 'rgba(251,191,36,0.1)' : 'none',
+                        border: 'none',
+                        color: activeResultTab === 'productAnalysis' ? '#fbbf24' : 'var(--text-secondary)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.4rem 0.65rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >🛍️ 상품 분석 AI</button>
+                    <button 
+                      type="button"
+                      onClick={() => setActiveResultTab('video')} 
+                      className={`result-tab-btn ${activeResultTab === 'video' ? 'active' : ''}`}
+                      style={{
+                        background: activeResultTab === 'video' ? 'rgba(251,191,36,0.1)' : 'none',
+                        border: 'none',
+                        color: activeResultTab === 'video' ? '#fbbf24' : 'var(--text-secondary)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.4rem 0.65rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >🎬 대본 & 연출</button>
+                    <button 
+                      type="button"
+                      onClick={() => setActiveResultTab('analysis')} 
+                      className={`result-tab-btn ${activeResultTab === 'analysis' ? 'active' : ''}`}
+                      style={{
+                        background: activeResultTab === 'analysis' ? 'rgba(251,191,36,0.1)' : 'none',
+                        border: 'none',
+                        color: activeResultTab === 'analysis' ? '#fbbf24' : 'var(--text-secondary)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.4rem 0.65rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >📊 바이럴 패턴 분석</button>
+                    <button 
+                      type="button"
+                      onClick={() => setActiveResultTab('scenes')} 
+                      className={`result-tab-btn ${activeResultTab === 'scenes' ? 'active' : ''}`}
+                      style={{
+                        background: activeResultTab === 'scenes' ? 'rgba(251,191,36,0.1)' : 'none',
+                        border: 'none',
+                        color: activeResultTab === 'scenes' ? '#fbbf24' : 'var(--text-secondary)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.4rem 0.65rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >✂️ 장면별 지시서</button>
+                    <button 
+                      type="button"
+                      onClick={() => setActiveResultTab('upload')} 
+                      className={`result-tab-btn ${activeResultTab === 'upload' ? 'active' : ''}`}
+                      style={{
+                        background: activeResultTab === 'upload' ? 'rgba(251,191,36,0.1)' : 'none',
+                        border: 'none',
+                        color: activeResultTab === 'upload' ? '#fbbf24' : 'var(--text-secondary)',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.4rem 0.65rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >📝 업로드 최적화</button>
                   </div>
 
+                  {activeResultTab === 'video' && (
+                    <div className="shorts-preview-card">
+                      <div className="card-top-row">
+                        <span className="shorts-badge" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>COUPANG SHORTS</span>
+                        <span className="duration-badge">{coupangResult.shorts.estimatedDuration || '45s'}</span>
+                      </div>
+
+                      <h3 className="shorts-card-title">{coupangResult.shorts.title}</h3>
+
+                      <div className="shorts-hook-box">
+                        <span className="hook-label">3초 오프닝 훅 (Opening Hook)</span>
+                        <p className="hook-text">"{coupangResult.shorts.hook}"</p>
+                      </div>
+
+                      <div className="shorts-script-box">
+                        <span className="script-label">나레이션 대본 (Script)</span>
+                        <div className="script-content" style={{ maxHeight: '180px' }}>{coupangResult.shorts.script}</div>
+                      </div>
+
+                      <div className="shorts-cues-box">
+                        <span className="cues-label">비주얼 연출 지시</span>
+                        <p className="cues-text">{coupangResult.shorts.visualCues}</p>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                        <button
+                          onClick={() => handleCopyScript('coupang_copy', `제목: ${coupangResult.shorts.title}\n훅: ${coupangResult.shorts.hook}\n\n[대본]\n${coupangResult.shorts.script}`)}
+                          className={`btn ${copiedId === 'coupang_copy' ? 'copied' : ''}`}
+                          style={{
+                            flex: 1,
+                            padding: '0.65rem',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.4rem',
+                            background: copiedId === 'coupang_copy' ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(255,255,255,0.03)',
+                            border: copiedId === 'coupang_copy' ? 'none' : '1px solid var(--border-color)',
+                            color: 'white',
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          {copiedId === 'coupang_copy' ? <Check size={14} /> : <Copy size={14} />}
+                          <span>{copiedId === 'coupang_copy' ? '복사 완료!' : '대본 복사'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeResultTab === 'analysis' && (
+                    <div className="analysis-panel" style={{ background: 'rgba(0, 0, 0, 0.2)', border: '1px solid var(--border-color)', padding: '1.2rem', borderRadius: '12px', color: 'var(--text-primary)' }}>
+                      <h3 style={{ fontSize: '1rem', color: '#fbbf24', marginTop: 0, marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>📊 바이럴 패턴 분석 & 전략</h3>
+                      {coupangResult.analysis ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem' }}>
+                          <div><strong>Hook 패턴:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.hookPattern}</span></div>
+                          <div><strong>평균 길이:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.avgDuration}</span></div>
+                          <div><strong>장면 전환 속도:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.transitionSpeed}</span></div>
+                          <div><strong>자막 스타일:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.captionStyle}</span></div>
+                          <div><strong>보이스 톤:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.voiceTone}</span></div>
+                          <div><strong>BGM 유형:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.bgmType}</span></div>
+                          <div><strong>시청 지속률 요인:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.retentionTriggers}</span></div>
+                          <div><strong>댓글 유도 요소:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.commentTriggers}</span></div>
+                          <div><strong>공유/좋아요 유도:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.likeShareTriggers}</span></div>
+                          <div><strong>알고리즘 최적화 전개:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.analysis.algorithmStrategy}</span></div>
+                          <div style={{ marginTop: '0.5rem', padding: '0.8rem', background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '8px' }}>
+                            <strong style={{ color: '#fbbf24' }}>🎯 핵심 제작 전략:</strong>
+                            <p style={{ margin: '0.4rem 0 0 0', lineHeight: 1.5, color: 'var(--text-secondary)' }}>{coupangResult.strategy}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>바이럴 패턴 분석 데이터가 존재하지 않습니다.</p>
+                      )}
+                    </div>
+                  )}
+
+                  {activeResultTab === 'productAnalysis' && (
+                    <div className="analysis-panel" style={{ background: 'rgba(0, 0, 0, 0.2)', border: '1px solid var(--border-color)', padding: '1.2rem', borderRadius: '12px', color: 'var(--text-primary)' }}>
+                      <h3 style={{ fontSize: '1rem', color: '#fbbf24', marginTop: 0, marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>🛍️ AI 상품 마케팅 분석</h3>
+                      {coupangResult.productAnalysis ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.82rem' }}>
+                          <div style={{ padding: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+                            <strong style={{ color: '#fbbf24', display: 'block', marginBottom: '0.35rem' }}>🎯 핵심 USP (소구점)</strong>
+                            <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{coupangResult.productAnalysis.usp}</p>
+                          </div>
+                          <div style={{ padding: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+                            <strong style={{ color: '#fbbf24', display: 'block', marginBottom: '0.35rem' }}>👥 주 타겟 오디언스 페르소나</strong>
+                            <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{coupangResult.productAnalysis.targetAudience}</p>
+                          </div>
+                          <div style={{ padding: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+                            <strong style={{ color: '#fbbf24', display: 'block', marginBottom: '0.35rem' }}>⚠️ 타겟 고객 페인 포인트</strong>
+                            <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{coupangResult.productAnalysis.painPoints}</p>
+                          </div>
+                          <div style={{ padding: '0.8rem', background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '8px' }}>
+                            <strong style={{ color: '#fbbf24', display: 'block', marginBottom: '0.4rem' }}>🚨 추천 후킹 메시지 앵글</strong>
+                            <ul style={{ margin: 0, paddingLeft: '1.2rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                              {coupangResult.productAnalysis.hookPoints?.map((hp, index) => (
+                                <li key={index}>{hp}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>상품 분석 데이터가 존재하지 않습니다. AI 제작을 시도해 보세요.</p>
+                      )}
+                    </div>
+                  )}
+
+                  {activeResultTab === 'scenes' && (
+                    <div className="scenes-timeline-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <h3 style={{ fontSize: '1rem', color: '#fbbf24', margin: 0, borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>🎬 장면별 상세 연출안 ({coupangResult.scenes?.length || 0}개 장면)</h3>
+                      <div className="scenes-scroll-list" style={{ maxHeight: '420px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingRight: '0.2rem' }}>
+                        {coupangResult.scenes && coupangResult.scenes.length > 0 ? (
+                          coupangResult.scenes.map((scene, idx) => {
+                            const sceneAssets = coupangResult.assets?.filter(a => a.scene_idx === idx) || [];
+                            return (
+                              <div key={idx} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.85rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '0.2rem' }}>
+                                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#fbbf24' }}>장면 #{scene.sceneNumber || (idx + 1)}</span>
+                                  <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>키워드: {scene.imageKeyword}</span>
+                                </div>
+                                <div style={{ fontSize: '0.78rem', marginBottom: '0.3rem' }}>
+                                  <strong style={{ color: 'var(--text-primary)' }}>소스:</strong> <span style={{ color: 'var(--text-secondary)' }}>{scene.visualSource}</span>
+                                </div>
+                                <div style={{ fontSize: '0.78rem', marginBottom: '0.3rem' }}>
+                                  <strong style={{ color: 'var(--text-primary)' }}>편집 지시:</strong> <span style={{ color: 'var(--text-secondary)' }}>{scene.editingInstruction}</span>
+                                </div>
+                                
+                                {/* 배치된 B-roll 자원 목록 표시 */}
+                                {sceneAssets.length > 0 && (
+                                  <div style={{ fontSize: '0.75rem', marginBottom: '0.4rem', background: 'rgba(0,0,0,0.2)', padding: '0.4rem', borderRadius: '6px' }}>
+                                    <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.2rem' }}>🎬 배치된 B-roll 소스 ({sceneAssets.length}개):</strong>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                                      {sceneAssets.map((asset, aIdx) => (
+                                        <div key={aIdx} style={{ fontSize: '0.7rem', display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
+                                          <span style={{ color: asset.type === 'video' ? '#00d2ff' : '#10b981' }}>
+                                            {asset.type === 'video' ? '🎥 동영상' : '🖼️ 이미지'} (슬롯 {asset.slot_idx + 1})
+                                          </span>
+                                          <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '200px' }} title={asset.url}>
+                                            {asset.url.startsWith('http') ? new URL(asset.url).hostname : asset.url}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div style={{ fontSize: '0.78rem', padding: '0.4rem', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', borderLeft: '3px solid #10b981' }}>
+                                  <strong style={{ color: '#10b981' }}>자막 (CapCut):</strong> <span style={{ color: '#ffffff', fontWeight: 600 }}>"{scene.caption}"</span>
+                                </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>장면별 연출 정보가 존재하지 않습니다.</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {activeResultTab === 'upload' && (
+                    <div className="upload-optimization-panel" style={{ background: 'rgba(0, 0, 0, 0.2)', border: '1px solid var(--border-color)', padding: '1.2rem', borderRadius: '12px', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <h3 style={{ fontSize: '1rem', color: '#fbbf24', margin: 0, borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.4rem' }}>📝 업로드 및 최적화 추천</h3>
+                      
+                      {/* 추천 제목 10선 */}
+                      <div>
+                        <strong style={{ fontSize: '0.8rem', color: '#fbbf24', display: 'block', marginBottom: '0.4rem' }}>💡 추천 바이럴 제목 10선 (클릭 시 복사)</strong>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                          {coupangResult.titles && coupangResult.titles.length > 0 ? (
+                            coupangResult.titles.map((title, idx) => (
+                              <div 
+                                key={idx} 
+                                onClick={() => handleCopyScript(`title_${idx}`, title)}
+                                style={{ 
+                                  fontSize: '0.78rem', 
+                                  padding: '0.4rem 0.6rem', 
+                                  background: 'rgba(255,255,255,0.01)', 
+                                  border: '1px solid rgba(255,255,255,0.05)', 
+                                  borderRadius: '6px', 
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  transition: 'background 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.01)'}
+                              >
+                                <span>{idx + 1}. {title}</span>
+                                <span style={{ fontSize: '0.65rem', color: copiedId === `title_${idx}` ? '#10b981' : 'rgba(255,255,255,0.2)' }}>
+                                  {copiedId === `title_${idx}` ? '복사됨!' : '클릭 복사'}
+                                </span>
+                              </div>
+                            ))
+                          ) : (
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>추천 제목 리스트가 없습니다.</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* BGM & 예상 반응 & 유지율 포인트 */}
+                      <div style={{ fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem' }}>
+                        <div><strong>🎵 추천 BGM:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.bgmRecommendation || '비트감이 빠르고 흥미진진한 음악'}</span></div>
+                        <div><strong>💬 예상 시청자 반응:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.expectedReaction}</span></div>
+                        <div><strong>🔥 유지율 상승 포인트:</strong> <span style={{ color: 'var(--text-secondary)' }}>{coupangResult.retentionPoints}</span></div>
+                      </div>
+
+                      {/* 업로드 설명란 */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem' }}>
+                        <strong style={{ fontSize: '0.8rem', color: '#fbbf24', display: 'block', marginBottom: '0.4rem' }}>📄 유튜브 설명란 템플릿</strong>
+                        <textarea
+                          readOnly
+                          value={`${coupangResult.shorts.title}\n\n${coupangResult.uploadDescription || ''}\n\n🛒 관련 추천 링크: ${coupangResult.product.affiliateLink}\n\n${coupangResult.hashtags ? coupangResult.hashtags.map(t => `#${t}`).join(' ') : '#쇼츠 #유튜브 #자동화'}`}
+                          style={{
+                            width: '100%',
+                            height: '100px',
+                            padding: '0.5rem',
+                            background: 'rgba(0,0,0,0.3)',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '6px',
+                            color: 'var(--text-secondary)',
+                            fontSize: '0.75rem',
+                            fontFamily: 'monospace',
+                            resize: 'none',
+                            outline: 'none'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

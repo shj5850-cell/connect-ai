@@ -28,6 +28,13 @@ AUTONOMY_LEVEL: 2
 - `enabled`: true
 - `requires_credentials`: `config.md` 참조
 
+### `monetization_tool`
+수익화 총괄용 분석 엔진 — 쿠팡 파트너스 상품 선정, 수익성 점수 산출, 수익 DB 및 일일 보고서 생성, 시장 조사 자동화
+
+- `enabled`: true
+- `requires_credentials`: 없음
+
+
 
 ---
 

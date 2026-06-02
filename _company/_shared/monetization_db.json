@@ -1,0 +1,110 @@
+{
+  "last_updated": "2026-06-01T13:50:22.488896+00:00",
+  "monetization_log": [
+    {
+      "date": "2026-06-01",
+      "top_picks": [
+        {
+          "rank": 1,
+          "topic": "AI",
+          "product_name": "맥북 에어 M3 15인치 (AI 런타임 최적)",
+          "expected_ctr": 5.0,
+          "expected_conv": 3.0,
+          "price": 1650000,
+          "expected_revenue_per_100k": 7425000
+        },
+        {
+          "rank": 2,
+          "topic": "AI",
+          "product_name": "AI 수익화 부업 마스터북 전자책",
+          "expected_ctr": 8.0,
+          "expected_conv": 6.0,
+          "price": 35000,
+          "expected_revenue_per_100k": 504000
+        },
+        {
+          "rank": 3,
+          "topic": "건강",
+          "product_name": "정관장 홍삼정 에브리타임",
+          "expected_ctr": 4.35,
+          "expected_conv": 3.65,
+          "price": 96000,
+          "expected_revenue_per_100k": 457272
+        },
+        {
+          "rank": 4,
+          "topic": "다이어트",
+          "product_name": "식욕 조절 프리미엄 보이차 추출물",
+          "expected_ctr": 4.9,
+          "expected_conv": 4.35,
+          "price": 42000,
+          "expected_revenue_per_100k": 268568
+        },
+        {
+          "rank": 5,
+          "topic": "다이어트",
+          "product_name": "허닭 국산 닭가슴살 볶음밥 10팩",
+          "expected_ctr": 5.6,
+          "expected_conv": 5.0,
+          "price": 29900,
+          "expected_revenue_per_100k": 251160
+        }
+      ]
+    },
+    {
+      "date": "2026-06-01",
+      "top_picks": [
+        {
+          "rank": 1,
+          "topic": "AI",
+          "product_name": "맥북 에어 M3 15인치 (AI 런타임 최적)",
+          "expected_ctr": 5.0,
+          "expected_conv": 3.0,
+          "price": 1650000,
+          "expected_revenue_per_100k": 7425000
+        },
+        {
+          "rank": 2,
+          "topic": "AI",
+          "product_name": "AI 수익화 부업 마스터북 전자책",
+          "expected_ctr": 8.0,
+          "expected_conv": 6.0,
+          "price": 35000,
+          "expected_revenue_per_100k": 504000
+        },
+        {
+          "rank": 3,
+          "topic": "건강",
+          "product_name": "정관장 홍삼정 에브리타임",
+          "expected_ctr": 4.35,
+          "expected_conv": 3.65,
+          "price": 96000,
+          "expected_revenue_per_100k": 457272
+        },
+        {
+          "rank": 4,
+          "topic": "다이어트",
+          "product_name": "식욕 조절 프리미엄 보이차 추출물",
+          "expected_ctr": 4.9,
+          "expected_conv": 4.35,
+          "price": 42000,
+          "expected_revenue_per_100k": 268568
+        },
+        {
+          "rank": 5,
+          "topic": "다이어트",
+          "product_name": "허닭 국산 닭가슴살 볶음밥 10팩",
+          "expected_ctr": 5.6,
+          "expected_conv": 5.0,
+          "price": 29900,
+          "expected_revenue_per_100k": 251160
+        }
+      ]
+    }
+  ],
+  "performance_summary": {
+    "total_estimated_revenue": 14850000,
+    "total_actual_revenue": 0,
+    "best_performing_topic": "AI"
+  }
+}

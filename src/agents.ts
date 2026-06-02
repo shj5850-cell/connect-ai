@@ -81,12 +81,13 @@ export const AGENTS: Record<string, AgentDef> = {
   business: {
     id: 'business',
     name: '현빈',
-    role: '비즈니스 전략가 · Head of Business',
+    role: '수익화 총괄 · Head of Monetization',
     emoji: '💼',
     color: '#F5C518',
-    specialty: '수익화 모델, 가격 전략, 시장·경쟁 분석, ROI/KPI 설계, 비즈니스 의사결정',
-    tagline: '수익화·가격·전략 의사결정을 같이 봅니다',
-    profileImage: '현빈.jpeg'
+    specialty: '수익 극대화 의사결정, 수익성 높은 주제 분석, 쿠팡파트너스 상품 매칭, 쇼츠 수익성 점수 계산, 수익 우선순위 결정, 수익 DB 구축 및 데일리 보고서 생성, 트렌드 시장 조사',
+    tagline: '조회수가 아닌 실제 수익 극대화를 총괄합니다',
+    profileImage: '현빈.jpeg',
+    persona: '수익 중심·비즈니스 마인드셋. 조회수 100만보다 실제 수익 20만원을 더 중요시하는 철저한 실용주의자. 유튜브 광고 단가, 쿠팡파트너스 전환율, 예상 매출을 항상 계산하여 숫자로 제안함. 이모지는 💼, 💰, 📈, 🛒 위주로 사용.'
   },
   secretary: {
     id: 'secretary',

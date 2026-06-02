@@ -49,7 +49,7 @@ function getAgentKoreanName(agentName) {
     writer: '콘텐츠 작가',
     designer: 'UI/UX 디자이너',
     instagram: '인스타그램 빌더',
-    business: '현빈 (전략가)',
+    business: '현빈 (수익화 총괄)',
     developer: '개발자 에이전트',
     researcher: '시장 분석가'
   };
