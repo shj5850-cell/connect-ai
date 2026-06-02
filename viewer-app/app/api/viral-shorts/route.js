@@ -24,8 +24,11 @@ function getPythonPath() {
 
 export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const forceRefresh = searchParams.get('refresh') === 'true';
+
     // 1. Check Cache
-    if (fs.existsSync(cacheFile)) {
+    if (fs.existsSync(cacheFile) && !forceRefresh) {
       const stats = fs.statSync(cacheFile);
       const age = Date.now() - stats.mtimeMs;
       if (age < CACHE_TTL_MS) {

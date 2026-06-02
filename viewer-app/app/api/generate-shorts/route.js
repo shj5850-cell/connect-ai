@@ -34,7 +34,8 @@ export async function POST(request) {
       localImageBase64,
       localImageFileName,
       pexelsApiKey,
-      pixabayApiKey
+      pixabayApiKey,
+      templateStyle
     } = await request.json();
 
     let directImagePath = '';
@@ -581,7 +582,8 @@ USP: ${productAnalysis.productAnalysis.usp}
       keyword: keyword,
       scenes: shortsPlan.scenes || [],
       pexels_api_key: pexelsApiKey || process.env.PEXELS_API_KEY || '',
-      pixabay_api_key: pixabayApiKey || process.env.PIXABAY_API_KEY || ''
+      pixabay_api_key: pixabayApiKey || process.env.PIXABAY_API_KEY || '',
+      template_style: templateStyle || 'classic'
     };
 
     fs.writeFileSync(configPath, JSON.stringify(inputData, null, 2), 'utf-8');

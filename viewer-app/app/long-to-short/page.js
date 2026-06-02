@@ -65,6 +65,7 @@ export default function LongToShortPage() {
   // API Keys states for Pexels and Pixabay
   const [pexelsApiKey, setPexelsApiKey] = useState('');
   const [pixabayApiKey, setPixabayApiKey] = useState('');
+  const [templateStyle, setTemplateStyle] = useState('classic');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -89,11 +90,11 @@ export default function LongToShortPage() {
   const [ytClientId, setYtClientId] = useState('');
   const [ytClientSecret, setYtClientSecret] = useState('');
 
-  const fetchViralShorts = async () => {
+  const fetchViralShorts = async (refresh = false) => {
     setViralLoading(true);
     setErrorMsg('');
     try {
-      const response = await fetch('/api/viral-shorts');
+      const response = await fetch(`/api/viral-shorts${refresh ? '?refresh=true' : ''}`);
       const data = await response.json();
       if (data.success) {
         setViralShorts(data.shorts || []);
@@ -124,7 +125,7 @@ export default function LongToShortPage() {
   };
 
   useEffect(() => {
-    fetchViralShorts();
+    fetchViralShorts(false);
     checkYtAuth();
   }, []);
 
@@ -201,7 +202,8 @@ export default function LongToShortPage() {
           localImageBase64,
           localImageFileName,
           pexelsApiKey,
-          pixabayApiKey
+          pixabayApiKey,
+          templateStyle
         })
       });
 
@@ -277,7 +279,8 @@ export default function LongToShortPage() {
         body: JSON.stringify({
           script: coupangResult.shorts.script,
           image: coupangResult.product.image,
-          title: coupangResult.shorts.title
+          title: coupangResult.shorts.title,
+          templateStyle
         })
       });
 
@@ -486,7 +489,7 @@ export default function LongToShortPage() {
               </p>
             </div>
             <button 
-              onClick={fetchViralShorts} 
+              onClick={() => fetchViralShorts(true)} 
               disabled={viralLoading}
               className="btn btn-secondary"
               style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', padding: '0.5rem 1rem' }}
@@ -869,8 +872,28 @@ export default function LongToShortPage() {
                   onChange={(e) => setVoice(e.target.value)}
                   className="coupang-select-field"
                 >
-                  <option value="female">🧐 여성 성우 (선희 - 차분하고 신뢰형)</option>
+                  <option value="female">🧐  여성 성우 (선희 - 차분하고 신뢰형)</option>
                   <option value="male">👨‍💼 남성 성우 (인준 - 명확하고 설득력있음)</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span className="input-title-label">🎨 쇼츠 비주얼 템플릿 선택</span>
+                <select 
+                  value={templateStyle} 
+                  onChange={(e) => setTemplateStyle(e.target.value)}
+                  className="coupang-select-field"
+                  style={{
+                    background: 'rgba(251,191,36,0.05)',
+                    border: '1px solid rgba(251,191,36,0.3)',
+                    color: '#fbbf24',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  <option value="classic" style={{ color: 'white', background: '#121212' }}>🎬 클래식 바이럴 (반투명 캡슐 자막 + 기본)</option>
+                  <option value="vibrant" style={{ color: 'white', background: '#121212' }}>🔥 Vibrant 네온 (보라-핑크 글로우 테두리 + 피치 오렌지 자막)</option>
+                  <option value="greenline" style={{ color: 'white', background: '#121212' }}>⚡ GreenLine 테크 (형광 네온 그린 상하선 + 형광 그린 자막)</option>
+                  <option value="minimal" style={{ color: 'white', background: '#121212' }}>🥚 Minimal 액자 (얇은 20% 투명 흰색 액자 + 깔끔 자막)</option>
                 </select>
               </div>
 

@@ -10,7 +10,7 @@ import subprocess
 import math
 import ssl
 import random
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageDraw, ImageFont
 
 # Ignore SSL verification for scraping/downloading files safely
 try:
@@ -46,16 +46,216 @@ def ensure_packages():
 ensure_packages()
 
 import edge_tts
+from PIL import ImageDraw, ImageFont
+
 try:
-    from moviepy.editor import ImageClip, AudioFileClip, VideoFileClip, concatenate_videoclips
+    from moviepy.editor import ImageClip, AudioFileClip, VideoFileClip, concatenate_videoclips, CompositeVideoClip
 except ImportError:
     try:
-        from moviepy import ImageClip, AudioFileClip, VideoFileClip, concatenate_videoclips
+        from moviepy import ImageClip, AudioFileClip, VideoFileClip, concatenate_videoclips, CompositeVideoClip
     except ImportError:
         from moviepy.video.VideoClip import ImageClip
         from moviepy.video.io.VideoFileClip import VideoFileClip
         from moviepy.audio.io.AudioFileClip import AudioFileClip
         from moviepy.video.compositing.concatenate import concatenate_videoclips
+        from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+
+# Font cache directory
+FONT_PATH = os.path.join(os.environ.get("USERPROFILE") or os.environ.get("HOME") or ".", ".connect-ai-fonts")
+os.makedirs(FONT_PATH, exist_ok=True)
+PRETENDARD_FONT_FILE = os.path.join(FONT_PATH, "Pretendard-ExtraBold.ttf")
+
+def download_font(dest_path):
+    font_url = "https://github.com/orioncactus/pretendard/raw/main/packages/pretendard/dist/public/static/Alternative/Pretendard-ExtraBold.ttf"
+    if os.path.exists(dest_path):
+        return True
+    print(f"📥 Downloading Pretendard Font from {font_url}...")
+    try:
+        req = urllib.request.Request(font_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=15) as response, open(dest_path, 'wb') as f:
+            f.write(response.read())
+        print("✅ Font downloaded successfully.")
+        return True
+    except Exception as e:
+        print(f"⚠️ Failed to download font: {e}")
+        return False
+
+# Trigger font download
+download_font(PRETENDARD_FONT_FILE)
+
+def trim_audio_silence(audio_clip, threshold=0.015):
+    """
+    Detect silence at start and end of audio clip using numpy array,
+    and return a subclip with silence trimmed.
+    """
+    try:
+        import numpy as np
+        fps = 8000
+        arr = audio_clip.to_soundarray(fps=fps)
+        if len(arr) == 0:
+            return audio_clip
+            
+        abs_arr = np.abs(arr)
+        if len(abs_arr.shape) > 1:
+            volume = np.mean(abs_arr, axis=1)
+        else:
+            volume = abs_arr
+            
+        above_threshold = np.where(volume > threshold)[0]
+        if len(above_threshold) == 0:
+            return audio_clip
+            
+        start_idx = above_threshold[0]
+        end_idx = above_threshold[-1]
+        
+        start_time = start_idx / fps
+        end_time = end_idx / fps
+        
+        # Pad slightly to avoid clicking
+        start_time = max(0, start_time - 0.05)
+        end_time = min(audio_clip.duration, end_time + 0.05)
+        
+        if end_time - start_time > 0.1:
+            print(f"✂️ Trimmed audio silence from {audio_clip.duration:.2f}s to {end_time - start_time:.2f}s (Start: {start_time:.2f}s, End: {end_time:.2f}s)")
+            return audio_clip.subclip(start_time, end_time)
+    except Exception as e:
+        print(f"⚠️ Audio trim failed: {e}. Keeping original audio.")
+    return audio_clip
+
+def create_template_frame_image(template_style, width=1080, height=1920):
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    
+    style = template_style.lower()
+    if style == "minimal":
+        # Draw thin subtle borders at top and bottom
+        draw.line([(80, 120), (width - 80, 120)], fill=(255, 255, 255, 60), width=2)
+        draw.line([(80, height - 120), (width - 80, height - 120)], fill=(255, 255, 255, 60), width=2)
+    elif style == "greenline":
+        # Neon green horizontal lines at very edge
+        draw.rectangle([0, 0, width, 6], fill=(57, 255, 20, 255))
+        draw.rectangle([0, height - 6, width, height], fill=(57, 255, 20, 255))
+    elif style == "vibrant":
+        # Soft purple-pink gradient glowing vertical bars on sides
+        # Left side glow
+        for x in range(20):
+            alpha = int(140 * (1 - x / 20.0))
+            draw.line([(x, 0), (x, height)], fill=(123, 89, 182, alpha))
+        # Right side glow
+        for x in range(20):
+            alpha = int(140 * (1 - x / 20.0))
+            draw.line([(width - x, 0), (width - x, height)], fill=(255, 105, 180, alpha))
+        
+        # Top subtle dark banner
+        draw.rectangle([0, 140, width, 220], fill=(0, 0, 0, 140))
+        # Accent glow line at banner bottom
+        draw.line([(0, 220), (width, 220)], fill=(255, 105, 180, 180), width=2)
+    return img
+
+def create_subtitle_image(text, width=1080, height=1920, font_path=None, font_size=55, template_style="classic", is_hook=False):
+    img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    
+    style = template_style.lower()
+    
+    # Scale up font size for opening hook to increase retention
+    if is_hook:
+        font_size = int(font_size * 1.25)
+        
+    # Load font
+    font = None
+    if font_path and os.path.exists(font_path):
+        try:
+            font = ImageFont.truetype(font_path, font_size)
+        except Exception as e:
+            print(f"⚠️ Font load error: {e}")
+    if font is None:
+        try:
+            for f_name in ["C:/Windows/Fonts/malgunbd.ttf", "C:/Windows/Fonts/malgun.ttf", "arial.ttf"]:
+                if os.path.exists(f_name):
+                    font = ImageFont.truetype(f_name, font_size)
+                    break
+        except Exception:
+            pass
+    if font is None:
+        font = ImageFont.load_default()
+
+    # Split text into lines for mobile readability
+    words = text.split()
+    lines = []
+    current_line = ""
+    for word in words:
+        test_line = current_line + " " + word if current_line else word
+        if len(test_line) > 13: # Keep lines short for vertical layout
+            lines.append(current_line)
+            current_line = word
+        else:
+            current_line = test_line
+    if current_line:
+        lines.append(current_line)
+        
+    y_center = int(height * 0.75) # Position at bottom 75%
+    
+    line_heights = []
+    for line in lines:
+        try:
+            bbox = draw.textbbox((0, 0), line, font=font)
+            line_w = bbox[2] - bbox[0]
+            line_h = bbox[3] - bbox[1]
+        except AttributeError:
+            line_w, line_h = draw.textsize(line, font=font)
+        line_heights.append((line, line_w, line_h))
+        
+    total_height = sum([lh[2] for lh in line_heights]) + (len(lines) - 1) * 15
+    current_y = y_center - (total_height // 2)
+    
+    for line, line_w, line_h in line_heights:
+        x = (width - line_w) // 2
+        
+        # Background pill coordinates
+        padding_x = 26
+        padding_y = 12
+        box_coords = [
+            x - padding_x, 
+            current_y - padding_y, 
+            x + line_w + padding_x, 
+            current_y + line_h + padding_y
+        ]
+        
+        if is_hook:
+            # Highlight orange/red background for the opening hook
+            draw.rounded_rectangle(box_coords, radius=14, fill=(255, 69, 0, 205))
+        elif style == "minimal":
+            # Transparent dark capsule
+            draw.rounded_rectangle(box_coords, radius=14, fill=(18, 18, 18, 100))
+        elif style == "greenline":
+            # Dark green capsule with neon green border
+            draw.rounded_rectangle(box_coords, radius=14, fill=(10, 25, 10, 190), outline=(57, 255, 20, 255), width=2)
+        elif style == "vibrant":
+            # Soft black background box
+            draw.rounded_rectangle(box_coords, radius=14, fill=(0, 0, 0, 60))
+        else: # classic
+            draw.rounded_rectangle(box_coords, radius=14, fill=(0, 0, 0, 150))
+        
+        # Color highlight rules (Yellow/Green/Peach for hook terms)
+        text_color = (255, 255, 255, 255) # White
+        highlight_keywords = ["!", "?", "대박", "필수", "금지", "주의", "꿀팁", "비밀", "공개", "방법", "멈추세요", "후회", "실수", "무료", "최저가", "할인", "추천"]
+        has_highlight = any(hk in line for hk in highlight_keywords)
+        
+        if is_hook:
+            text_color = (255, 255, 255, 255)
+        elif has_highlight:
+            if style == "greenline":
+                text_color = (57, 255, 20, 255) # Neon Green
+            elif style == "vibrant":
+                text_color = (255, 127, 80, 255) # Peach Orange
+            else:
+                text_color = (255, 223, 0, 255) # Yellow
+            
+        draw.text((x, current_y), line, font=font, fill=text_color)
+        current_y += line_h + 15
+        
+    return img
 
 # Safe helper to set clip duration across all MoviePy versions
 def set_clip_duration(clip, duration):
@@ -146,17 +346,22 @@ def search_pexels_videos(query, api_key, limit=5):
                 files = v.get("video_files", [])
                 if not files:
                     continue
-                # Prefer vertical video if available
-                vertical = [f for f in files if f.get("width", 0) < f.get("height", 0) and f.get("link")]
-                if vertical:
-                    video_urls.append(vertical[0]["link"])
-                else:
-                    # Otherwise take any mp4 file link
-                    mp4_files = [f for f in files if f.get("link") and f.get("file_type") == "video/mp4"]
-                    if mp4_files:
-                        video_urls.append(mp4_files[0]["link"])
-                    elif files:
-                        video_urls.append(files[0]["link"])
+                mp4_files = [f for f in files if f.get("link") and f.get("file_type") == "video/mp4"]
+                if not mp4_files:
+                    continue
+                
+                # Sort files to favor medium/low resolution vertical video to optimize download/render speed
+                def score_file(f):
+                    w = f.get("width") or 0
+                    h = f.get("height") or 0
+                    is_vertical = w < h
+                    size_diff = abs(w - 720) + abs(h - 1280) if is_vertical else abs(w - 1280) + abs(h - 720)
+                    vertical_bonus = 0 if is_vertical else 20000
+                    uhd_penalty = 10000 if f.get("quality") == "uhd" else 0
+                    return vertical_bonus + size_diff + uhd_penalty
+
+                mp4_files.sort(key=score_file)
+                video_urls.append(mp4_files[0]["link"])
             return video_urls
     except Exception as e:
         print(f"⚠️ Pexels video search failed for '{query}': {e}")
@@ -329,6 +534,7 @@ def main():
     scenes = config.get("scenes", [])
     pexels_api_key = config.get("pexels_api_key", "")
     pixabay_api_key = config.get("pixabay_api_key", "")
+    template_style = config.get("template_style", "classic")
     
     if not output_path or not scenes:
         print("❌ Missing required configuration fields (output_path, scenes).")
@@ -336,9 +542,18 @@ def main():
         
     # Setup directories
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    timestamp_id = int(os.path.basename(output_path).split('_')[-1].split('.')[0]) if '_' in os.path.basename(output_path) else random.randint(1000, 9999)
+    try:
+        timestamp_id = int(os.path.basename(output_path).split('_')[-1].split('.')[0]) if '_' in os.path.basename(output_path) else random.randint(1000, 9999)
+    except ValueError:
+        import time
+        timestamp_id = int(time.time())
     temp_dir = os.path.join(os.path.dirname(output_path), f"temp_{timestamp_id}")
     os.makedirs(temp_dir, exist_ok=True)
+    
+    # Pre-render visual template frame overlay
+    template_frame_path = os.path.join(temp_dir, "template_frame.png")
+    frame_img = create_template_frame_image(template_style)
+    frame_img.save(template_frame_path, "PNG")
     
     # 1. Run Async Neural TTS generation for all scenes concurrently
     try:
@@ -355,7 +570,7 @@ def main():
     scene_clips = []
     
     # Track temporary file paths for cleanup
-    temp_paths = []
+    temp_paths = [template_frame_path]
     
     try:
         for idx, scene in enumerate(scenes):
@@ -364,15 +579,14 @@ def main():
                 print(f"⚠️ Audio file missing for Scene {idx+1}. Skipping.")
                 continue
                 
-            audio_clip = AudioFileClip(audio_path)
+            raw_audio_clip = AudioFileClip(audio_path)
+            # Apply Jump Cut (Silence Removal) technology to trim quiet spaces
+            audio_clip = trim_audio_silence(raw_audio_clip)
             duration = audio_clip.duration
             print(f"\n--- Scene {idx+1} (Duration: {duration:.2f}s) ---")
             
-            # Calculate slot clips (max 2 seconds per clip)
-            # Slot duration d <= 2.0s
-            num_slots = max(1, int(math.ceil(duration / 2.0)))
-            slot_duration = duration / num_slots
-            print(f"Splitting scene into {num_slots} slots of {slot_duration:.2f}s each to enforce 2s pacing.")
+            # Use 1:1 pacing (1 clip per scene) instead of splitting to optimize API downloads & render speed
+            slot_duration = duration
             
             # Get video search keywords and image search keywords
             video_kws = scene.get("videoSearchKeywords", [])
@@ -389,206 +603,217 @@ def main():
                 legacy_kw = scene.get("imageKeyword", "").strip()
                 image_kws = [legacy_kw] if legacy_kw else [keyword or "abstract"]
                 
-            slot_clips = []
+            clip_added = False
+            formatted_media_clip = None
             
-            for slot_idx in range(num_slots):
-                clip_added = False
+            # Check for direct image override logic (e.g. show product cover image)
+            is_direct_override = (
+                image_source_mode == "direct" and 
+                (direct_image_path or direct_image_url) and 
+                (idx == 0 or idx % 5 == 0)
+            )
+            
+            if is_direct_override:
+                print(f"Using direct local product image upload/URL.")
+                target_source = direct_image_path if (direct_image_path and os.path.exists(direct_image_path)) else direct_image_url
+                dest_jpg = os.path.join(temp_dir, f"direct_scene_{idx}.jpg")
                 
-                # Check for direct image override logic (e.g. show product cover image)
-                # We place the direct image in Scene 1 Slot 0, and transition slots (e.g. Slot 0 of Scene 5, Scene 10, Scene 15)
-                is_direct_override = (
-                    image_source_mode == "direct" and 
-                    (direct_image_path or direct_image_url) and 
-                    (idx == 0 or idx % 5 == 0) and 
-                    slot_idx == 0
-                )
-                
-                if is_direct_override:
-                    print(f"Slot {slot_idx}: Using direct local product image upload/URL.")
-                    target_source = direct_image_path if (direct_image_path and os.path.exists(direct_image_path)) else direct_image_url
-                    dest_jpg = os.path.join(temp_dir, f"direct_scene_{idx}_slot_{slot_idx}.jpg")
-                    
-                    if os.path.exists(target_source):
-                        if crop_and_format_image(target_source, dest_jpg):
+                if os.path.exists(target_source):
+                    if crop_and_format_image(target_source, dest_jpg):
+                        img_clip = set_clip_duration(ImageClip(dest_jpg), slot_duration)
+                        try:
+                            img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
+                        except Exception as zoom_err:
+                            print(f"⚠️ Zoom effect failed: {zoom_err}")
+                        formatted_media_clip = img_clip
+                        temp_paths.append(dest_jpg)
+                        collected_assets_metadata.append({"url": "local_upload", "type": "image", "keyword": "direct_upload"})
+                        clip_added = True
+                elif target_source.startswith("http"):
+                    try:
+                        download_file(target_source, dest_jpg)
+                        if crop_and_format_image(dest_jpg, dest_jpg):
                             img_clip = set_clip_duration(ImageClip(dest_jpg), slot_duration)
-                            # Ken Burns effect
                             try:
                                 img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
                             except Exception as zoom_err:
                                 print(f"⚠️ Zoom effect failed: {zoom_err}")
-                            slot_clips.append(img_clip)
+                            formatted_media_clip = img_clip
                             temp_paths.append(dest_jpg)
-                            collected_assets_metadata.append({"url": "local_upload", "type": "image", "keyword": "direct_upload"})
+                            collected_assets_metadata.append({"url": target_source, "type": "image", "keyword": "direct_url"})
                             clip_added = True
-                    elif target_source.startswith("http"):
-                        try:
-                            download_file(target_source, dest_jpg)
-                            if crop_and_format_image(dest_jpg, dest_jpg):
-                                img_clip = set_clip_duration(ImageClip(dest_jpg), slot_duration)
-                                try:
-                                    img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
-                                except Exception as zoom_err:
-                                    print(f"⚠️ Zoom effect failed: {zoom_err}")
-                                slot_clips.append(img_clip)
-                                temp_paths.append(dest_jpg)
-                                collected_assets_metadata.append({"url": target_source, "type": "image", "keyword": "direct_url"})
-                                clip_added = True
-                        except Exception as e:
-                            print(f"⚠️ Failed to download direct image URL: {e}")
-                
-                # Prioritize Pexels/Pixabay stock videos
-                if not clip_added:
-                    for video_kw in video_kws:
-                        if not video_kw.strip():
-                            continue
-                        video_pool = []
-                        if pexels_api_key:
-                            video_pool.extend(search_pexels_videos(video_kw, pexels_api_key))
-                        if pixabay_api_key:
-                            video_pool.extend(search_pixabay_videos(video_kw, pixabay_api_key))
-                            
-                        # Filter already used
-                        video_pool = [v for v in video_pool if v not in used_urls]
+                    except Exception as e:
+                        print(f"⚠️ Failed to download direct image URL: {e}")
+            
+            # Prioritize Pexels/Pixabay stock videos
+            if not clip_added:
+                for video_kw in video_kws:
+                    if not video_kw.strip():
+                        continue
+                    video_pool = []
+                    if pexels_api_key:
+                        video_pool.extend(search_pexels_videos(video_kw, pexels_api_key))
+                    if pixabay_api_key:
+                        video_pool.extend(search_pixabay_videos(video_kw, pixabay_api_key))
                         
-                        if video_pool:
-                            selected_video_url = video_pool[0]
-                            print(f"Slot {slot_idx}: Downloading unique stock video for '{video_kw}': {selected_video_url}")
-                            temp_mp4 = os.path.join(temp_dir, f"video_s{idx}_p{slot_idx}.mp4")
-                            
-                            try:
-                                download_file(selected_video_url, temp_mp4)
-                                raw_video_clip = VideoFileClip(temp_mp4)
-                                
-                                # Trim video clip to match slot duration
-                                # Strip original audio
-                                raw_video_clip = raw_video_clip.without_audio()
-                                if raw_video_clip.duration < slot_duration:
-                                    loops_needed = int(math.ceil(slot_duration / raw_video_clip.duration))
-                                    timed_clip = concatenate_videoclips([raw_video_clip] * loops_needed).subclip(0, slot_duration)
-                                else:
-                                    timed_clip = raw_video_clip.subclip(0, slot_duration)
-                                    
-                                # Fit-crop to 9:16 portrait
-                                formatted_video_clip = crop_and_resize_video(timed_clip)
-                                slot_clips.append(formatted_video_clip)
-                                
-                                used_urls.add(selected_video_url)
-                                temp_paths.append(temp_mp4)
-                                collected_assets_metadata.append({"scene_idx": idx, "slot_idx": slot_idx, "url": selected_video_url, "type": "video", "keyword": video_kw})
-                                clip_added = True
-                                break
-                            except Exception as e:
-                                print(f"⚠️ Video processing failed for {selected_video_url}: {e}")
-                                
-                # Fallback to Unsplash / Pixabay stock images
-                if not clip_added:
-                    for image_kw in image_kws:
-                        if not image_kw.strip():
-                            continue
-                        image_pool = []
-                        image_pool.extend(scrape_unsplash_images([image_kw], max_images=5))
-                        if pixabay_api_key:
-                            image_pool.extend(search_pixabay_images(image_kw, pixabay_api_key))
-                            
-                        # Filter already used
-                        image_pool = [img for img in image_pool if img not in used_urls]
-                        
-                        if image_pool:
-                            selected_image_url = image_pool[0]
-                            print(f"Slot {slot_idx}: Downloading unique stock image for '{image_kw}': {selected_image_url}")
-                            temp_jpg = os.path.join(temp_dir, f"img_s{idx}_p{slot_idx}.jpg")
-                            
-                            try:
-                                # Append Unsplash resizing parameters for high-res fitting
-                                download_url = selected_image_url
-                                if "unsplash.com" in download_url:
-                                    download_url = download_url + "?w=1080&h=1920&q=85&auto=format&fit=crop"
-                                    
-                                download_file(download_url, temp_jpg)
-                                if crop_and_format_image(temp_jpg, temp_jpg):
-                                    img_clip = set_clip_duration(ImageClip(temp_jpg), slot_duration)
-                                    
-                                    # Alternating Ken Burns zoom-in / zoom-out transitions
-                                    try:
-                                        if (idx + slot_idx) % 2 == 0:
-                                            img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
-                                        else:
-                                            img_clip = img_clip.resize(lambda t: 1.04 - 0.04 * t)
-                                    except Exception as zoom_err:
-                                        print(f"⚠️ Zoom effect failed: {zoom_err}")
-                                        
-                                    slot_clips.append(img_clip)
-                                    used_urls.add(selected_image_url)
-                                    temp_paths.append(temp_jpg)
-                                    collected_assets_metadata.append({"scene_idx": idx, "slot_idx": slot_idx, "url": selected_image_url, "type": "image", "keyword": image_kw})
-                                    clip_added = True
-                                    break
-                                else:
-                                    raise Exception("Image cropping failed")
-                            except Exception as e:
-                                print(f"⚠️ Image processing failed for {selected_image_url}: {e}")
-                        
-                # If still empty, use general fallback Unsplash placeholders
-                if not clip_added:
-                    print("⚠️ No unique search images found. Using fallback category placeholders...")
-                    placeholder_pool = [
-                        f"https://images.unsplash.com/photo-{img_id}" for img_id in [
-                            "1504674900247-0877df9cc836", "1512917774080-9991f1c4c750", 
-                            "1526738549149-8e07eca6c147", "1518770660439-4636190af475",
-                            "1498050108023-c5249f4df085", "1488590528505-98d2b5aba04b"
-                        ]
-                    ]
-                    image_pool = [p for p in placeholder_pool if p not in used_urls]
-                    if not image_pool:
-                        image_pool = placeholder_pool
-                        
-                    selected_image_url = image_pool[0]
-                    print(f"Slot {slot_idx}: Downloading unique stock image: {selected_image_url}")
-                    temp_jpg = os.path.join(temp_dir, f"img_s{idx}_p{slot_idx}.jpg")
+                    # Filter already used
+                    video_pool = [v for v in video_pool if v not in used_urls]
                     
-                    try:
-                        # Append Unsplash resizing parameters for high-res fitting
-                        download_url = selected_image_url
-                        if "unsplash.com" in download_url:
-                            download_url = download_url + "?w=1080&h=1920&q=85&auto=format&fit=crop"
+                    if video_pool:
+                        selected_video_url = video_pool[0]
+                        print(f"Downloading unique stock video for '{video_kw}': {selected_video_url}")
+                        temp_mp4 = os.path.join(temp_dir, f"video_s{idx}.mp4")
+                        
+                        try:
+                            download_file(selected_video_url, temp_mp4)
+                            raw_video_clip = VideoFileClip(temp_mp4)
+                            raw_video_clip = raw_video_clip.without_audio()
+                            if raw_video_clip.duration < slot_duration:
+                                loops_needed = int(math.ceil(slot_duration / raw_video_clip.duration))
+                                timed_clip = concatenate_videoclips([raw_video_clip] * loops_needed).subclip(0, slot_duration)
+                            else:
+                                timed_clip = raw_video_clip.subclip(0, slot_duration)
+                                
+                            formatted_media_clip = crop_and_resize_video(timed_clip)
+                            used_urls.add(selected_video_url)
+                            temp_paths.append(temp_mp4)
+                            collected_assets_metadata.append({"scene_idx": idx, "url": selected_video_url, "type": "video", "keyword": video_kw})
+                            clip_added = True
+                            break
+                        except Exception as e:
+                            print(f"⚠️ Video processing failed for {selected_video_url}: {e}")
                             
-                        download_file(download_url, temp_jpg)
-                        if crop_and_format_image(temp_jpg, temp_jpg):
-                            img_clip = set_clip_duration(ImageClip(temp_jpg), slot_duration)
-                            
-                            # Alternating Ken Burns zoom-in / zoom-out transitions
-                            try:
-                                    if (idx + slot_idx) % 2 == 0:
+            # Fallback to Unsplash / Pixabay stock images
+            if not clip_added:
+                for image_kw in image_kws:
+                    if not image_kw.strip():
+                        continue
+                    image_pool = []
+                    image_pool.extend(scrape_unsplash_images([image_kw], max_images=5))
+                    if pixabay_api_key:
+                        image_pool.extend(search_pixabay_images(image_kw, pixabay_api_key))
+                        
+                    # Filter already used
+                    image_pool = [img for img in image_pool if img not in used_urls]
+                    
+                    if image_pool:
+                        selected_image_url = image_pool[0]
+                        print(f"Downloading unique stock image for '{image_kw}': {selected_image_url}")
+                        temp_jpg = os.path.join(temp_dir, f"img_s{idx}.jpg")
+                        
+                        try:
+                            download_url = selected_image_url
+                            if "unsplash.com" in download_url:
+                                download_url = download_url + "?w=1080&h=1920&q=85&auto=format&fit=crop"
+                                
+                            download_file(download_url, temp_jpg)
+                            if crop_and_format_image(temp_jpg, temp_jpg):
+                                img_clip = set_clip_duration(ImageClip(temp_jpg), slot_duration)
+                                try:
+                                    if idx % 2 == 0:
                                         img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
                                     else:
                                         img_clip = img_clip.resize(lambda t: 1.04 - 0.04 * t)
-                            except Exception as zoom_err:
-                                print(f"⚠️ Zoom effect failed: {zoom_err}")
-                                
-                            slot_clips.append(img_clip)
-                            used_urls.add(selected_image_url)
-                            temp_paths.append(temp_jpg)
-                            collected_assets_metadata.append({"scene_idx": idx, "slot_idx": slot_idx, "url": selected_image_url, "type": "image", "keyword": "fallback"})
-                            clip_added = True
-                        else:
-                            raise Exception("Image cropping failed")
-                    except Exception as e:
-                        print(f"⚠️ Fallback image processing failed for {selected_image_url}: {e}")
+                                except Exception as zoom_err:
+                                    print(f"⚠️ Zoom effect failed: {zoom_err}")
+                                    
+                                formatted_media_clip = img_clip
+                                used_urls.add(selected_image_url)
+                                temp_paths.append(temp_jpg)
+                                collected_assets_metadata.append({"scene_idx": idx, "url": selected_image_url, "type": "image", "keyword": image_kw})
+                                clip_added = True
+                                break
+                            else:
+                                raise Exception("Image cropping failed")
+                        except Exception as e:
+                            print(f"⚠️ Image processing failed for {selected_image_url}: {e}")
+                    
+            # If still empty, use general fallback Unsplash placeholders
+            if not clip_added:
+                print("⚠️ No unique search images found. Using fallback category placeholders...")
+                placeholder_pool = [
+                    f"https://images.unsplash.com/photo-{img_id}" for img_id in [
+                        "1504674900247-0877df9cc836", "1512917774080-9991f1c4c750", 
+                        "1526738549149-8e07eca6c147", "1518770660439-4636190af475",
+                        "1498050108023-c5249f4df085", "1488590528505-98d2b5aba04b"
+                    ]
+                ]
+                image_pool = [p for p in placeholder_pool if p not in used_urls]
+                if not image_pool:
+                    image_pool = placeholder_pool
+                    
+                selected_image_url = image_pool[0]
+                print(f"Downloading unique stock image: {selected_image_url}")
+                temp_jpg = os.path.join(temp_dir, f"img_s{idx}.jpg")
+                
+                try:
+                    download_url = selected_image_url
+                    if "unsplash.com" in download_url:
+                        download_url = download_url + "?w=1080&h=1920&q=85&auto=format&fit=crop"
                         
-                # Ultimate fallback clip (black clip or static placeholder) in case everything failed
-                if not clip_added:
-                    print("⚠️ Ultimate fallback clip generated (black screen).")
-                    dummy_jpg = os.path.join(temp_dir, f"dummy_s{idx}_p{slot_idx}.jpg")
-                    img = Image.new("RGB", (1080, 1920), (18, 18, 18))
-                    img.save(dummy_jpg)
-                    img_clip = set_clip_duration(ImageClip(dummy_jpg), slot_duration)
-                    slot_clips.append(img_clip)
-                    temp_paths.append(dummy_jpg)
-                    collected_assets_metadata.append({"scene_idx": idx, "slot_idx": slot_idx, "url": "ultimate_fallback", "type": "image", "keyword": "fallback"})
+                    download_file(download_url, temp_jpg)
+                    if crop_and_format_image(temp_jpg, temp_jpg):
+                        img_clip = set_clip_duration(ImageClip(temp_jpg), slot_duration)
+                        try:
+                            if idx % 2 == 0:
+                                img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
+                            else:
+                                img_clip = img_clip.resize(lambda t: 1.04 - 0.04 * t)
+                        except Exception as zoom_err:
+                            print(f"⚠️ Zoom effect failed: {zoom_err}")
+                            
+                        formatted_media_clip = img_clip
+                        used_urls.add(selected_image_url)
+                        temp_paths.append(temp_jpg)
+                        collected_assets_metadata.append({"scene_idx": idx, "url": selected_image_url, "type": "image", "keyword": "fallback"})
+                        clip_added = True
+                    else:
+                        raise Exception("Image cropping failed")
+                except Exception as e:
+                    print(f"⚠️ Fallback image processing failed for {selected_image_url}: {e}")
+                    
+            # Ultimate fallback clip (black clip or static placeholder) in case everything failed
+            if not clip_added:
+                print("⚠️ Ultimate fallback clip generated (black screen).")
+                dummy_jpg = os.path.join(temp_dir, f"dummy_s{idx}.jpg")
+                img = Image.new("RGB", (1080, 1920), (18, 18, 18))
+                img.save(dummy_jpg)
+                img_clip = set_clip_duration(ImageClip(dummy_jpg), slot_duration)
+                formatted_media_clip = img_clip
+                temp_paths.append(dummy_jpg)
+                collected_assets_metadata.append({"scene_idx": idx, "url": "ultimate_fallback", "type": "image", "keyword": "fallback"})
+
+            # PIL Subtitle Rendering and Overlaying with Template Style
+            caption_text = scene.get("caption") or scene.get("narration") or ""
+            composite_layers = [formatted_media_clip]
             
-            # Concatenate all slot clips for this scene
-            scene_video_track = concatenate_videoclips(slot_clips, method="compose")
+            # Add template overlay layer if template is not classic
+            if template_style.lower() != "classic" and os.path.exists(template_frame_path):
+                frame_clip = ImageClip(template_frame_path)
+                frame_clip = set_clip_duration(frame_clip, duration)
+                composite_layers.append(frame_clip)
+                
+            if caption_text:
+                try:
+                    sub_img_path = os.path.join(temp_dir, f"subtitle_s{idx}.png")
+                    sub_image = create_subtitle_image(
+                        caption_text, 
+                        font_path=PRETENDARD_FONT_FILE, 
+                        template_style=template_style,
+                        is_hook=(idx == 0) # Scale up opening hook
+                    )
+                    sub_image.save(sub_img_path, "PNG")
+                    
+                    sub_clip = ImageClip(sub_img_path)
+                    sub_clip = set_clip_duration(sub_clip, duration)
+                    composite_layers.append(sub_clip)
+                    temp_paths.append(sub_img_path)
+                except Exception as sub_err:
+                    print(f"⚠️ Subtitle creation failed for Scene {idx+1}: {sub_err}")
             
+            # Composite original video/image with the subtitle & template overlays
+            scene_video_track = CompositeVideoClip(composite_layers)
+
             # Overlay the scene audio track
             scene_full_clip = set_clip_audio(scene_video_track, audio_clip)
             scene_clips.append(scene_full_clip)
@@ -608,7 +833,9 @@ def main():
             codec="libx264",
             audio_codec="aac",
             temp_audiofile=os.path.join(temp_dir, "temp-audio-render.m4a"),
-            remove_temp=True
+            remove_temp=True,
+            preset="ultrafast",
+            threads=os.cpu_count() or 4
         )
         
         # Close all open moviepy handles

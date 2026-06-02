@@ -5,7 +5,7 @@ import path from 'path';
 
 export async function POST(request) {
   try {
-    const { script, image, title } = await request.json();
+    const { script, image, title, templateStyle } = await request.json();
 
     if (!script || !image) {
       return NextResponse.json(
@@ -32,7 +32,8 @@ export async function POST(request) {
     const inputData = {
       script: script,
       image: image,
-      output_path: absoluteOutputPath.replace(/\\/g, '/') // python prefers forward slashes
+      output_path: absoluteOutputPath.replace(/\\/g, '/'), // python prefers forward slashes
+      template_style: templateStyle || 'classic'
     };
 
     fs.writeFileSync(configPath, JSON.stringify(inputData, null, 2), 'utf-8');
