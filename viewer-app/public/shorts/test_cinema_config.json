@@ -1,0 +1,41 @@
+{
+  "cuts": [
+    {
+      "subtitle": "이것은 첫 번째 테스트 컷입니다. 아주 길고 긴 자막이 들어가면 어떻게 될까요?",
+      "camera_movement": "zoom in",
+      "duration": 3,
+      "keywords": "시네마틱",
+      "image_path": ""
+    },
+    {
+      "subtitle": "두 번째 컷은 조금 더 길게 두 줄 또는 세 줄까지 자막을 써서 겹침 테스트를 합니다.",
+      "camera_movement": "zoom out",
+      "duration": 3,
+      "keywords": "스토리",
+      "image_path": ""
+    },
+    {
+      "subtitle": "세 번째 컷의 패닝 연출입니다.",
+      "camera_movement": "panning",
+      "duration": 3,
+      "keywords": "감성",
+      "image_path": ""
+    },
+    {
+      "subtitle": "마지막으로 대단한 결론을 맺습니다.",
+      "camera_movement": "shaking",
+      "duration": 3,
+      "keywords": "엔딩",
+      "image_path": ""
+    }
+  ],
+  "bgm_style": "piano",
+  "bgm_volume": 10,
+  "output_path": "c:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/test_cinema_output.mp4",
+  "template_style": "minimal",
+  "color_preset": "vintage",
+  "caption_style": "hooking",
+  "caption_position": "bottom",
+  "transition_effect": "fade",
+  "voice": "female"
+}

@@ -145,6 +145,17 @@ def calculate_shorts_scores(config):
         norm_views = 100000
         norm_revenue = norm_views * ctr * conv * prod["price"] * comm
         
+        # Calculate PoC Feasibility / Speed to First Sale Score
+        difficulty_multiplier = 1.0
+        if prod["price"] > 100000:
+            difficulty_multiplier = 0.05  # Severe penalty for high-ticket items (long buying decision cycle)
+        elif prod["price"] > 50000:
+            difficulty_multiplier = 0.5   # Moderate penalty
+        elif prod["price"] <= 30000:
+            difficulty_multiplier = 1.5   # Boost for low-ticket impulse buys (perfect for fast PoC)
+            
+        poc_score = ctr * conv * difficulty_multiplier
+        
         scored_combinations.append({
             "topic": prod["topic"],
             "product_name": prod["name"],
@@ -155,12 +166,13 @@ def calculate_shorts_scores(config):
             "base_views": views,
             "expected_revenue": expected_revenue,
             "normalized_revenue_per_100k": norm_revenue,
+            "poc_score": poc_score,
             "competition": prod["competition"],
             "link": prod["link"]
         })
         
-    # Sort by normalized revenue per 100k views (Prioritizing "Revenue Generator" over raw view count)
-    scored_combinations.sort(key=lambda x: x["normalized_revenue_per_100k"], reverse=True)
+    # Sort by poc_score to prioritize the fastest path to first revenue validation
+    scored_combinations.sort(key=lambda x: x["poc_score"], reverse=True)
     return scored_combinations
 
 def simulate_market_trends():
@@ -245,10 +257,9 @@ def main():
     for rank, item in enumerate(scores[:5]):
         report_md += f"| **{rank+1}** | {item['topic']} | {item['product_name']} | {item['price']:,}원 | {item['ctr']*100:.2f}% | {item['conversion_rate']*100:.2f}% | **{int(item['normalized_revenue_per_100k']):,}원** |\n"
         
-    report_md += f"""
-> 💡 **수익화 우선순위 원칙 의사결정**:
-> - 현재 1위인 **{best_item['product_name']}** ({best_item['topic']}) 조합은 10만 뷰만 달성하더라도 **{int(best_item['normalized_revenue_per_100k']):,}원**의 쿠팡 파트너스 수익을 창출합니다. 
-> - 이는 단순 생활꿀팁 주제로 100만 뷰를 기록하고 단가가 낮아 1만 원의 광고비를 얻는 것보다 비즈니스 관점에서 **{int(best_item['normalized_revenue_per_100k'] / 10000)}배 높은 순수익 가치**를 지닙니다.
+    report_md += f"""> 💡 **수익화 우선순위 원칙 의사결정 (PoC 검증 중심)**:
+> - 현재 1위인 **{best_item['product_name']}** ({best_item['topic']}) 조합은 단가가 낮고 충동 구매 확률이 높아 첫 1만 원 수익 발생을 위한 최적의 PoC 모델입니다.
+> - 고가 상품보다 시청자의 저항감이 적어 유입 클릭과 쿠키 확보율이 압도적이며, 24시간 쿠키 전환 효과를 극대화할 수 있습니다.
 
 ---
 

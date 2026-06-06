@@ -5697,7 +5697,7 @@ function readAgentSharedContext(agentId: string, opts?: { lean?: boolean }): str
   const _BUILTIN_TOOLS = new Set(['google_calendar_write', 'google_calendar']);
   const tools = listAgentTools(agentId).filter(t => t.enabled && !_BUILTIN_TOOLS.has(t.name));
   if (tools.length > 0) {
-    ctx += `\n\n[사용 가능한 도구 — <run_command>로 직접 실행 가능]\n` + tools.map(t => {
+    ctx += `\n\n[사용 가능한 도구 — run_command로 직접 실행 가능]\n` + tools.map(t => {
       const cd = `cd "${path.dirname(t.scriptPath)}"`;
       return `- 🛠️ \`${t.name}\` — ${t.description.replace(/\n/g, ' ').slice(0, 140)}\n  실행: <run_command>${cd} && ${_pythonCmd()} ${path.basename(t.scriptPath)}</run_command>\n  설정 파일(API 키 등): ${t.configPath}`;
     }).join('\n');
@@ -5707,10 +5707,10 @@ function readAgentSharedContext(agentId: string, opts?: { lean?: boolean }): str
        LLM은 도구 stdout을 못 봄 — system이 LLM 응답 종료 후 실행하고
        결과는 출력 끝에 append되어 다음 에이전트(peerCtx)와 final report에 흘러감. */
     ctx += `\n\n[🛠️ 도구 사용 규칙 — 반드시 따를 것]\n`
-      + `- 위 도구 중 task에 필요한 게 있고 [실시간 데이터] 섹션에 해당 데이터가 아직 없으면, **답변 어디든** \`<run_command>\` 블록을 출력하세요. 시스템이 LLM 응답 종료 후 실행하고 결과를 출력 끝에 append합니다 (당신은 이 응답에서 stdout 못 봄 — 다음 에이전트와 final report가 활용).\n`
+      + `- 위 도구 중 task에 필요한 게 있고 [실시간 데이터] 섹션에 해당 데이터가 아직 없으면, **답변 어디든** \`run_command\` 블록을 출력하세요. 시스템이 LLM 응답 종료 후 실행하고 결과를 출력 끝에 append합니다 (당신은 이 응답에서 stdout 못 봄 — 다음 에이전트와 final report가 활용).\n`
       + `- 이미 [실시간 데이터] 섹션에 데이터가 자동 주입돼 있으면 그걸 분석에 활용 — 도구 중복 실행 X.\n`
       + `- 데이터 없이 추측·일반론으로 답하는 건 금지. 데이터가 없고 도구도 없으면 솔직히 "데이터 부족으로 분석 보류" + 평가 \`대기\`로.\n`
-      + `- 같은 task에 여러 도구가 도움 되면 \`<run_command>\` 블록을 여러 개 출력해도 됩니다 (시스템이 순차 실행).`;
+      + `- 같은 task에 여러 도구가 도움 되면 \`run_command\` 블록을 여러 개 출력해도 됩니다 (시스템이 순차 실행).`;
   }
   /* Calendar context — if OAuth is connected, tell the agent it can access
      calendar data through the built-in system (no Python script needed).
@@ -15629,6 +15629,18 @@ window.addEventListener('message', e => {
     case 'error': {
       logActivity('⚠️','ceo','<strong>오류:</strong> '+escapeHtml(m.value||''));
       setSending(false);
+      /* v2.89.158 — Reset all agents back to idle on error to prevent monologue loop and stuck animations */
+      setTimeout(() => {
+        Object.keys(deskEls).forEach(id => {
+          setDeskState(id, 'idle');
+          const el = deskEls[id];
+          if (el) {
+            const hx = parseFloat(el.dataset.homeX);
+            const hy = parseFloat(el.dataset.homeY);
+            walkToward(id, hx, hy, 1000);
+          }
+        });
+      }, 1000);
       break;
     }
   }
@@ -20172,6 +20184,18 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                     let cmdMatch: RegExpExecArray | null;
                     while ((cmdMatch = cmdRegex.exec(out)) !== null) {
                         let c = cmdMatch[1].trim();
+                        /* v2.89.159 — Guard against nested/unclosed opening tags in prompts.
+                           If a previous prompt had an unclosed opening tag, the regex matches
+                           across it. Narrow down to the innermost opening tag. */
+                        const lastOpenIdx = Math.max(
+                            c.lastIndexOf('<run_command>'),
+                            c.lastIndexOf('<command>'),
+                            c.lastIndexOf('<bash>'),
+                            c.lastIndexOf('<terminal>')
+                        );
+                        if (lastOpenIdx >= 0) {
+                            c = c.substring(lastOpenIdx).replace(/^<(?:run_command|command|bash|terminal)>/i, '').trim();
+                        }
                         if (c.startsWith('```')) {
                             const lines = c.split('\n');
                             if (lines[0].startsWith('```')) lines.shift();
@@ -21611,6 +21635,18 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         }
         while (!opts?.skipRunCommand && (match = cmdRegex.exec(aiMessage)) !== null) {
             let cmd = match[1].trim();
+            /* v2.89.159 — Guard against nested/unclosed opening tags in prompts.
+               If a previous prompt had an unclosed opening tag, the regex matches
+               across it. Narrow down to the innermost opening tag. */
+            const lastOpenIdx = Math.max(
+                cmd.lastIndexOf('<run_command>'),
+                cmd.lastIndexOf('<command>'),
+                cmd.lastIndexOf('<bash>'),
+                cmd.lastIndexOf('<terminal>')
+            );
+            if (lastOpenIdx >= 0) {
+                cmd = cmd.substring(lastOpenIdx).replace(/^<(?:run_command|command|bash|terminal)>/i, '').trim();
+            }
             // Clean up if AI outputs markdown inside
             if (cmd.startsWith('```')) {
                 const lines = cmd.split('\n');

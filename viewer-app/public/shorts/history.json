@@ -1,0 +1,1062 @@
+[
+  {
+    "id": "1780720148640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780720148640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "맥북 에어 M3 15인치 (AI 런타임 최적)",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780720148640",
+    "commentText": "오늘 영상에서 활약한 [맥북 에어 M3 15인치 (AI 런타임 최적)] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780720148640",
+    "created_at": "2026-06-06T04:29:08.640Z",
+    "scriptData": {
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "cuts": [
+        {
+          "subtitle": "하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?",
+          "description": "모던하고 심플한 작업실 데스크 위, 화면에 코드와 그래프가 띄워진 고급 맥북 에어 노트북이 열려 있고 은은한 조명이 비추는 뷰",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, modern minimalist workspace, premium sleek space gray laptop open on desk, screen showing code, warm dramatic lighting",
+          "keywords": "AI 자동화",
+          "duration": 5
+        },
+        {
+          "subtitle": "고성능 컴퓨터가 없어도 맥북 에어 M3 하나면 완벽하게 가동됩니다.",
+          "description": "맥북 알루미늄 키보드 위에서 타이핑하는 손과 모니터에서 차트가 역동적으로 계산되는 클로즈업 뷰",
+          "prompt": "Cinematic close-up, photorealistic, typing on aluminum laptop keyboard, neon glow reflecting on fingers, screen showing fast processing charts",
+          "keywords": "맥북 에어 M3",
+          "duration": 5
+        },
+        {
+          "subtitle": "M3 칩의 강력한 뉴럴 엔진이 나만의 AI 에이전트를 초고속으로 기동시킵니다.",
+          "description": "파란색과 보라색 전류가 흐르며 빛나는 입체적인 미래형 뉴럴 AI 마이크로칩 회로도",
+          "prompt": "Abstract high-tech microchip glowing with blue and violet energy lines, circuit board, futuristic, 8k resolution, cinematic lighting",
+          "keywords": "뉴럴 엔진",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 가장 합리적인 M3 맥북으로 AI 부업을 개시해 보세요. 댓글 링크 확인!",
+          "description": "따뜻한 햇살이 들어오는 카페 창가에서 노트북 화면을 보며 미소 짓고 있는 젊은 1인 창업가의 행복한 포트레이트",
+          "prompt": "Cinematic portrait, young entrepreneur smiling, looking at laptop screen in cozy warm cafe, soft sunset light filtering through window, photorealistic, 8k",
+          "keywords": "부업 시작",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "맥북 M3",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 65,
+        "scriptContent": 70,
+        "sceneVisuals": 60,
+        "subtitleAesthetics": 65,
+        "soundDesign": 70
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 다소 약하며 보완이 요구됨.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 설명 위주로 템포가 처짐.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 6200,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": false
+  },
+  {
+    "id": "1780633748640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780633748640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "정관장 홍삼정 에브리타임",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780633748640",
+    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780633748640",
+    "created_at": "2026-06-05T04:29:08.640Z",
+    "scriptData": {
+      "title": "피로회복 끝판왕 홍삼정 추천",
+      "cuts": [
+        {
+          "subtitle": "매일 아침 피곤하고 지치는 직장인들 필독하세요!",
+          "description": "피곤해 지쳐 모니터 앞에서 하품하는 남성의 모습, 모던 데스크 조명",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, tired young businessman yawning in office front of computer, dramatic side lighting, warm colors",
+          "keywords": "피로회복",
+          "duration": 5
+        },
+        {
+          "subtitle": "가장 간편하게 활력을 충전하는 법, 바로 홍삼정 에브리타임입니다.",
+          "description": "홍삼 스틱 패키지가 데스크 위에 놓여 있는 깔끔한 연출",
+          "prompt": "Cinematic close-up, photorealistic, premium red ginseng extract stick on table, soft clean background, vertical framing",
+          "keywords": "활력충전",
+          "duration": 5
+        },
+        {
+          "subtitle": "6년근 홍삼 농축액이 면역력 증진과 피로 개선에 탁월한 효과를 줍니다.",
+          "description": "홍삼 한 스푼이 부드럽게 꿀물처럼 흘러내리는 건강미 넘치는 클로즈업",
+          "prompt": "Macro shot of rich brown viscous healthy ginseng extract dripping down slowly, golden light, organic luxury concept, 8k",
+          "keywords": "면역력",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 지친 나를 위한 에너지 충전, 고정댓글 링크를 확인하세요!",
+          "description": "아침 햇살 아래 활기찬 표정으로 커피숍에서 활짝 웃는 건강한 직장인",
+          "prompt": "Cinematic portrait, happy healthy korean worker smiling, glowing energetic skin, bright morning sun, 8k resolution, vertical format",
+          "keywords": "에너지충전",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "정관장 홍삼",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 67,
+        "scriptContent": 71,
+        "sceneVisuals": 62,
+        "subtitleAesthetics": 66,
+        "soundDesign": 71
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 다소 약하며 보완이 요구됨.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 설명 위주로 템포가 처짐.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '매일 아침 피곤하고 지치는 직장인들 필독하세요!' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 6360,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780547348640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780547348640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "AI 부업 전자책 마스터북",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780547348640",
+    "commentText": "오늘 영상에서 활약한 [AI 부업 전자책 마스터북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780547348640",
+    "created_at": "2026-06-04T04:29:08.640Z",
+    "scriptData": {
+      "title": "노트북 하나로 월 100만원 버는 법",
+      "cuts": [
+        {
+          "subtitle": "퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.",
+          "description": "어두운 방 안, 모던한 스탠드 조명 아래 아늑한 데스크 위 노트북 화면이 켜져 있는 구도",
+          "prompt": "Professional commercial photography, cozy dark room with a warm desk lamp lighting a modern laptop, screen glowing, highly aesthetic, minimalist composition, 8k",
+          "keywords": "방구석 부업",
+          "duration": 5
+        },
+        {
+          "subtitle": "특별한 기술 없이도 AI 마스터북 하나면 바로 수익 자동화가 가능합니다.",
+          "description": "태블릿이나 노트북 화면에 세련된 디자인의 이북(e-book) 표지가 보이는 클로즈업 뷰",
+          "prompt": "Professional product photography, modern tablet showing an elegant e-book cover design on a clean wooden table, shallow depth of field, soft studio lighting, f/1.8, 8k",
+          "keywords": "AI 마스터북",
+          "duration": 5
+        },
+        {
+          "subtitle": "대기업 직장인들이 남몰래 하는 AI 부업 치트키, 지금 공개합니다.",
+          "description": "카페 창가에서 여유롭게 커피를 마시며 미소 짓는 직장인의 클로즈업 뷰",
+          "prompt": "Professional lifestyle portrait, young professional smiling holding a coffee cup next to a laptop in a bright cafe, soft natural light, depth of field, 8k",
+          "keywords": "부업 치트키",
+          "duration": 5
+        },
+        {
+          "subtitle": "월 100만원 파이프라인 만드는 전자책 정보, 고정 댓글 링크를 확인하세요!",
+          "description": "햇살이 드는 아늑한 거실 테이블에 커피와 태블릿이 놓여 있는 모던하고 행복한 분위기",
+          "prompt": "Professional interior photography, bright modern living room table with coffee and tablet showing clean UI, warm morning sunlight, vertical framing, 8k",
+          "keywords": "고정댓글 링크",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "전자책 부업",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 70,
+        "scriptContent": 73,
+        "sceneVisuals": 64,
+        "subtitleAesthetics": 68,
+        "soundDesign": 72
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 다소 약하며 보완이 요구됨.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 설명 위주로 템포가 처짐.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 6600,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780460948640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780460948640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "맥북 에어 M3 15인치 (AI 런타임 최적)",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780460948640",
+    "commentText": "오늘 영상에서 활약한 [맥북 에어 M3 15인치 (AI 런타임 최적)] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780460948640",
+    "created_at": "2026-06-03T04:29:08.640Z",
+    "scriptData": {
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "cuts": [
+        {
+          "subtitle": "하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?",
+          "description": "모던하고 심플한 작업실 데스크 위, 화면에 코드와 그래프가 띄워진 고급 맥북 에어 노트북이 열려 있고 은은한 조명이 비추는 뷰",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, modern minimalist workspace, premium sleek space gray laptop open on desk, screen showing code, warm dramatic lighting",
+          "keywords": "AI 자동화",
+          "duration": 5
+        },
+        {
+          "subtitle": "고성능 컴퓨터가 없어도 맥북 에어 M3 하나면 완벽하게 가동됩니다.",
+          "description": "맥북 알루미늄 키보드 위에서 타이핑하는 손과 모니터에서 차트가 역동적으로 계산되는 클로즈업 뷰",
+          "prompt": "Cinematic close-up, photorealistic, typing on aluminum laptop keyboard, neon glow reflecting on fingers, screen showing fast processing charts",
+          "keywords": "맥북 에어 M3",
+          "duration": 5
+        },
+        {
+          "subtitle": "M3 칩의 강력한 뉴럴 엔진이 나만의 AI 에이전트를 초고속으로 기동시킵니다.",
+          "description": "파란색과 보라색 전류가 흐르며 빛나는 입체적인 미래형 뉴럴 AI 마이크로칩 회로도",
+          "prompt": "Abstract high-tech microchip glowing with blue and violet energy lines, circuit board, futuristic, 8k resolution, cinematic lighting",
+          "keywords": "뉴럴 엔진",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 가장 합리적인 M3 맥북으로 AI 부업을 개시해 보세요. 댓글 링크 확인!",
+          "description": "따뜻한 햇살이 들어오는 카페 창가에서 노트북 화면을 보며 미소 짓고 있는 젊은 1인 창업가의 행복한 포트레이트",
+          "prompt": "Cinematic portrait, young entrepreneur smiling, looking at laptop screen in cozy warm cafe, soft sunset light filtering through window, photorealistic, 8k",
+          "keywords": "부업 시작",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "맥북 M3",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 72,
+        "scriptContent": 75,
+        "sceneVisuals": 66,
+        "subtitleAesthetics": 69,
+        "soundDesign": 73
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 다소 약하며 보완이 요구됨.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 설명 위주로 템포가 처짐.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 6760,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780374548640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780374548640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "정관장 홍삼정 에브리타임",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780374548640",
+    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780374548640",
+    "created_at": "2026-06-02T04:29:08.640Z",
+    "scriptData": {
+      "title": "피로회복 끝판왕 홍삼정 추천",
+      "cuts": [
+        {
+          "subtitle": "매일 아침 피곤하고 지치는 직장인들 필독하세요!",
+          "description": "피곤해 지쳐 모니터 앞에서 하품하는 남성의 모습, 모던 데스크 조명",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, tired young businessman yawning in office front of computer, dramatic side lighting, warm colors",
+          "keywords": "피로회복",
+          "duration": 5
+        },
+        {
+          "subtitle": "가장 간편하게 활력을 충전하는 법, 바로 홍삼정 에브리타임입니다.",
+          "description": "홍삼 스틱 패키지가 데스크 위에 놓여 있는 깔끔한 연출",
+          "prompt": "Cinematic close-up, photorealistic, premium red ginseng extract stick on table, soft clean background, vertical framing",
+          "keywords": "활력충전",
+          "duration": 5
+        },
+        {
+          "subtitle": "6년근 홍삼 농축액이 면역력 증진과 피로 개선에 탁월한 효과를 줍니다.",
+          "description": "홍삼 한 스푼이 부드럽게 꿀물처럼 흘러내리는 건강미 넘치는 클로즈업",
+          "prompt": "Macro shot of rich brown viscous healthy ginseng extract dripping down slowly, golden light, organic luxury concept, 8k",
+          "keywords": "면역력",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 지친 나를 위한 에너지 충전, 고정댓글 링크를 확인하세요!",
+          "description": "아침 햇살 아래 활기찬 표정으로 커피숍에서 활짝 웃는 건강한 직장인",
+          "prompt": "Cinematic portrait, happy healthy korean worker smiling, glowing energetic skin, bright morning sun, 8k resolution, vertical format",
+          "keywords": "에너지충전",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "정관장 홍삼",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 75,
+        "scriptContent": 77,
+        "sceneVisuals": 68,
+        "subtitleAesthetics": 71,
+        "soundDesign": 74
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 다소 약하며 보완이 요구됨.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 설명 위주로 템포가 처짐.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '매일 아침 피곤하고 지치는 직장인들 필독하세요!' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 7000,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 2337,
+      "likeRate": 3.1,
+      "commentCount": 4,
+      "avgRetention": 42,
+      "evaluated_at": "2026-06-02T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,337회\n- **성과 요약**: 사전 예측한 후킹 점수(75점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "successFactors": "BGM 매칭은 적절했음.",
+      "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+      "answers": {
+        "q1_hook_stop": "첫 자막이 지루하여 멈추지 못하고 이탈함",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 2,337회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 2337,
+    "likeRate": 3.1,
+    "commentCount": 4,
+    "avgRetention": 42,
+    "successFactors": "BGM 매칭은 적절했음.",
+    "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780288148640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780288148640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "AI 부업 전자책 마스터북",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780288148640",
+    "commentText": "오늘 영상에서 활약한 [AI 부업 전자책 마스터북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780288148640",
+    "created_at": "2026-06-01T04:29:08.640Z",
+    "scriptData": {
+      "title": "노트북 하나로 월 100만원 버는 법",
+      "cuts": [
+        {
+          "subtitle": "퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.",
+          "description": "어두운 방 안, 모던한 스탠드 조명 아래 아늑한 데스크 위 노트북 화면이 켜져 있는 구도",
+          "prompt": "Professional commercial photography, cozy dark room with a warm desk lamp lighting a modern laptop, screen glowing, highly aesthetic, minimalist composition, 8k",
+          "keywords": "방구석 부업",
+          "duration": 5
+        },
+        {
+          "subtitle": "특별한 기술 없이도 AI 마스터북 하나면 바로 수익 자동화가 가능합니다.",
+          "description": "태블릿이나 노트북 화면에 세련된 디자인의 이북(e-book) 표지가 보이는 클로즈업 뷰",
+          "prompt": "Professional product photography, modern tablet showing an elegant e-book cover design on a clean wooden table, shallow depth of field, soft studio lighting, f/1.8, 8k",
+          "keywords": "AI 마스터북",
+          "duration": 5
+        },
+        {
+          "subtitle": "대기업 직장인들이 남몰래 하는 AI 부업 치트키, 지금 공개합니다.",
+          "description": "카페 창가에서 여유롭게 커피를 마시며 미소 짓는 직장인의 클로즈업 뷰",
+          "prompt": "Professional lifestyle portrait, young professional smiling holding a coffee cup next to a laptop in a bright cafe, soft natural light, depth of field, 8k",
+          "keywords": "부업 치트키",
+          "duration": 5
+        },
+        {
+          "subtitle": "월 100만원 파이프라인 만드는 전자책 정보, 고정 댓글 링크를 확인하세요!",
+          "description": "햇살이 드는 아늑한 거실 테이블에 커피와 태블릿이 놓여 있는 모던하고 행복한 분위기",
+          "prompt": "Professional interior photography, bright modern living room table with coffee and tablet showing clean UI, warm morning sunlight, vertical framing, 8k",
+          "keywords": "고정댓글 링크",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "전자책 부업",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 77,
+        "scriptContent": 79,
+        "sceneVisuals": 70,
+        "subtitleAesthetics": 72,
+        "soundDesign": 76
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 다소 약하며 보완이 요구됨.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 설명 위주로 템포가 처짐.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 7160,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 652,
+      "likeRate": 3.6,
+      "commentCount": 1,
+      "avgRetention": 46,
+      "evaluated_at": "2026-06-01T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 652회\n- **성과 요약**: 사전 예측한 후킹 점수(77점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "successFactors": "BGM 매칭은 적절했음.",
+      "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+      "answers": {
+        "q1_hook_stop": "첫 자막이 지루하여 멈추지 못하고 이탈함",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 652회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 652,
+    "likeRate": 3.6,
+    "commentCount": 1,
+    "avgRetention": 46,
+    "successFactors": "BGM 매칭은 적절했음.",
+    "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780201748640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780201748640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "맥북 에어 M3 15인치 (AI 런타임 최적)",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780201748640",
+    "commentText": "오늘 영상에서 활약한 [맥북 에어 M3 15인치 (AI 런타임 최적)] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780201748640",
+    "created_at": "2026-05-31T04:29:08.640Z",
+    "scriptData": {
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "cuts": [
+        {
+          "subtitle": "하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?",
+          "description": "모던하고 심플한 작업실 데스크 위, 화면에 코드와 그래프가 띄워진 고급 맥북 에어 노트북이 열려 있고 은은한 조명이 비추는 뷰",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, modern minimalist workspace, premium sleek space gray laptop open on desk, screen showing code, warm dramatic lighting",
+          "keywords": "AI 자동화",
+          "duration": 5
+        },
+        {
+          "subtitle": "고성능 컴퓨터가 없어도 맥북 에어 M3 하나면 완벽하게 가동됩니다.",
+          "description": "맥북 알루미늄 키보드 위에서 타이핑하는 손과 모니터에서 차트가 역동적으로 계산되는 클로즈업 뷰",
+          "prompt": "Cinematic close-up, photorealistic, typing on aluminum laptop keyboard, neon glow reflecting on fingers, screen showing fast processing charts",
+          "keywords": "맥북 에어 M3",
+          "duration": 5
+        },
+        {
+          "subtitle": "M3 칩의 강력한 뉴럴 엔진이 나만의 AI 에이전트를 초고속으로 기동시킵니다.",
+          "description": "파란색과 보라색 전류가 흐르며 빛나는 입체적인 미래형 뉴럴 AI 마이크로칩 회로도",
+          "prompt": "Abstract high-tech microchip glowing with blue and violet energy lines, circuit board, futuristic, 8k resolution, cinematic lighting",
+          "keywords": "뉴럴 엔진",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 가장 합리적인 M3 맥북으로 AI 부업을 개시해 보세요. 댓글 링크 확인!",
+          "description": "따뜻한 햇살이 들어오는 카페 창가에서 노트북 화면을 보며 미소 짓고 있는 젊은 1인 창업가의 행복한 포트레이트",
+          "prompt": "Cinematic portrait, young entrepreneur smiling, looking at laptop screen in cozy warm cafe, soft sunset light filtering through window, photorealistic, 8k",
+          "keywords": "부업 시작",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "맥북 M3",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 80,
+        "scriptContent": 80,
+        "sceneVisuals": 72,
+        "subtitleAesthetics": 74,
+        "soundDesign": 77
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 아주 훌륭함.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 아주 자연스럽고 부드러움.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 7400,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 15940,
+      "likeRate": 9.6,
+      "commentCount": 127,
+      "avgRetention": 78,
+      "evaluated_at": "2026-05-31T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 15,940회\n- **성과 요약**: 사전 예측한 후킹 점수(80점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
+      "failureFactors": "없음",
+      "answers": {
+        "q1_hook_stop": "도입부의 파이프라인/비밀 카피가 시청자를 잡아둠",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 15,940회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 15940,
+    "likeRate": 9.6,
+    "commentCount": 127,
+    "avgRetention": 78,
+    "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
+    "failureFactors": "없음",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780115348640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780115348640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "정관장 홍삼정 에브리타임",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780115348640",
+    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780115348640",
+    "created_at": "2026-05-30T04:29:08.640Z",
+    "scriptData": {
+      "title": "피로회복 끝판왕 홍삼정 추천",
+      "cuts": [
+        {
+          "subtitle": "매일 아침 피곤하고 지치는 직장인들 필독하세요!",
+          "description": "피곤해 지쳐 모니터 앞에서 하품하는 남성의 모습, 모던 데스크 조명",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, tired young businessman yawning in office front of computer, dramatic side lighting, warm colors",
+          "keywords": "피로회복",
+          "duration": 5
+        },
+        {
+          "subtitle": "가장 간편하게 활력을 충전하는 법, 바로 홍삼정 에브리타임입니다.",
+          "description": "홍삼 스틱 패키지가 데스크 위에 놓여 있는 깔끔한 연출",
+          "prompt": "Cinematic close-up, photorealistic, premium red ginseng extract stick on table, soft clean background, vertical framing",
+          "keywords": "활력충전",
+          "duration": 5
+        },
+        {
+          "subtitle": "6년근 홍삼 농축액이 면역력 증진과 피로 개선에 탁월한 효과를 줍니다.",
+          "description": "홍삼 한 스푼이 부드럽게 꿀물처럼 흘러내리는 건강미 넘치는 클로즈업",
+          "prompt": "Macro shot of rich brown viscous healthy ginseng extract dripping down slowly, golden light, organic luxury concept, 8k",
+          "keywords": "면역력",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 지친 나를 위한 에너지 충전, 고정댓글 링크를 확인하세요!",
+          "description": "아침 햇살 아래 활기찬 표정으로 커피숍에서 활짝 웃는 건강한 직장인",
+          "prompt": "Cinematic portrait, happy healthy korean worker smiling, glowing energetic skin, bright morning sun, 8k resolution, vertical format",
+          "keywords": "에너지충전",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "정관장 홍삼",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 82,
+        "scriptContent": 82,
+        "sceneVisuals": 74,
+        "subtitleAesthetics": 75,
+        "soundDesign": 78
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 아주 훌륭함.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 아주 자연스럽고 부드러움.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '매일 아침 피곤하고 지치는 직장인들 필독하세요!' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 7560,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 2050,
+      "likeRate": 2.9,
+      "commentCount": 4,
+      "avgRetention": 26,
+      "evaluated_at": "2026-05-30T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,050회\n- **성과 요약**: 사전 예측한 후킹 점수(82점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "successFactors": "BGM 매칭은 적절했음.",
+      "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+      "answers": {
+        "q1_hook_stop": "첫 자막이 지루하여 멈추지 못하고 이탈함",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 2,050회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 2050,
+    "likeRate": 2.9,
+    "commentCount": 4,
+    "avgRetention": 26,
+    "successFactors": "BGM 매칭은 적절했음.",
+    "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1780028948640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1780028948640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "AI 부업 전자책 마스터북",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780028948640",
+    "commentText": "오늘 영상에서 활약한 [AI 부업 전자책 마스터북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780028948640",
+    "created_at": "2026-05-29T04:29:08.640Z",
+    "scriptData": {
+      "title": "노트북 하나로 월 100만원 버는 법",
+      "cuts": [
+        {
+          "subtitle": "퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.",
+          "description": "어두운 방 안, 모던한 스탠드 조명 아래 아늑한 데스크 위 노트북 화면이 켜져 있는 구도",
+          "prompt": "Professional commercial photography, cozy dark room with a warm desk lamp lighting a modern laptop, screen glowing, highly aesthetic, minimalist composition, 8k",
+          "keywords": "방구석 부업",
+          "duration": 5
+        },
+        {
+          "subtitle": "특별한 기술 없이도 AI 마스터북 하나면 바로 수익 자동화가 가능합니다.",
+          "description": "태블릿이나 노트북 화면에 세련된 디자인의 이북(e-book) 표지가 보이는 클로즈업 뷰",
+          "prompt": "Professional product photography, modern tablet showing an elegant e-book cover design on a clean wooden table, shallow depth of field, soft studio lighting, f/1.8, 8k",
+          "keywords": "AI 마스터북",
+          "duration": 5
+        },
+        {
+          "subtitle": "대기업 직장인들이 남몰래 하는 AI 부업 치트키, 지금 공개합니다.",
+          "description": "카페 창가에서 여유롭게 커피를 마시며 미소 짓는 직장인의 클로즈업 뷰",
+          "prompt": "Professional lifestyle portrait, young professional smiling holding a coffee cup next to a laptop in a bright cafe, soft natural light, depth of field, 8k",
+          "keywords": "부업 치트키",
+          "duration": 5
+        },
+        {
+          "subtitle": "월 100만원 파이프라인 만드는 전자책 정보, 고정 댓글 링크를 확인하세요!",
+          "description": "햇살이 드는 아늑한 거실 테이블에 커피와 태블릿이 놓여 있는 모던하고 행복한 분위기",
+          "prompt": "Professional interior photography, bright modern living room table with coffee and tablet showing clean UI, warm morning sunlight, vertical framing, 8k",
+          "keywords": "고정댓글 링크",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "전자책 부업",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 84,
+        "sceneVisuals": 76,
+        "subtitleAesthetics": 77,
+        "soundDesign": 79
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 아주 훌륭함.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 아주 자연스럽고 부드러움.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 평범한 사운드로 평이함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 7800,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 2721,
+      "likeRate": 3.4,
+      "commentCount": 5,
+      "avgRetention": 34,
+      "evaluated_at": "2026-05-29T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,721회\n- **성과 요약**: 사전 예측한 후킹 점수(85점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "successFactors": "BGM 매칭은 적절했음.",
+      "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+      "answers": {
+        "q1_hook_stop": "첫 자막이 지루하여 멈추지 못하고 이탈함",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 2,721회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 2721,
+    "likeRate": 3.4,
+    "commentCount": 5,
+    "avgRetention": 34,
+    "successFactors": "BGM 매칭은 적절했음.",
+    "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1779942548640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1779942548640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "맥북 에어 M3 15인치 (AI 런타임 최적)",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779942548640",
+    "commentText": "오늘 영상에서 활약한 [맥북 에어 M3 15인치 (AI 런타임 최적)] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779942548640",
+    "created_at": "2026-05-28T04:29:08.640Z",
+    "scriptData": {
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "cuts": [
+        {
+          "subtitle": "하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?",
+          "description": "모던하고 심플한 작업실 데스크 위, 화면에 코드와 그래프가 띄워진 고급 맥북 에어 노트북이 열려 있고 은은한 조명이 비추는 뷰",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, modern minimalist workspace, premium sleek space gray laptop open on desk, screen showing code, warm dramatic lighting",
+          "keywords": "AI 자동화",
+          "duration": 5
+        },
+        {
+          "subtitle": "고성능 컴퓨터가 없어도 맥북 에어 M3 하나면 완벽하게 가동됩니다.",
+          "description": "맥북 알루미늄 키보드 위에서 타이핑하는 손과 모니터에서 차트가 역동적으로 계산되는 클로즈업 뷰",
+          "prompt": "Cinematic close-up, photorealistic, typing on aluminum laptop keyboard, neon glow reflecting on fingers, screen showing fast processing charts",
+          "keywords": "맥북 에어 M3",
+          "duration": 5
+        },
+        {
+          "subtitle": "M3 칩의 강력한 뉴럴 엔진이 나만의 AI 에이전트를 초고속으로 기동시킵니다.",
+          "description": "파란색과 보라색 전류가 흐르며 빛나는 입체적인 미래형 뉴럴 AI 마이크로칩 회로도",
+          "prompt": "Abstract high-tech microchip glowing with blue and violet energy lines, circuit board, futuristic, 8k resolution, cinematic lighting",
+          "keywords": "뉴럴 엔진",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 가장 합리적인 M3 맥북으로 AI 부업을 개시해 보세요. 댓글 링크 확인!",
+          "description": "따뜻한 햇살이 들어오는 카페 창가에서 노트북 화면을 보며 미소 짓고 있는 젊은 1인 창업가의 행복한 포트레이트",
+          "prompt": "Cinematic portrait, young entrepreneur smiling, looking at laptop screen in cozy warm cafe, soft sunset light filtering through window, photorealistic, 8k",
+          "keywords": "부업 시작",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "맥북 M3",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 87,
+        "scriptContent": 86,
+        "sceneVisuals": 78,
+        "subtitleAesthetics": 78,
+        "soundDesign": 80
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 아주 훌륭함.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 아주 자연스럽고 부드러움.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 평이하고 대조가 부족함.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 글자 수가 길어 가독성 저하됨.",
+        "soundDesign": "BGM 매칭이 작품의 긴장감 형성에 아주 적합함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 7960,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 65766,
+      "likeRate": 10.6,
+      "commentCount": 526,
+      "avgRetention": 80,
+      "evaluated_at": "2026-05-28T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 65,766회\n- **성과 요약**: 사전 예측한 후킹 점수(87점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
+      "failureFactors": "없음",
+      "answers": {
+        "q1_hook_stop": "도입부의 파이프라인/비밀 카피가 시청자를 잡아둠",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 65,766회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 65766,
+    "likeRate": 10.6,
+    "commentCount": 526,
+    "avgRetention": 80,
+    "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
+    "failureFactors": "없음",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1779856148640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1779856148640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "정관장 홍삼정 에브리타임",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779856148640",
+    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779856148640",
+    "created_at": "2026-05-27T04:29:08.640Z",
+    "scriptData": {
+      "title": "피로회복 끝판왕 홍삼정 추천",
+      "cuts": [
+        {
+          "subtitle": "매일 아침 피곤하고 지치는 직장인들 필독하세요!",
+          "description": "피곤해 지쳐 모니터 앞에서 하품하는 남성의 모습, 모던 데스크 조명",
+          "prompt": "Cinematic vertical photo, photorealistic, 8k, tired young businessman yawning in office front of computer, dramatic side lighting, warm colors",
+          "keywords": "피로회복",
+          "duration": 5
+        },
+        {
+          "subtitle": "가장 간편하게 활력을 충전하는 법, 바로 홍삼정 에브리타임입니다.",
+          "description": "홍삼 스틱 패키지가 데스크 위에 놓여 있는 깔끔한 연출",
+          "prompt": "Cinematic close-up, photorealistic, premium red ginseng extract stick on table, soft clean background, vertical framing",
+          "keywords": "활력충전",
+          "duration": 5
+        },
+        {
+          "subtitle": "6년근 홍삼 농축액이 면역력 증진과 피로 개선에 탁월한 효과를 줍니다.",
+          "description": "홍삼 한 스푼이 부드럽게 꿀물처럼 흘러내리는 건강미 넘치는 클로즈업",
+          "prompt": "Macro shot of rich brown viscous healthy ginseng extract dripping down slowly, golden light, organic luxury concept, 8k",
+          "keywords": "면역력",
+          "duration": 5
+        },
+        {
+          "subtitle": "지금 지친 나를 위한 에너지 충전, 고정댓글 링크를 확인하세요!",
+          "description": "아침 햇살 아래 활기찬 표정으로 커피숍에서 활짝 웃는 건강한 직장인",
+          "prompt": "Cinematic portrait, happy healthy korean worker smiling, glowing energetic skin, bright morning sun, 8k resolution, vertical format",
+          "keywords": "에너지충전",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "정관장 홍삼",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 90,
+        "scriptContent": 88,
+        "sceneVisuals": 81,
+        "subtitleAesthetics": 80,
+        "soundDesign": 82
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 아주 훌륭함.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 아주 자연스럽고 부드러움.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 시각적으로 극적이고 매력적임.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 매우 양호함.",
+        "soundDesign": "BGM 매칭이 작품의 긴장감 형성에 아주 적합함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '매일 아침 피곤하고 지치는 직장인들 필독하세요!' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 8200,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 2018,
+      "likeRate": 2.7,
+      "commentCount": 4,
+      "avgRetention": 39,
+      "evaluated_at": "2026-05-27T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,018회\n- **성과 요약**: 사전 예측한 후킹 점수(90점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "successFactors": "BGM 매칭은 적절했음.",
+      "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+      "answers": {
+        "q1_hook_stop": "첫 자막이 지루하여 멈추지 못하고 이탈함",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 2,018회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 2018,
+    "likeRate": 2.7,
+    "commentCount": 4,
+    "avgRetention": 39,
+    "successFactors": "BGM 매칭은 적절했음.",
+    "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+    "selfImprovementApplied": true
+  },
+  {
+    "id": "1779769748640",
+    "videoUrl": "/shorts/test_video_output.mp4",
+    "youtubeVideoId": "MOCK_YT_1779769748640",
+    "isMockUpload": true,
+    "uploadMessage": "시뮬레이션 업로드 완료",
+    "productTitle": "AI 부업 전자책 마스터북",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779769748640",
+    "commentText": "오늘 영상에서 활약한 [AI 부업 전자책 마스터북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779769748640",
+    "created_at": "2026-05-26T04:29:08.640Z",
+    "scriptData": {
+      "title": "노트북 하나로 월 100만원 버는 법",
+      "cuts": [
+        {
+          "subtitle": "퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.",
+          "description": "어두운 방 안, 모던한 스탠드 조명 아래 아늑한 데스크 위 노트북 화면이 켜져 있는 구도",
+          "prompt": "Professional commercial photography, cozy dark room with a warm desk lamp lighting a modern laptop, screen glowing, highly aesthetic, minimalist composition, 8k",
+          "keywords": "방구석 부업",
+          "duration": 5
+        },
+        {
+          "subtitle": "특별한 기술 없이도 AI 마스터북 하나면 바로 수익 자동화가 가능합니다.",
+          "description": "태블릿이나 노트북 화면에 세련된 디자인의 이북(e-book) 표지가 보이는 클로즈업 뷰",
+          "prompt": "Professional product photography, modern tablet showing an elegant e-book cover design on a clean wooden table, shallow depth of field, soft studio lighting, f/1.8, 8k",
+          "keywords": "AI 마스터북",
+          "duration": 5
+        },
+        {
+          "subtitle": "대기업 직장인들이 남몰래 하는 AI 부업 치트키, 지금 공개합니다.",
+          "description": "카페 창가에서 여유롭게 커피를 마시며 미소 짓는 직장인의 클로즈업 뷰",
+          "prompt": "Professional lifestyle portrait, young professional smiling holding a coffee cup next to a laptop in a bright cafe, soft natural light, depth of field, 8k",
+          "keywords": "부업 치트키",
+          "duration": 5
+        },
+        {
+          "subtitle": "월 100만원 파이프라인 만드는 전자책 정보, 고정 댓글 링크를 확인하세요!",
+          "description": "햇살이 드는 아늑한 거실 테이블에 커피와 태블릿이 놓여 있는 모던하고 행복한 분위기",
+          "prompt": "Professional interior photography, bright modern living room table with coffee and tablet showing clean UI, warm morning sunlight, vertical framing, 8k",
+          "keywords": "고정댓글 링크",
+          "duration": 5
+        }
+      ]
+    },
+    "topic": "전자책 부업",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 92,
+        "scriptContent": 89,
+        "sceneVisuals": 83,
+        "subtitleAesthetics": 81,
+        "soundDesign": 83
+      },
+      "evaluations": {
+        "hookStrength": "도입부 컷의 문장과 연출이 호기심을 유발하기에 아주 훌륭함.",
+        "scriptContent": "대본의 논리 구조와 정보전달력이 아주 자연스럽고 부드러움.",
+        "sceneVisuals": "장면 연출 설명 및 이미지 프롬프트 상태가 시각적으로 극적이고 매력적임.",
+        "subtitleAesthetics": "모바일 최적화 자막 위치와 가독성이 매우 양호함.",
+        "soundDesign": "BGM 매칭이 작품의 긴장감 형성에 아주 적합함."
+      },
+      "answers": {
+        "q1_hook_stop": "도입부의 '퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.' 질문이 타겟 유저의 문제 인식을 자극하여 스크롤을 멈춤.",
+        "q2_dropoff": "2번째 컷 설명 조에서 다소 흐름이 늘어나 템포 저하로 시청자 이탈 우려 있음.",
+        "q3_diff_from_viral": "1. 평균 컷 전환 길이(우리 5초 vs 인기 2.5초)\n2. 자막 강조 이모지 및 색상 차이\n3. 초반 이미지 연출의 인물 클로즈업 부족.",
+        "q4_must_fix": "첫 번째 컷의 도입부 후킹 문장을 단조로운 설명에서 질문형/충격제시형으로 개정할 것.",
+        "q5_expected_views": 8360,
+        "q6_multiplier_10x": "도입부에 극적인 이미지 연출을 결합하고, 2초 전환 컷 템포로 재구성해야 함."
+      }
+    },
+    "postUploadAnalysis": {
+      "views": 1667,
+      "likeRate": 1.7,
+      "commentCount": 3,
+      "avgRetention": 34,
+      "evaluated_at": "2026-05-26T04:29:08.640Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,667회\n- **성과 요약**: 사전 예측한 후킹 점수(92점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "successFactors": "BGM 매칭은 적절했음.",
+      "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+      "answers": {
+        "q1_hook_stop": "첫 자막이 지루하여 멈추지 못하고 이탈함",
+        "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
+        "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
+        "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
+        "q5_expected_views": "실제 1,667회 기록.",
+        "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
+      }
+    },
+    "views": 1667,
+    "likeRate": 1.7,
+    "commentCount": 3,
+    "avgRetention": 34,
+    "successFactors": "BGM 매칭은 적절했음.",
+    "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
+    "selfImprovementApplied": true
+  }
+]
