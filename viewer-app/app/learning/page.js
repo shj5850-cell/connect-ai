@@ -876,6 +876,14 @@ export default function LearningPage() {
                 <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>전체 영상 중 자가 실험 영상의 비율</span>
               </div>
 
+              <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid rgba(251,191,36,0.15)', background: 'linear-gradient(145deg, rgba(255,255,255,0.01) 0%, rgba(251,191,36,0.02) 100%)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>성공 DNA 반영률 (Success DNA Reflection)</span>
+                <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fbbf24', display: 'block', marginTop: '0.5rem' }}>
+                  {growthMetrics?.success_dna_reflection_rate !== undefined ? `${growthMetrics.success_dna_reflection_rate}%` : '0.0%'}
+                </span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>성공 DNA 가이드 반영 생성 비율 (목표: 90%+)</span>
+              </div>
+
             </div>
           </div>
 

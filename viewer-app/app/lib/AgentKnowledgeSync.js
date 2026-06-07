@@ -157,6 +157,7 @@ function runIngestion() {
     let diversityScoreAvg = 84.5;
     let noveltyScoreAvg = 80.0;
     let experimentSuccessRate = 66.7;
+    let successDnaReflectionRate = 0.0;
 
     if (fs.existsSync(HISTORY_PATH)) {
       try {
@@ -205,6 +206,12 @@ function runIngestion() {
             const successfulExps = experiments.filter(v => (v.views || (v.postUploadAnalysis && v.postUploadAnalysis.views) || 0) >= 5000);
             experimentSuccessRate = parseFloat(((successfulExps.length / experiments.length) * 100).toFixed(1));
           }
+
+          // Success DNA Reflection Rate: percentage of videos containing used_success_dna lists
+          const withSuccessDna = historyList.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
+          successDnaReflectionRate = historyList.length > 0
+            ? parseFloat(((withSuccessDna.length / historyList.length) * 100).toFixed(1))
+            : 0.0;
         }
       } catch (e) {
         console.error('[AgentSync] Failed to process history for diversity KPIs:', e);
@@ -214,6 +221,7 @@ function runIngestion() {
     db.agent_growth_metrics.diversity_score_average = diversityScoreAvg;
     db.agent_growth_metrics.novelty_score_average = noveltyScoreAvg;
     db.agent_growth_metrics.experiment_success_rate = experimentSuccessRate;
+    db.agent_growth_metrics.success_dna_reflection_rate = successDnaReflectionRate;
 
     // 1. Read Decisions Markdown
     const decisionsPath = path.join(SHARED_DIR, 'decisions.md');

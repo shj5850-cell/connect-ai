@@ -83,6 +83,12 @@ export async function GET() {
       try {
         const db = JSON.parse(fs.readFileSync(intelDbPath, 'utf-8'));
         growthMetrics = db.agent_growth_metrics || null;
+        if (growthMetrics) {
+          const withSuccessDna = history.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
+          growthMetrics.success_dna_reflection_rate = history.length > 0
+            ? parseFloat(((withSuccessDna.length / history.length) * 100).toFixed(1))
+            : 0.0;
+        }
       } catch (e) {
         console.error('Failed to parse agent_intelligence_db.json:', e);
       }
@@ -493,7 +499,17 @@ function generateSeedHistoryData() {
       is_experiment: i % 5 === 0,
       custom_font: 'Pretendard-Bold',
       custom_caption_style: 'minimal',
-      custom_caption_position: 'bottom'
+      custom_caption_position: 'bottom',
+      used_success_dna: [
+        { id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }
+      ],
+      used_failure_dna: [
+        { id: '1780103900042', title: '노트북 하나로 월 100만원 버는 법' },
+        { id: '1779931100042', title: '피로회복 끝판왕 홍삼정 추천' }
+      ],
+      used_revenue_dna: [
+        { id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }
+      ]
     });
   }
 

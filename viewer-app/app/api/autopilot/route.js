@@ -129,6 +129,9 @@ async function runAutopilotProcess() {
     let customFont = 'Pretendard-Bold';
     let customCaptionStyle = 'minimal';
     let customCaptionPosition = 'bottom';
+    let forceScrambledParams = false;
+    let similarityPenalty = 0;
+    let selectedSuccessVids = [];
 
     let styleDnaList = [];
     const styleDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'style_dna_db.json');
@@ -141,37 +144,75 @@ async function runAutopilotProcess() {
       }
     }
 
+    let successDnaList = [];
+    const successDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
+    if (fs.existsSync(successDnaDbPath)) {
+      try {
+        const db = JSON.parse(fs.readFileSync(successDnaDbPath, 'utf-8'));
+        successDnaList = db.success_dna_list || [];
+      } catch (e) {
+        console.error('Failed to parse success_dna_db.json:', e);
+      }
+    }
+
+    let revenueDnaList = [];
+    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
+    if (fs.existsSync(revenueDnaDbPath)) {
+      try {
+        const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
+        revenueDnaList = db.revenue_dna_list || [];
+      } catch (e) {
+        console.error('Failed to parse revenue_dna_db.json:', e);
+      }
+    }
+
+    let failureDnaList = [];
+    const failureDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'failure_dna_db.json');
+    if (fs.existsSync(failureDnaDbPath)) {
+      try {
+        const db = JSON.parse(fs.readFileSync(failureDnaDbPath, 'utf-8'));
+        failureDnaList = db.failure_dna_list || [];
+      } catch (e) {
+        console.error('Failed to parse failure_dna_db.json:', e);
+      }
+    }
+
     let finalScoreAvg = 0;
     let retryCount = 0;
     const maxRetries = 3;
 
     while (retryCount <= maxRetries) {
       if (retryCount > 0) {
-        console.log(`[Autopilot] Quality Board score <= 70. Regenerating content... (Retry attempt ${retryCount}/${maxRetries})`);
-        updateStatus('script_generation', `품질 보드 심사 70점 이하로 재시도 중... (${retryCount}/${maxRetries}회)`, 30 + retryCount * 5);
+        console.log(`[Autopilot] Quality Board score <= 70 or clone alert. Regenerating content... (Retry attempt ${retryCount}/${maxRetries})`);
+        updateStatus('script_generation', `품질 보드 심사 또는 유사도 통과 실패로 재시도 중... (${retryCount}/${maxRetries}회)`, 30 + retryCount * 5);
       }
 
       imagePaths = []; // Reset image paths
 
       isExperiment = Math.random() < 0.2;
 
-      // Select Style DNA based on Experiment status
-      if (isExperiment || styleDnaList.length === 0) {
-        styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
-      } else {
-        const uniqueStyles = [...new Set(styleDnaList.map(item => item.style))];
-        if (uniqueStyles.length > 0) {
-          styleDna = uniqueStyles[Math.floor(Math.random() * uniqueStyles.length)];
-        } else {
+      // Select Style DNA based on Experiment status (only if not forced by clone scrambling retry)
+      if (!forceScrambledParams) {
+        if (isExperiment || styleDnaList.length === 0) {
           styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
+        } else {
+          const uniqueStyles = [...new Set(styleDnaList.map(item => item.style))];
+          if (uniqueStyles.length > 0) {
+            styleDna = uniqueStyles[Math.floor(Math.random() * uniqueStyles.length)];
+          } else {
+            styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
+          }
         }
-      }
 
-      usedStyle = VISUAL_STYLES[Math.floor(Math.random() * VISUAL_STYLES.length)];
-      const selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
-      hookType = selectedHook.type;
-      const selectedPattern = SHOT_PATTERNS[Math.floor(Math.random() * SHOT_PATTERNS.length)];
-      shotPattern = selectedPattern.name;
+        usedStyle = VISUAL_STYLES[Math.floor(Math.random() * VISUAL_STYLES.length)];
+        const selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
+        hookType = selectedHook.type;
+        const selectedPattern = SHOT_PATTERNS[Math.floor(Math.random() * SHOT_PATTERNS.length)];
+        shotPattern = selectedPattern.name;
+      } else {
+        // Reset force flag so next iterations can select normally if needed
+        forceScrambledParams = false;
+      }
 
       if (apiKey) {
         try {
@@ -180,12 +221,29 @@ async function runAutopilotProcess() {
           const failureDnaGuidelines = getFailureDnaGuidelines();
           const agentIntelligenceGuidelines = getAgentIntelligenceGuidelines();
           
+          // Select 3 to 5 random success DNAs
+          selectedSuccessVids = [];
+          if (successDnaList.length > 0) {
+            const shuffled = [...successDnaList].sort(() => 0.5 - Math.random());
+            const numToSelect = Math.min(shuffled.length, Math.floor(Math.random() * 3) + 3); // 3, 4, or 5
+            selectedSuccessVids = shuffled.slice(0, numToSelect);
+          }
+          const successDnaGuidelines = getSuccessDnaGuidelines(selectedSuccessVids);
+          
           let combinedGuidelines = '';
           if (isExperiment) {
             console.log('[Autopilot] AUTO EXPERIMENT ACTIVE: Bypassing success/revenue DNA rules.');
             combinedGuidelines = `\n[💡 자가 실험 모드 가동: 기존 성공 공식을 무시하고 완전히 새로운 컨셉을 탐험하십시오]\n` + failureDnaGuidelines + agentIntelligenceGuidelines;
           } else {
-            combinedGuidelines = selfImprovementGuidelines + revenueDnaGuidelines + failureDnaGuidelines + agentIntelligenceGuidelines;
+            combinedGuidelines = `
+[📢 대본 작성 가중치 비율 지침 (작가 필독)]
+당신은 대본을 작성할 때 반드시 다음 4가지 성과 요소를 지정된 가중치 비율에 맞추어 완벽히 반영해야 합니다:
+1. **성공 DNA 패턴 (Success DNA)**: 50% 가중치. 과거에 조회수가 높았던 대본 구성, 어조, 장면 아이디어를 가장 적극적으로 모방하고 강화할 것.
+2. **수익화 DNA 패턴 (Revenue DNA)**: 25% 가중치. 고수익 및 고ROI를 유발한 최적 카피 패턴 및 상품 매칭 전환 문구를 벤치마킹할 것.
+3. **실패 DNA 패턴 (Failure DNA)**: 15% 가중치. 아래 실패 원인(도입부 설명조 진행, 지루함 등)을 적극적 회피(Constraint)할 것.
+4. **에이전트 최근 교훈 (Agent Intelligence)**: 10% 가중치. 에이전트 인텔리전스의 성장 학습 포인트를 준수할 것.
+
+` + successDnaGuidelines + revenueDnaGuidelines + failureDnaGuidelines + agentIntelligenceGuidelines;
             
             // In non-experiment mode, read from successful templates/style DNA
             if (styleDnaList.length > 0) {
@@ -375,10 +433,11 @@ async function runAutopilotProcess() {
           console.log(`[Diversity] Calculated Similarity Score: ${similarityScore}%, Diversity Score: ${diversityScore}%`);
           
           if (similarityScore >= 70) {
-            console.log(`[Anti-Clone] Clone alert! Similarity >= 70%. Scrambling script and applying penalty...`);
+            console.log(`[Anti-Clone] Clone alert! Similarity >= 70%. Scrambling parameters and triggering script regeneration...`);
+            similarityPenalty = 15;
             const modifications = antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna);
             
-            // Apply scrambled parameters
+            // Set scrambled parameters to force regeneration in next retry loop
             customFont = modifications.font;
             customCaptionStyle = modifications.captionStyle;
             customCaptionPosition = modifications.captionPosition;
@@ -387,18 +446,9 @@ async function runAutopilotProcess() {
             shotPattern = modifications.shotPattern;
             styleDna = modifications.styleDna;
             
-            // Update cuts durations to match scrambled alternate pattern durations
-            const newPatternObj = SHOT_PATTERNS.find(p => p.name === shotPattern);
-            if (newPatternObj && scriptData && Array.isArray(scriptData.cuts)) {
-              scriptData.cuts.forEach((cut, idx) => {
-                if (newPatternObj.durations[idx] !== undefined) {
-                  cut.duration = newPatternObj.durations[idx];
-                }
-              });
-            }
-
-            finalScoreAvg -= 15; // Apply -15 similarity penalty
-            console.log(`[Anti-Clone] Quality Board Average Score after similarity penalty: ${finalScoreAvg.toFixed(1)}`);
+            forceScrambledParams = true;
+            retryCount++;
+            continue; // Force script regeneration loop
           } else {
             customFont = 'Pretendard-Bold';
             customCaptionStyle = 'minimal';
@@ -423,6 +473,12 @@ async function runAutopilotProcess() {
 
     if (finalScoreAvg <= 70 && retryCount > maxRetries) {
       throw new Error(`품질 심사 결과 70점 이하(평균 ${finalScoreAvg.toFixed(1)}점)로 3회 재시도했으나 품질 기준을 통과하지 못했습니다. 작업을 중단합니다.`);
+    }
+
+    // Apply similarity penalty if triggered
+    finalScoreAvg -= similarityPenalty;
+    if (preUploadAnalysis && preUploadAnalysis.scores) {
+      preUploadAnalysis.similarityPenaltyApplied = similarityPenalty > 0;
     }
 
     updateStatus('video_rendering', '4단계: AI 성우 나레이션 및 BGM 비디오 렌더링 중...', 75);
@@ -540,7 +596,10 @@ async function runAutopilotProcess() {
       is_experiment: isExperiment,
       custom_font: customFont,
       custom_caption_style: customCaptionStyle,
-      custom_caption_position: customCaptionPosition
+      custom_caption_position: customCaptionPosition,
+      used_success_dna: selectedSuccessVids.map(v => ({ id: v.id, title: v.title })),
+      used_failure_dna: failureDnaList.slice(-10).map(v => ({ id: v.id, title: v.title })),
+      used_revenue_dna: revenueDnaList.slice(-10).map(v => ({ id: v.id, title: v.title }))
     };
 
     saveToHistory(resultDetails);
@@ -1276,4 +1335,14 @@ function getAgentIntelligenceGuidelines() {
     console.error('Failed to read agent intelligence guidelines:', e);
   }
   return '';
+}
+
+// Retrieve success DNA from DB to inject into generation prompts
+function getSuccessDnaGuidelines(selectedSuccessVids) {
+  if (!selectedSuccessVids || selectedSuccessVids.length === 0) return '';
+  let dnaGuide = `\n[🔥 검증된 성공 DNA 패턴 (가장 강하고 적극적으로 모방/강화할 요소 - 가중치 50%)]\n`;
+  selectedSuccessVids.forEach((item, idx) => {
+    dnaGuide += `${idx + 1}. 제목: "${item.title}" | 3초 후킹: "${item.hook || item.title}" | 성공 요인: ${item.successFactors} | 조회수: ${item.views}회\n`;
+  });
+  return dnaGuide;
 }

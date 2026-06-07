@@ -250,6 +250,35 @@ export default function ArchivePage() {
                     </div>
                   </div>
 
+                  {/* DNA Trace Info */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(0,0,0,0.15)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
+                    <div style={{ fontWeight: 'bold', color: 'white', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.25rem', marginBottom: '0.25rem', fontSize: '0.7rem', color: '#a78bfa' }}>🧬 DNA Trace (모델 대본 프롬프트 반영)</div>
+                    <div>
+                      <span style={{ color: '#fbbf24', fontWeight: 600 }}>성공 DNA (50%):</span>{' '}
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        {item.used_success_dna && item.used_success_dna.length > 0
+                          ? item.used_success_dna.map(x => x.title).join(', ')
+                          : '없음'}
+                      </span>
+                    </div>
+                    <div>
+                      <span style={{ color: '#f87171', fontWeight: 600 }}>실패 DNA (회피 15%):</span>{' '}
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        {item.used_failure_dna && item.used_failure_dna.length > 0
+                          ? item.used_failure_dna.map(x => x.title).join(', ')
+                          : '없음'}
+                      </span>
+                    </div>
+                    <div>
+                      <span style={{ color: '#34d399', fontWeight: 600 }}>수익 DNA (25%):</span>{' '}
+                      <span style={{ color: 'var(--text-secondary)' }}>
+                        {item.used_revenue_dna && item.used_revenue_dna.length > 0
+                          ? item.used_revenue_dna.map(x => x.title).join(', ')
+                          : '없음'}
+                      </span>
+                    </div>
+                  </div>
+
                   {/* YouTube upload Status Badge */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.isMockUpload ? '#fbbf24' : '#10b981' }} />
