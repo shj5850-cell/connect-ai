@@ -212,6 +212,44 @@ export default function ArchivePage() {
                     </div>
                   </div>
 
+                  {/* Diversity & Revenue Metrics Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧬 사용한 DNA</span>
+                      <span style={{ color: '#a78bfa', fontWeight: 700 }}>{item.style_dna || 'Motivation'}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🎨 사용한 스타일</span>
+                      <span style={{ color: '#fff', fontWeight: 600 }}>{item.used_style || 'Cinematic'}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⚡ 후킹 유형</span>
+                      <span style={{ color: '#60a5fa', fontWeight: 600 }}>{item.hook_type || '호기심형'}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>💰 Revenue Score</span>
+                      <span style={{ color: '#10b981', fontWeight: 700 }}>{item.postUploadAnalysis?.money_score || item.preUploadAnalysis?.scores?.hookStrength || 78}점</span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>📊 Diversity Score</span>
+                      <span style={{ color: (item.diversity_score || 80) >= 70 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
+                        {item.diversity_score || 80}%
+                      </span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🔍 Similarity Score</span>
+                      <span style={{ color: (item.similarity_score || 20) < 30 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
+                        {item.similarity_score || 20}%
+                      </span>
+                    </div>
+                    <div style={{ gridColumn: 'span 2', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>🧠 적용된 DNA 유형</span>
+                      <span style={{ color: item.is_experiment ? '#a78bfa' : '#34d399', fontWeight: 'bold', fontSize: '0.75rem', background: item.is_experiment ? 'rgba(167,139,250,0.1)' : 'rgba(52,211,153,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>
+                        {item.is_experiment ? '🧪 자가 실험 DNA' : '🔥 Revenue DNA'}
+                      </span>
+                    </div>
+                  </div>
+
                   {/* YouTube upload Status Badge */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.isMockUpload ? '#fbbf24' : '#10b981' }} />

@@ -1,0 +1,507 @@
+{
+  "agent_memories": [
+    {
+      "agent": "business",
+      "task": "memory.md",
+      "date": "2026-06-06",
+      "content": "# 💼 현빈 (비즈니스 전략가 · Head of Business) 개인 메모리\n\n_현빈 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 월별 목표 설정 및 예산 확인 → 산출물 sessions/2026-05-30T07-46/business.md\n- [2026-05-30] 최근 의사결정 로그에서 필요한 정보 및 개인 목표에 대한 요약서를 작성합니다. → 산출물 sessions/2026-05-30T07-52/business.md\n- [2026-05-30] 현재..."
+    },
+    {
+      "agent": "ceo",
+      "task": "memory.md",
+      "date": "2026-06-07",
+      "content": "# 🧭 CEO (Chief Executive Agent) 개인 메모리\n\n_CEO 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 이번달 목표 진행하자 → 보고서 sessions/2026-05-30T07-46/_report.md\n- [2026-05-30] [자율 사이클 — 2026-05-30] 1인 기업 24시간 운영 중. 회사 목표·각 에이전트의 개인 목표(_agents/{id}/goal.md)·최근 의사결정·메모리를 검토해서 지금 가장 가치 있는 단일 작..."
+    },
+    {
+      "agent": "designer",
+      "task": "memory.md",
+      "date": "2026-06-04",
+      "content": "# 🎨 Designer (Lead Designer) 개인 메모리\n\n_Designer 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최신 디자인 비주얼 확인 → 산출물 sessions/2026-05-31T03-46/designer.md\n- [2026-06-01] 마케팅 디자인 브리프를 작성하고 썸네일·브랜드 비주얼을 생성합니다. → 산출물 sessions/2026-06-01T03-07/designer.md\n- [2026-06-01] 추적된 데이터를 바탕으로..."
+    },
+    {
+      "agent": "developer",
+      "task": "memory.md",
+      "date": "2026-06-04",
+      "content": "# 💻 코다리 (시니어 풀스택 엔지니어) 개인 메모리\n\n_코다리 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] AI 아이템을 기반으로 코드 작성 및 테스트 → 산출물 sessions/2026-05-30T09-22/developer.md\n- [2026-06-01] 선택된 작업에 대한 코드 작성과 테스트를 진행합니다. → 산출물 sessions/2026-06-01T03-38/developer.md\n- [2026-06-01] 적절한 코드 및 화면 디자인 작업을..."
+    },
+    {
+      "agent": "editor",
+      "task": "memory.md",
+      "date": "2026-05-30",
+      "content": "# 🎵 루나 (Sound Director & Composer) 개인 메모리\n\n_루나 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n..."
+    },
+    {
+      "agent": "hook_specialist",
+      "task": "memory.md",
+      "date": "2026-06-06",
+      "content": "# hook_specialist Agent Memory & Log\n\n## [Lessons Learned]\n- hook_specialist 관련 성공 요인 분석 결과 획득\n- hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요\n\n## [Next Actions]\n- 대본 템포 및 이미지 연출 품질 지속 향상\n- 수익 지표 연동 로직 검증..."
+    },
+    {
+      "agent": "instagram",
+      "task": "memory.md",
+      "date": "2026-06-04",
+      "content": "# 📷 Instagram (Head of Instagram) 개인 메모리\n\n_Instagram 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최근 피드 분석 → 산출물 sessions/2026-05-31T04-24/instagram.md\n- [2026-06-01]  최근 릴스를 확인하여 피드의 내용과 관심사를 파악합니다. → 산출물 sessions/2026-06-01T03-07/instagram.md\n- [2026-06-01] 선택된 작업에 대한 릴스/피..."
+    },
+    {
+      "agent": "researcher",
+      "task": "memory.md",
+      "date": "2026-06-01",
+      "content": "# 🔍 Researcher (Trend & Data Researcher) 개인 메모리\n\n_Researcher 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 회사 설정 모달에서 AI 자동화로 수익을 창출하는 아이템을 찾아보기 → 산출물 sessions/2026-05-30T08-52/researcher.md\n- [2026-05-30] AI 자동화로 수익 창출을 위한 아이템을 찾아보고, 결과를 수집 및 요약하여 회사 설정 모달에 반영합니다. → 산출물 sess..."
+    },
+    {
+      "agent": "secretary",
+      "task": "memory.md",
+      "date": "2026-06-07",
+      "content": "# 📱 영숙 (비서 · Personal Assistant) 개인 메모리\n\n_영숙 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 최근 의사결정 로그와 메모를 검토합니다. → 산출물 sessions/2026-05-30T08-07/secretary.md\n- [2026-05-30] AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까? → 산출물 sessions/2026-05-30T08-52/secretary.md\n- [2026-05-30] 최근 의사결정 로그 ..."
+    },
+    {
+      "agent": "vision_critic",
+      "task": "memory.md",
+      "date": "2026-06-06",
+      "content": "# vision_critic Agent Memory & Log\n\n## [Lessons Learned]\n- vision_critic 관련 성공 요인 분석 결과 획득\n- vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요\n\n## [Next Actions]\n- 대본 템포 및 이미지 연출 품질 지속 향상\n- 수익 지표 연동 로직 검증..."
+    },
+    {
+      "agent": "writer",
+      "task": "memory.md",
+      "date": "2026-06-01",
+      "content": "# ✍️ Writer (Copywriter) 개인 메모리\n\n_Writer 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] AI 아이템 찾기 → 산출물 sessions/2026-05-30T08-37/writer.md\n- [2026-05-30] AI 아이템 찾기 시작 → 산출물 sessions/2026-05-30T08-52/writer.md\n- [2026-05-30] AI 아이템 찾기 시작 → 산출물 sessions/2026-05-30T10-07/writer.m..."
+    },
+    {
+      "agent": "youtube",
+      "task": "memory.md",
+      "date": "2026-06-06",
+      "content": "# 📺 레오 (Head of YouTube) 개인 메모리\n\n_레오 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최근 영상 분석 → 산출물 sessions/2026-05-31T04-24/youtube.md\n- [2026-06-01] 최근 영상을 조사해 콘텐츠에 대한 반응을 파악하고, 트렌드와 시장 동향을 확인합니다. → 산출물 sessions/2026-06-01T03-07/youtube.md\n- [2026-06-01] 선택된 작업에 대한 영상 기획 및 트..."
+    }
+  ],
+  "agent_decisions": [
+    {
+      "agent": "CEO",
+      "decision": "PayPal Client ID와 Secret을 확인하고 필요한 정보를 입력하세요.",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "상위 단계 목표 설정 및 예산 확인",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화로 인한 수익 100만원 달성",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "경쟁사 ROI 분석",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "수익화 모델 학습 및 예측",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화로 인한 수익 달성을 목표로 하고, 현빈과 영숙에게 AI 아이템 찾기 작업을 분배합니다.",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾기 작업을 시작하겠습니다.",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈과 영숙에게 AI 아이템 찾기 작업을 분배합니다.",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "영숙: 메모 검토 및 정리",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈: 경쟁사 ROI 분석 실시",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Writer: AI 아이템 찾기 시작",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화로 수익 창출을 위한 아이템 찾기 시작",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾아보기 시작",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈과 영숙 분배",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾기를 통해 필요 AI 아이템을 찾았습니다.",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾기를 통해 회사 목표와 개인 목표를 검토하고, 적절한 에이전트에게 배분합니다.",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾기 명령어 전달",
+      "date": "2026-05-30"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화를 통해 수익 창출을 위한 AI 아이템 찾기 시작",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "경쟁사 ROI 분석 실시 및 결과 문서 작성",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "가격·번들 옵션 비교 메모 작성",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화를 통해 수익 창출을 위한 AI 아이템 찾기 작업을 시작하겠습니다.",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾기 시작",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화로 수익 창출을 위한 AI 아이템 찾기",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 경쟁사 ROI 분석 실시 및 결과 문서 작성",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화 기반 수익 창출을 실시하는 과정에서 필요한 도구와 정보를 제공하고",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템을 찾아보는 작업.",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾기 시작",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "경쟁사 ROI 분석 실시",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "PayPal Client ID 및 Secret 입력 필요",
+      "date": "2026-05-31"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Researcher가 AI 자동화로 수익 창출을 위한 AI 아이템 찾기",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Business가 경쟁사 ROI 분석 실시 및 결과 문서 작성",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Writer가 가격·번들 옵션 2~3안 비교 메모 작성",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "데이터 부족으로 분석 보류",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화 사업 아이템 개발",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 경쟁사 ROI 분석 및 가격 최적화 방안",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "영숙: 오늘 회사의 수익 목표를 설정하고, 이를 달성하기 위한 비즈니스 전략을 정리해주세요.",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈: AI 경쟁사의 ROI 분석과 가격 최적화 결과 문서를 작성하고, Researcher와 Business에게 보고드립니다.",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Writer: 업계 경쟁사의 트렌드 분석과 비즈니스 전략 제안을 마무리하고, Researcher와 Business에게 보고드립니다.",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "영숙 업무는 현재 가치 있는 작업을 결정하고, 적절한 1~2명 에이전트에게 분배해서 실행했습니다.",
+      "date": "2026-06-01"
+    },
+    {
+      "agent": "CEO",
+      "decision": "영숙 님, 일정 생성 작업이 진행 중입니다.",
+      "date": "2026-06-02"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 기반 디자인이 현재 가장 가치 있는 작업으로 결정되었습니다.",
+      "date": "2026-06-02"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동화로 인한 수익 달성 도움이 필요한 AI 아이템 찾기 시작",
+      "date": "2026-06-02"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI Shorts Generator와 상품 매칭 & 쇼츠 생성 연동을 실행",
+      "date": "2026-06-02"
+    },
+    {
+      "agent": "CEO",
+      "decision": "수익 DB 구축 및 보고서 생성",
+      "date": "2026-06-02"
+    },
+    {
+      "agent": "CEO",
+      "decision": "일 시작하자",
+      "date": "2026-06-03"
+    },
+    {
+      "agent": "CEO",
+      "decision": "사장님이 사이드바로 한 줄을 보냈습니다. → AI 아이템 찾기 명령어 전달",
+      "date": "2026-06-03"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현재 이 상품의 예상 수익이 높아 고수익을 주는 것이므로, 조회수가 낮더라도 우선 순위 1위로 설정합니다.",
+      "date": "2026-06-03"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈: 회사 목표를 요약하세요",
+      "date": "2026-06-03"
+    },
+    {
+      "agent": "CEO",
+      "decision": "영숙: 오늘의 일정과 미팅 확인",
+      "date": "2026-06-03"
+    },
+    {
+      "agent": "CEO",
+      "decision": "일 시작 시 일정 확인 및 미팅 체크",
+      "date": "2026-06-04"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 자동 수익 분석 작업을 시작하고, 데이터 수집 및 분석을 진행합니다.",
+      "date": "2026-06-04"
+    },
+    {
+      "agent": "CEO",
+      "decision": "쇼츠 생성 연동 과정에서 추천 상품과 쇼츠 제목의 준비가 필수적이므로, 이 부분에 더욱 신중하게 접근하여 최적화해야 합니다.",
+      "date": "2026-06-04"
+    },
+    {
+      "agent": "CEO",
+      "decision": "추천 영상 제안",
+      "date": "2026-06-04"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈아, PayPal Client ID와 Secret을 확인하세요.",
+      "date": "2026-06-04"
+    },
+    {
+      "agent": "CEO",
+      "decision": "이달의 PayPal 매출을 분석하지 못하여 이를 위해서는 PayPal Client ID와 Secret을 설정하고 연결해야 합니다.",
+      "date": "2026-06-04"
+    },
+    {
+      "agent": "CEO",
+      "decision": "AI 아이템 찾아보세요",
+      "date": "2026-06-06"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현재 가장 가치있는 단일 작업: 로컬 CPU 비디오 인코딩 부하와 이미지 API 402 에러 문제 해결",
+      "date": "2026-06-06"
+    }
+  ],
+  "agent_lessons": [
+    {
+      "agent": "Content Strategist",
+      "lesson": "성공 DNA 확보: \"피로회복 끝판왕 홍삼정 추천\" - 후킹 점수 67점 및 비주얼 점수 62점 시너지로 높은 성과 기록.",
+      "source": "success_dna_db.json",
+      "type": "success_dna"
+    },
+    {
+      "agent": "Vision Critic",
+      "lesson": "실패 원인 식별: \"M3 맥북으로 AI 수익화 시작하는 법\" - 비주얼 컷의 단조로움 및 불일치",
+      "source": "failure_dna_db.json",
+      "type": "failure_dna"
+    },
+    {
+      "agent": "hook_specialist",
+      "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득",
+      "source": "hook_specialist/memory.md",
+      "type": "success_pattern"
+    },
+    {
+      "agent": "hook_specialist",
+      "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요",
+      "source": "hook_specialist/memory.md",
+      "type": "success_pattern"
+    },
+    {
+      "agent": "vision_critic",
+      "lesson": "vision_critic 관련 성공 요인 분석 결과 획득",
+      "source": "vision_critic/memory.md",
+      "type": "success_pattern"
+    },
+    {
+      "agent": "vision_critic",
+      "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요",
+      "source": "vision_critic/memory.md",
+      "type": "success_pattern"
+    }
+  ],
+  "agent_outputs": [
+    {
+      "name": "task.md",
+      "type": "task_tracker",
+      "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\6ca2731a-fafd-4f1a-aa1e-d71002104549\\task.md",
+      "size": 1027,
+      "updated_at": "2026-06-07T01:17:36.426Z"
+    },
+    {
+      "name": "quality_board_veto.log",
+      "type": "agent_log",
+      "path": "C:\\Users\\user\\Desktop\\명철\\개발\\_company\\agent_logs\\quality_board_veto.log",
+      "size": 159,
+      "updated_at": "2026-06-06T05:24:28.661Z"
+    },
+    {
+      "name": "vision_critic_check.log",
+      "type": "agent_log",
+      "path": "C:\\Users\\user\\Desktop\\명철\\개발\\_company\\agent_logs\\vision_critic_check.log",
+      "size": 262,
+      "updated_at": "2026-06-06T05:24:28.644Z"
+    },
+    {
+      "name": "writer_script_agent.log",
+      "type": "agent_log",
+      "path": "C:\\Users\\user\\Desktop\\명철\\개발\\_company\\agent_logs\\writer_script_agent.log",
+      "size": 242,
+      "updated_at": "2026-06-06T05:24:28.641Z"
+    }
+  ],
+  "agent_growth_metrics": {
+    "views_before_average": 4949,
+    "views_after_average": 6419,
+    "ctr_before_average": 8.7,
+    "ctr_after_average": 6.6,
+    "retention_before_average": 58,
+    "retention_after_average": 70,
+    "roi_before_average": 4580.7,
+    "roi_after_average": 0
+  },
+  "agent_skill_scores": {
+    "ceo": {
+      "score": 100,
+      "completed_tasks": 65,
+      "lessons_learned": 0,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 508
+    },
+    "writer": {
+      "score": 44,
+      "completed_tasks": 6,
+      "lessons_learned": 0,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 67
+    },
+    "researcher": {
+      "score": 50,
+      "completed_tasks": 7,
+      "lessons_learned": 0,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 75
+    },
+    "developer": {
+      "score": 80,
+      "completed_tasks": 12,
+      "lessons_learned": 0,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 88
+    },
+    "vision_critic": {
+      "score": 60,
+      "completed_tasks": 6,
+      "lessons_learned": 2,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 80
+    },
+    "video_director": {
+      "score": 38,
+      "completed_tasks": 5,
+      "lessons_learned": 0,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 50
+    },
+    "hook_specialist": {
+      "score": 66,
+      "completed_tasks": 7,
+      "lessons_learned": 2,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 73
+    },
+    "quality_board": {
+      "score": 44,
+      "completed_tasks": 6,
+      "lessons_learned": 0,
+      "success_patterns_found": 1,
+      "failure_patterns_avoided": 1,
+      "roi_contribution": 85
+    }
+  }
+}

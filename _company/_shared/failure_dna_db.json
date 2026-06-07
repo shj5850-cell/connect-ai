@@ -1,0 +1,26 @@
+{
+  "failure_dna_list": [
+    {
+      "id": "1780103900042",
+      "title": "노트북 하나로 월 100만원 버는 법",
+      "views": 218,
+      "avgRetention": 30,
+      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
+      "hook_score": 85,
+      "visual_score": 76,
+      "subtitle_score": 77,
+      "added_at": "2026-06-07T01:18:20.050Z"
+    },
+    {
+      "id": "1779931100042",
+      "title": "피로회복 끝판왕 홍삼정 추천",
+      "views": 889,
+      "avgRetention": 48,
+      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
+      "hook_score": 90,
+      "visual_score": 81,
+      "subtitle_score": 80,
+      "added_at": "2026-06-07T01:18:20.050Z"
+    }
+  ]
+}

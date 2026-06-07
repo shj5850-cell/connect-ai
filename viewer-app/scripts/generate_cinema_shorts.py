@@ -85,6 +85,34 @@ def download_font(dest_path):
 # Trigger font download
 download_font(PRETENDARD_FONT_FILE)
 
+def get_font_file(font_name):
+    font_urls = {
+        "Pretendard-Bold": "https://github.com/orioncactus/pretendard/raw/main/packages/pretendard/dist/public/static/Alternative/Pretendard-Bold.ttf",
+        "GmarketSansMedium": "https://github.com/leeduyoung/leeduyoung.github.io/raw/master/fonts/GmarketSansMedium.ttf",
+        "EstablishRoomNo707": "https://github.com/google/fonts/raw/main/ofl/nanumgothic/NanumGothic-Bold.ttf", # fallback NanumGothic
+        "TmonMonsori": "https://github.com/google/fonts/raw/main/ofl/nanumgothic/NanumGothic-Bold.ttf", # fallback NanumGothic
+        "BaminJua": "https://github.com/google/fonts/raw/main/ofl/jua/Jua-Regular.ttf", # Google Jua font
+        "NanumGothic-Bold": "https://github.com/google/fonts/raw/main/ofl/nanumgothic/NanumGothic-Bold.ttf"
+    }
+    
+    url = font_urls.get(font_name, font_urls["NanumGothic-Bold"])
+    filename = f"{font_name}.ttf"
+    dest_path = os.path.join(FONT_PATH, filename)
+    
+    if os.path.exists(dest_path):
+        return dest_path
+        
+    print(f"📥 Downloading font '{font_name}' from: {url}")
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=15) as response, open(dest_path, 'wb') as f:
+            f.write(response.read())
+        print(f"✅ Font {font_name} downloaded successfully.")
+        return dest_path
+    except Exception as e:
+        print(f"⚠️ Failed to download font {font_name}: {e}. Falling back to default NanumGothic-Bold.")
+        return os.path.join(FONT_PATH, "NanumGothic-Bold.ttf")
+
 # Compatibility helpers for MoviePy v2.x changes
 def subclip_clip_compat(clip, start_time, end_time):
     if hasattr(clip, "subclipped"):
@@ -582,6 +610,8 @@ async def main():
     caption_position = config.get("caption_position", "bottom")
     transition_effect = config.get("transition_effect", "fade")
     voice = config.get("voice", "female")
+    font_name = config.get("font_name", "NanumGothic-Bold")
+    active_font_path = get_font_file(font_name)
     
     if not output_path or not cuts:
         print("❌ Missing required config fields (output_path, cuts).")
@@ -739,7 +769,7 @@ async def main():
                 sub_png = os.path.join(temp_dir, f"sub_overlay_{idx}.png")
                 sub_img = create_subtitle_image(
                     subtitle, 
-                    font_path=PRETENDARD_FONT_FILE,
+                    font_path=active_font_path,
                     caption_style=caption_style,
                     is_hook=(idx == 0),
                     position=caption_position

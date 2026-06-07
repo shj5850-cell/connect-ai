@@ -1,0 +1,44 @@
+{
+  "style_dna_list": [
+    {
+      "style": "Luxury Tech",
+      "video_id": "1780720148640",
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "views": 3930,
+      "roi": -100,
+      "added_at": "2026-06-06T05:16:06.087Z"
+    },
+    {
+      "style": "Emotional",
+      "video_id": "1780633748640",
+      "title": "피로회복 끝판왕 홍삼정 추천",
+      "views": 8908,
+      "roi": 0,
+      "added_at": "2026-06-06T05:16:06.087Z"
+    },
+    {
+      "style": "Motivation",
+      "video_id": "1780547348640",
+      "title": "노트북 하나로 월 100만원 버는 법",
+      "views": 4949,
+      "roi": 4580.7,
+      "added_at": "2026-06-06T05:16:06.087Z"
+    },
+    {
+      "style": "Motivation",
+      "video_id": "1780276700042",
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "views": 24955,
+      "roi": 1255403.7,
+      "added_at": "2026-06-07T01:18:20.058Z"
+    },
+    {
+      "style": "Emotional",
+      "video_id": "1780017500042",
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "views": 95100,
+      "roi": 5390914.3,
+      "added_at": "2026-06-07T01:18:20.058Z"
+    }
+  ]
+}

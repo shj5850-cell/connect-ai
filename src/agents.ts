@@ -128,8 +128,68 @@ export const AGENTS: Record<string, AgentDef> = {
     color: '#60A5FA',
     specialty: '트렌드 리서치, 경쟁사 분석, 데이터 수집·요약, 인용 자료 정리, 사실 확인',
     tagline: '트렌드와 데이터를 모아 사실 확인까지 끝냅니다'
+  },
+  content_strategist: {
+    id: 'content_strategist',
+    name: '단디',
+    role: 'Content Strategist',
+    emoji: '🎯',
+    color: '#EC4899',
+    specialty: '주제 선정, 타겟 감정 선호 분석, 성공 DNA 기반 콘텐츠 전략 수립',
+    tagline: '성공 공식에 부합하는 타겟 감정 및 주제 전략을 제안합니다'
+  },
+  prompt_engineer: {
+    id: 'prompt_engineer',
+    name: '영필',
+    role: 'Prompt Engineer',
+    emoji: '✍️',
+    color: '#F59E0B',
+    specialty: '고품질 AI 이미지 및 비디오 생성용 골든 프롬프트 최적화 작성',
+    tagline: 'AI 화가가 그릴 최고의 시각 지침 프롬프트를 설계합니다'
+  },
+  vision_critic: {
+    id: 'vision_critic',
+    name: '눈길',
+    role: 'Vision Critic',
+    emoji: '👁️',
+    color: '#10B981',
+    specialty: '생성된 이미지/비디오 프레임 비주얼 구성 및 인체 왜곡 비전 평가 검수',
+    tagline: '생성된 컷의 비주얼 왜곡과 구성 완성도를 매의 눈으로 검수합니다'
+  },
+  video_director: {
+    id: 'video_director',
+    name: '감독',
+    role: 'Video Director',
+    emoji: '🎬',
+    color: '#8B5CF6',
+    specialty: '장면 전환 템포, 컷 연출 자연스러움 및 자막 시선 유도 최적화 검수',
+    tagline: '전체 쇼츠의 컷 연결성과 연출 완성도를 검수하고 연출 지시를 조정합니다'
+  },
+  hook_specialist: {
+    id: 'hook_specialist',
+    name: '후킹',
+    role: 'Hook Specialist',
+    emoji: '🪝',
+    color: '#EF4444',
+    specialty: '오프닝 3초 손실 회피 궁금증 유발 질문형 후크 문장 및 썸네일 카피 극대화',
+    tagline: '이탈율 0%를 목표로 첫 3초의 도입부 오프닝 훅을 최고치로 튜닝합니다'
+  },
+  quality_board: {
+    id: 'quality_board',
+    name: '심사위원회',
+    role: 'Quality Board',
+    emoji: '⚖️',
+    color: '#3B82F6',
+    specialty: '종합 품질 검수, 영역별 점수 부여, 자동 재생성 및 업로드 제한 여부 최종 판정',
+    tagline: '모든 검수자들의 피드백을 모아 최종 출시 심사를 진행합니다'
   }
 };
 
-export const AGENT_ORDER = ['ceo', 'youtube', 'instagram', 'designer', 'developer', 'business', 'secretary', 'editor', 'writer', 'researcher'];
-export const SPECIALIST_IDS = ['youtube', 'instagram', 'designer', 'developer', 'business', 'secretary', 'editor', 'writer', 'researcher'];
+export const AGENT_ORDER = [
+  'ceo', 'youtube', 'instagram', 'designer', 'developer', 'business', 'secretary', 'editor', 'writer', 'researcher',
+  'content_strategist', 'prompt_engineer', 'vision_critic', 'video_director', 'hook_specialist', 'quality_board'
+];
+export const SPECIALIST_IDS = [
+  'youtube', 'instagram', 'designer', 'developer', 'business', 'secretary', 'editor', 'writer', 'researcher',
+  'content_strategist', 'prompt_engineer', 'vision_critic', 'video_director', 'hook_specialist', 'quality_board'
+];
