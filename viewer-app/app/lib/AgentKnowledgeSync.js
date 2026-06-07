@@ -524,7 +524,7 @@ function runIngestion() {
 
       const avg = (arr, key) => arr.length === 0 ? 0 : arr.reduce((acc, item) => acc + (item[key] || 0), 0) / arr.length;
 
-      db.agent_growth_metrics = {
+      Object.assign(db.agent_growth_metrics, {
         views_before_average: Math.round(avg(bottomHalf, 'views')),
         views_after_average: Math.round(avg(topHalf, 'views')),
         ctr_before_average: parseFloat(avg(bottomHalf, 'ctr').toFixed(1)),
@@ -533,7 +533,7 @@ function runIngestion() {
         retention_after_average: Math.round(avg(topHalf, 'retention')),
         roi_before_average: parseFloat(avg(bottomHalf, 'roi').toFixed(1)),
         roi_after_average: parseFloat(avg(topHalf, 'roi').toFixed(1))
-      };
+      });
     }
 
     // 9. Write to local database

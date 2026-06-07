@@ -108,6 +108,55 @@ async function runAutopilotProcess() {
       }
     }
 
+    // 1. Get recent records for weighting and experiment splits
+    let recentHistory = [];
+    if (fs.existsSync(HISTORY_PATH)) {
+      try {
+        recentHistory = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8'));
+      } catch (e) {
+        console.error('Failed to parse history.json:', e);
+      }
+    }
+
+    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
+    let realRevenueDnaCount = 0;
+    if (fs.existsSync(revenueDnaDbPath)) {
+      try {
+        const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
+        const revList = db.revenue_dna_list || [];
+        realRevenueDnaCount = revList.filter(item => item.is_mock !== true).length;
+      } catch (e) {
+        console.error('Failed to parse revenue_dna_db.json:', e);
+      }
+    }
+
+    let experimentRate = 0.3;
+    if (realRevenueDnaCount < 10) {
+      experimentRate = 0.6;
+    } else if (realRevenueDnaCount < 30) {
+      experimentRate = 0.4;
+    } else if (realRevenueDnaCount < 100) {
+      experimentRate = 0.3;
+    } else {
+      experimentRate = 0.2;
+    }
+
+    const isExperiment = Math.random() < experimentRate;
+    const { selectWeightedCategory, selectBestHookCandidate, EXPERIMENT_MAP, tokenize, calculateJaccard } = require('../../lib/CreativeDiversityEngine');
+
+    if (isExperiment) {
+      const selectedCategory = selectWeightedCategory(recentHistory);
+      const mapped = EXPERIMENT_MAP[selectedCategory];
+      if (mapped) {
+        productTitle = mapped.product;
+        keyword = `${mapped.topic} 꿀팁 - ${mapped.product}`;
+        affiliateLink = `https://link.coupang.com/a/mock_${mapped.product.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        console.log(`[Autopilot] DYNAMIC EXPERIMENT ACTIVE! Category: ${selectedCategory}, Product: ${productTitle}, Rate: ${experimentRate*100}%`);
+      }
+    } else {
+      console.log(`[Autopilot] SUCCESS/REVENUE DNA OPTIMIZATION ACTIVE. Rate: ${(1 - experimentRate)*100}%`);
+    }
+
     console.log(`[Autopilot] Target product: ${productTitle}`);
     updateStatus('script_generation', '2단계: AI 대본 및 화면 연출 프롬프트 창작 중...', 30);
 
@@ -122,7 +171,6 @@ async function runAutopilotProcess() {
     let usedStyle = '';
     let hookType = '';
     let shotPattern = '';
-    let isExperiment = false;
     let styleDna = 'Motivation';
     let similarityScore = 0;
     let diversityScore = 100;
@@ -156,7 +204,6 @@ async function runAutopilotProcess() {
     }
 
     let revenueDnaList = [];
-    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
     if (fs.existsSync(revenueDnaDbPath)) {
       try {
         const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
@@ -188,8 +235,6 @@ async function runAutopilotProcess() {
       }
 
       imagePaths = []; // Reset image paths
-
-      isExperiment = Math.random() < 0.2;
 
       // Select Style DNA based on Experiment status (only if not forced by clone scrambling retry)
       if (!forceScrambledParams) {
@@ -270,6 +315,44 @@ async function runAutopilotProcess() {
 
           console.log('[Autopilot] Injecting guidelines (Self-Improvement + Revenue DNA + Failure DNA + Agent Intelligence Memory + Diversity Specification) into writer agent prompt...');
           scriptData = await generateScriptWithGemini(apiKey, productTitle, combinedGuidelines);
+
+          let recentHooks = [];
+          if (Array.isArray(recentHistory)) {
+            recentHooks = recentHistory.slice(0, 20).map(v => v.scriptData?.cuts?.[0]?.subtitle).filter(Boolean);
+          }
+
+          let chosenHook = '';
+          const hookCandidates = scriptData.hook_candidates || [];
+          if (hookCandidates.length >= 5) {
+            chosenHook = selectBestHookCandidate(hookCandidates, recentHooks);
+            console.log(`[Autopilot] Best Hook selected from candidates: "${chosenHook}"`);
+          } else {
+            chosenHook = scriptData.cuts && scriptData.cuts[0] ? scriptData.cuts[0].subtitle : '';
+          }
+
+          if (scriptData.cuts && scriptData.cuts[0] && chosenHook) {
+            scriptData.cuts[0].subtitle = chosenHook;
+          }
+
+          let hookSimMax = 0;
+          if (recentHooks.length > 0 && chosenHook) {
+            recentHooks.forEach(rHook => {
+              const sim = calculateJaccard(tokenize(chosenHook), tokenize(rHook));
+              if (sim > hookSimMax) {
+                hookSimMax = sim;
+              }
+            });
+          }
+
+          const hookSimMaxPct = Math.round(hookSimMax * 100);
+          console.log(`[Autopilot] Chosen hook max Jaccard similarity: ${hookSimMaxPct}%`);
+
+          if (hookSimMaxPct >= 60) {
+            console.log(`[Autopilot] Hook similarity ${hookSimMaxPct}% >= 60% detected. Rejecting script and forcing regeneration.`);
+            retryCount++;
+            forceScrambledParams = true;
+            continue;
+          }
         } catch (e) {
           console.warn('Gemini script generation failed, falling back to static script:', e.message);
           scriptData = generateFallbackScript(productTitle);
@@ -599,7 +682,9 @@ async function runAutopilotProcess() {
       custom_caption_position: customCaptionPosition,
       used_success_dna: selectedSuccessVids.map(v => ({ id: v.id, title: v.title })),
       used_failure_dna: failureDnaList.slice(-10).map(v => ({ id: v.id, title: v.title })),
-      used_revenue_dna: revenueDnaList.slice(-10).map(v => ({ id: v.id, title: v.title }))
+      used_revenue_dna: revenueDnaList.slice(-10).map(v => ({ id: v.id, title: v.title })),
+      is_mock: false,
+      source: "autopilot"
     };
 
     saveToHistory(resultDetails);
@@ -621,11 +706,11 @@ function getRevenueDnaGuidelines() {
     const dnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
     if (fs.existsSync(dnaPath)) {
       const db = JSON.parse(fs.readFileSync(dnaPath, 'utf-8'));
-      const list = db.revenue_dna_list || [];
+      const list = (db.revenue_dna_list || []).filter(item => item.is_mock !== true);
       if (list.length > 0) {
         let dnaGuide = `\n[🔥 검증된 수익화 영상 DNA (반드시 아래 고수익 및 고ROI 패턴을 벤치마킹하여 구매 전환을 극대화하는 카피를 작성하십시오)]\n`;
         list.slice(-10).forEach((item, idx) => {
-          dnaGuide += `${idx + 1}. 제목: "${item.title}" | 3초 후킹 카피: "${item.title}" | Money Score: ${item.money_score}점 | ROI: ${item.roi}%\n`;
+          dnaGuide += `${idx + 1}. 제목: "${item.source_video_title || item.title}" | 3초 후킹 카피: "${item.hook || item.title}" | Money Score: ${item.money_score}점 | ROI: ${item.roi || 0}%\n`;
         });
         return dnaGuide;
       }
@@ -907,6 +992,13 @@ async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGui
 출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
 {
   "title": "쇼츠 영상 제목 (한글 20자 이내)",
+  "hook_candidates": [
+    "도입부 1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
+    "후보 2 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
+    "후보 3 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
+    "후보 4 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
+    "후보 5 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)"
+  ],
   "cuts": [
     {
       "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 반드시 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지(예: 💰, 🔥, 🚨, 👀 등)를 딱 1개 붙여 모바일 숏폼 자막 가독성과 전달력을 극대화할 것 (예: '방구석에서 돈 버는 비밀 👀')",
@@ -919,7 +1011,7 @@ async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGui
     }
   ]
 }
-주의사항: cuts 배열의 크기는 반드시 정확히 4개여야 합니다.
+주의사항: cuts 배열의 크기는 반드시 정확히 4개여야 하며, hook_candidates의 크기는 반드시 정확히 5개여야 합니다.
 
 ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovementGuidelines}` : ''}`;
 

@@ -885,6 +885,148 @@ export default function LearningPage() {
               </div>
 
             </div>
+
+            {/* Revenue DNA Expansion Status & Overfitting Risk Section */}
+            <div className="glass-panel" style={{ padding: '1.5rem', marginTop: '2rem' }}>
+              <h4 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Brain size={18} color="#f59e0b" />
+                <span>수익 DNA 확장 시스템 상태 (Revenue DNA Expansion Status)</span>
+              </h4>
+
+              {/* Overfitting Danger Alert */}
+              {growthMetrics?.overfitting_warning ? (
+                <div style={{
+                  background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1.5rem',
+                  color: '#f87171',
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem'
+                }}>
+                  <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                  <div>
+                    <strong>과적합 경고 (Overfitting Warning):</strong> &quot;{growthMetrics.overfit_category}&quot; 카테고리가 수익 DNA의 50% 이상을 차지하고 있어 맥북 편향(Overfitting) 위험 상태입니다. 실험 비중을 늘려 다변화를 탐색해야 합니다.
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  background: 'linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(52, 211, 153, 0.05) 100%)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  marginBottom: '1.5rem',
+                  color: '#34d399',
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem'
+                }}>
+                  <span style={{ fontSize: '1.25rem' }}>✅</span>
+                  <div>
+                    <strong>수익 최적화 안전 (Overfitting Safe):</strong> 여러 카테고리의 고효율 학습 DNA가 고르게 축적되고 있어 자율 성장에 안전한 상태입니다.
+                  </div>
+                </div>
+              )}
+
+              {/* Counts & Diversity Score Row */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                <div className="glass-panel" style={{ padding: '1rem', border: '1px solid rgba(245, 158, 11, 0.15)', background: 'rgba(255,255,255,0.01)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>실제 Revenue DNA 개수</span>
+                  <span style={{ display: 'block', fontSize: '1.6rem', fontWeight: 'bold', color: '#f59e0b', marginTop: '0.25rem' }}>
+                    {growthMetrics?.real_revenue_dna_count || 0} / 50+
+                  </span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.15rem' }}>실제 업로드 성과 기반 누적 건수</span>
+                </div>
+
+                <div className="glass-panel" style={{ padding: '1rem', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.01)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Mock/Test DNA 개수</span>
+                  <span style={{ display: 'block', fontSize: '1.6rem', fontWeight: 'bold', color: '#9ca3af', marginTop: '0.25rem' }}>
+                    {growthMetrics?.mock_revenue_dna_count || 0} 개
+                  </span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.15rem' }}>UI 검증 및 데이터 세팅용 mock 개수</span>
+                </div>
+
+                <div className="glass-panel" style={{ padding: '1rem', border: '1px solid rgba(167, 139, 250, 0.15)', background: 'rgba(255,255,255,0.01)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>수익 DNA 종합 다양성 스코어</span>
+                  <span style={{ display: 'block', fontSize: '1.6rem', fontWeight: 'bold', color: '#a78bfa', marginTop: '0.25rem' }}>
+                    {growthMetrics?.revenue_dna_diversity_score !== undefined ? `${growthMetrics.revenue_dna_diversity_score}%` : '0.0%'}
+                  </span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.15rem' }}>카테고리/상품/Hook/스타일 종합 다양성</span>
+                </div>
+              </div>
+
+              {/* Breakdowns & Milestone Progress */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+                
+                {/* Detailed metrics bar */}
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'white', fontWeight: 600, display: 'block', marginBottom: '0.75rem' }}>다양성 분석 세부 요소 (Diversity Breakdowns)</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {[
+                      { label: '카테고리 다양성 (Category Diversity)', val: growthMetrics?.rev_category_diversity || 0, color: '#60a5fa' },
+                      { label: '상품명 다양성 (Product Diversity)', val: growthMetrics?.rev_product_diversity || 0, color: '#34d399' },
+                      { label: '도입 Hook 다양성 (Hook Diversity)', val: growthMetrics?.rev_hook_diversity || 0, color: '#fbbf24' },
+                      { label: '비주얼 스타일 다양성 (Style Diversity)', val: growthMetrics?.rev_style_diversity || 0, color: '#a78bfa' }
+                    ].map((item, idx) => (
+                      <div key={idx}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: '0.2rem' }}>
+                          <span>{item.label}</span>
+                          <span style={{ color: 'white', fontWeight: 600 }}>{item.val}%</span>
+                        </div>
+                        <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ width: `${item.val}%`, height: '100%', background: item.color, borderRadius: '3px' }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Milestone Gauge */}
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'white', fontWeight: 600, display: 'block', marginBottom: '0.75rem' }}>수익 DNA 마일스톤 단계 (Milestone Level)</span>
+                  {(() => {
+                    const count = growthMetrics?.real_revenue_dna_count || 0;
+                    let level = '단계 1 (초기 탐색)';
+                    let target = 10;
+                    if (count >= 100) {
+                      level = '단계 5 (자율 수익 최적화)';
+                      target = 100;
+                    } else if (count >= 50) {
+                      level = '단계 4 (성공 공식 확립)';
+                      target = 100;
+                    } else if (count >= 30) {
+                      level = '단계 3 (시장 다변화)';
+                      target = 50;
+                    } else if (count >= 10) {
+                      level = '단계 2 (다각화 시작)';
+                      target = 30;
+                    }
+                    
+                    const pct = Math.min(100, Math.round((count / target) * 100));
+                    return (
+                      <div className="glass-panel" style={{ padding: '1rem', border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0,0,0,0.1)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                          <span style={{ fontWeight: 'bold', color: '#fbbf24' }}>{level}</span>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>목표: {target}개 중 {count}개</span>
+                        </div>
+                        <div style={{ height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '5px', overflow: 'hidden', marginBottom: '0.4rem' }}>
+                          <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)', borderRadius: '5px' }} />
+                        </div>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
+                          다음 마일스톤 진척도: {pct}% | AI 학습 자립을 위해 50개 이상의 실제 고효율 패턴을 확보해야 합니다.
+                        </span>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+              </div>
+
+            </div>
           </div>
 
           {/* Revenue Attribution & ROI Chart Section */}

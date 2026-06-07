@@ -1,26 +1,3 @@
 {
-  "failure_dna_list": [
-    {
-      "id": "1780363869430",
-      "title": "노트북 하나로 월 100만원 버는 법",
-      "views": 655,
-      "avgRetention": 25,
-      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
-      "hook_score": 77,
-      "visual_score": 70,
-      "subtitle_score": 72,
-      "added_at": "2026-06-07T01:31:09.436Z"
-    },
-    {
-      "id": "1780104669430",
-      "title": "노트북 하나로 월 100만원 버는 법",
-      "views": 1231,
-      "avgRetention": 37,
-      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
-      "hook_score": 85,
-      "visual_score": 76,
-      "subtitle_score": 77,
-      "added_at": "2026-06-07T01:31:09.436Z"
-    }
-  ]
+  "failure_dna_list": []
 }

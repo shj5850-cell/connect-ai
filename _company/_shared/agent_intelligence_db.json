@@ -378,27 +378,54 @@
       "agent": "CEO",
       "decision": "코다리가 코드 수정 및 개선을 진행",
       "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "인스타그램 에이전트의 개인 목표를 확인하고 현재 작업과 관련된 인물 후킹 기술을 추가하는 작업.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Writer: 고정 댓글 및 설명란용 최저가 제휴 링크 홍보 문구(Call-to-Action) 템플릿 5종 작성",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram: SNS 바이럴 채널의 후킹 스크립트 분석 및 커머스 결합 포인트 도출 1건",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram: 인스타그램 릴스 작성 및 해시태그 추가",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "레오가 오늘의 영상을 생성하거나 수정하여 최신 트렌드와 비즈니스 포인트를 반영할 수 있습니다.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "만약 메모리 검토가 불가능하거나 메모리에 비슷한 작업이 있다면, 다른 각도로 다시 생각해보세요.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "레오 — 유튜브 쇼츠와 연계하여 배포할 꿀템 추천 릴스 콘텐츠 발행 계획 3건",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram 릴스 작성 과정에 집중하겠습니다.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram의 디자인 커스터마이징 작업을 진행하겠습니다.",
+      "date": "2026-06-07"
     }
   ],
   "agent_lessons": [
-    {
-      "agent": "Content Strategist",
-      "lesson": "성공 DNA 확보: \"M3 맥북으로 AI 수익화 시작하는 법\" - 후킹 점수 87점 및 비주얼 점수 78점 시너지로 높은 성과 기록.",
-      "source": "success_dna_db.json",
-      "type": "success_dna"
-    },
-    {
-      "agent": "Vision Critic",
-      "lesson": "실패 원인 식별: \"노트북 하나로 월 100만원 버는 법\" - 설명 위주 전개로 인한 도입부 이탈 우려",
-      "source": "failure_dna_db.json",
-      "type": "failure_dna"
-    },
-    {
-      "agent": "Vision Critic",
-      "lesson": "실패 원인 식별: \"노트북 하나로 월 100만원 버는 법\" - 설명 위주 전개로 인한 도입부 이탈 우려",
-      "source": "failure_dna_db.json",
-      "type": "failure_dna"
-    },
     {
       "agent": "hook_specialist",
       "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득",
@@ -429,15 +456,15 @@
       "name": "walkthrough.md",
       "type": "documentation",
       "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\6ca2731a-fafd-4f1a-aa1e-d71002104549\\walkthrough.md",
-      "size": 5163,
-      "updated_at": "2026-06-07T01:21:11.913Z"
+      "size": 5376,
+      "updated_at": "2026-06-07T02:13:21.155Z"
     },
     {
       "name": "task.md",
       "type": "task_tracker",
       "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\6ca2731a-fafd-4f1a-aa1e-d71002104549\\task.md",
-      "size": 1032,
-      "updated_at": "2026-06-07T01:27:41.137Z"
+      "size": 1260,
+      "updated_at": "2026-06-07T02:13:16.817Z"
     },
     {
       "name": "quality_board_veto.log",
@@ -462,37 +489,41 @@
     }
   ],
   "agent_growth_metrics": {
-    "views_before_average": 1517,
-    "views_after_average": 23550,
-    "ctr_before_average": 8.5,
-    "ctr_after_average": 10.8,
-    "retention_before_average": 33,
-    "retention_after_average": 57,
-    "roi_before_average": 1835.2,
-    "roi_after_average": 1461263.5
+    "views_before_average": 1255,
+    "views_after_average": 31171,
+    "ctr_before_average": 8.2,
+    "ctr_after_average": 10,
+    "retention_before_average": 38,
+    "retention_after_average": 65,
+    "roi_before_average": 1640.2,
+    "roi_after_average": 56256.7,
+    "diversity_score_average": 79.1,
+    "novelty_score_average": 40,
+    "experiment_success_rate": 20,
+    "success_dna_reflection_rate": 100
   },
   "agent_skill_scores": {
     "ceo": {
       "score": 100,
-      "completed_tasks": 69,
+      "completed_tasks": 78,
       "lessons_learned": 0,
-      "success_patterns_found": 1,
+      "success_patterns_found": 0,
       "failure_patterns_avoided": 1,
-      "roi_contribution": 439206
+      "roi_contribution": 22590
     },
     "writer": {
-      "score": 48,
+      "score": 36,
       "completed_tasks": 6,
       "lessons_learned": 0,
-      "success_patterns_found": 1,
-      "failure_patterns_avoided": 2,
-      "roi_contribution": 76
+      "success_patterns_found": 0,
+      "failure_patterns_avoided": 0,
+      "roi_contribution": 83
     },
     "researcher": {
-      "score": 50,
+      "score": 46,
       "completed_tasks": 7,
       "lessons_learned": 0,
-      "success_patterns_found": 1,
+      "success_patterns_found": 0,
       "failure_patterns_avoided": 1,
       "roi_contribution": 75
     },
@@ -505,11 +536,11 @@
       "roi_contribution": 88
     },
     "vision_critic": {
-      "score": 64,
+      "score": 56,
       "completed_tasks": 6,
       "lessons_learned": 2,
       "success_patterns_found": 1,
-      "failure_patterns_avoided": 2,
+      "failure_patterns_avoided": 0,
       "roi_contribution": 80
     },
     "video_director": {
@@ -521,19 +552,19 @@
       "roi_contribution": 50
     },
     "hook_specialist": {
-      "score": 66,
+      "score": 62,
       "completed_tasks": 7,
       "lessons_learned": 2,
-      "success_patterns_found": 1,
+      "success_patterns_found": 0,
       "failure_patterns_avoided": 1,
-      "roi_contribution": 84
+      "roi_contribution": 94
     },
     "quality_board": {
-      "score": 48,
+      "score": 40,
       "completed_tasks": 6,
       "lessons_learned": 0,
       "success_patterns_found": 1,
-      "failure_patterns_avoided": 2,
+      "failure_patterns_avoided": 0,
       "roi_contribution": 85
     }
   }

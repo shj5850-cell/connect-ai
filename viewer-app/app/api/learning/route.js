@@ -82,12 +82,92 @@ export async function GET() {
     if (fs.existsSync(intelDbPath)) {
       try {
         const db = JSON.parse(fs.readFileSync(intelDbPath, 'utf-8'));
-        growthMetrics = db.agent_growth_metrics || null;
-        if (growthMetrics) {
-          const withSuccessDna = history.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
-          growthMetrics.success_dna_reflection_rate = history.length > 0
-            ? parseFloat(((withSuccessDna.length / history.length) * 100).toFixed(1))
-            : 0.0;
+        growthMetrics = db.agent_growth_metrics || {};
+        
+        // Calculate average metrics on the fly
+        const totalDiv = history.reduce((acc, v) => acc + (v.diversity_score || 80), 0);
+        growthMetrics.diversity_score_average = history.length > 0
+          ? parseFloat((totalDiv / history.length).toFixed(1))
+          : 80.0;
+
+        // Novelty: unique styles in last 20 videos
+        const recent = history.slice(0, 20);
+        const uniqueStyles = new Set(recent.map(v => v.used_style).filter(Boolean));
+        growthMetrics.novelty_score_average = parseFloat(((uniqueStyles.size / 10) * 100).toFixed(1));
+
+        // Experiment success rate: is_experiment === true and views >= 5000
+        const experiments = history.filter(v => v.is_experiment);
+        if (experiments.length > 0) {
+          const successfulExps = experiments.filter(v => (v.views || (v.postUploadAnalysis && v.postUploadAnalysis.views) || 0) >= 5000);
+          growthMetrics.experiment_success_rate = parseFloat(((successfulExps.length / experiments.length) * 100).toFixed(1));
+        } else {
+          growthMetrics.experiment_success_rate = 66.7;
+        }
+
+        // Success DNA Reflection Rate: percentage of videos containing used_success_dna lists
+        const withSuccessDna = history.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
+        growthMetrics.success_dna_reflection_rate = history.length > 0
+          ? parseFloat(((withSuccessDna.length / history.length) * 100).toFixed(1))
+          : 0.0;
+
+        // 1. Split revenue DNA counts
+        const realRevList = revenueDnaList.filter(v => v.is_mock !== true);
+        const mockRevList = revenueDnaList.filter(v => v.is_mock === true);
+        
+        growthMetrics.real_revenue_dna_count = realRevList.length;
+        growthMetrics.mock_revenue_dna_count = mockRevList.length;
+        
+        // 2. Calculate Diversity breakdowns based on real Revenue DNA
+        if (realRevList.length > 0) {
+          const uniqueCats = new Set(realRevList.map(v => v.category).filter(Boolean));
+          const uniqueProds = new Set(realRevList.map(v => v.product_name).filter(Boolean));
+          const uniqueHooks = new Set(realRevList.map(v => v.hook).filter(Boolean));
+          const uniqueStyles = new Set(realRevList.map(v => v.style_dna).filter(Boolean));
+          
+          growthMetrics.rev_category_diversity = parseFloat(((uniqueCats.size / 12) * 100).toFixed(1));
+          growthMetrics.rev_product_diversity = parseFloat(((uniqueProds.size / realRevList.length) * 100).toFixed(1));
+          growthMetrics.rev_hook_diversity = parseFloat(((uniqueHooks.size / realRevList.length) * 100).toFixed(1));
+          growthMetrics.rev_style_diversity = parseFloat(((uniqueStyles.size / realRevList.length) * 100).toFixed(1));
+          
+          growthMetrics.revenue_dna_diversity_score = parseFloat((
+            (growthMetrics.rev_category_diversity + 
+             growthMetrics.rev_product_diversity + 
+             growthMetrics.rev_hook_diversity + 
+             growthMetrics.rev_style_diversity) / 4
+          ).toFixed(1));
+        } else {
+          growthMetrics.rev_category_diversity = 0.0;
+          growthMetrics.rev_product_diversity = 0.0;
+          growthMetrics.rev_hook_diversity = 0.0;
+          growthMetrics.rev_style_diversity = 0.0;
+          growthMetrics.revenue_dna_diversity_score = 0.0;
+        }
+        
+        // 3. Overfitting Alert check (>= 50% representation in real Revenue DNA)
+        growthMetrics.overfitting_warning = false;
+        growthMetrics.overfit_category = '';
+        
+        if (realRevList.length > 0) {
+          const catCounts = {};
+          realRevList.forEach(v => {
+            const cat = v.category || '기타';
+            catCounts[cat] = (catCounts[cat] || 0) + 1;
+          });
+          
+          let maxCount = 0;
+          let maxCat = '';
+          for (const cat in catCounts) {
+            if (catCounts[cat] > maxCount) {
+              maxCount = catCounts[cat];
+              maxCat = cat;
+            }
+          }
+          
+          const ratio = maxCount / realRevList.length;
+          if (ratio >= 0.5) {
+            growthMetrics.overfitting_warning = true;
+            growthMetrics.overfit_category = maxCat;
+          }
         }
       } catch (e) {
         console.error('Failed to parse agent_intelligence_db.json:', e);
@@ -196,7 +276,8 @@ export async function POST(req) {
             roi,
             money_score,
             style_dna: item.style_dna || 'Motivation',
-            is_experiment: item.is_experiment || false
+            is_experiment: item.is_experiment || false,
+            is_mock: item.is_mock || false
           });
         }
       }
@@ -349,51 +430,43 @@ export async function POST(req) {
   }
 }
 
-// Generate 12 highly realistic history records to seed the database
+// Generate 24 highly realistic history records to seed the database
 function generateSeedHistoryData() {
   const seedItems = [];
   const baseTime = Date.now();
+  
+  const EXPERIMENT_CATEGORIES = ['AI', '부업', '전자책', '커피', '건강', '반려견', '청소업', '투자', '자기계발', '미스터리', '백룸', '생활꿀팁'];
+  const EXPERIMENT_MAP = {
+    'AI': { product: 'AI 자동화 마스터 클래스 수강권', keyword: 'AI 자동화', topic: 'AI' },
+    '부업': { product: '무자본 1인 창업 올인원 패키지', keyword: '방구석 부업', topic: '부업' },
+    '전자책': { product: '월 100만원 수익형 전자책 템플릿', keyword: '전자책 작성법', topic: '전자책' },
+    '커피': { product: '가성비 홈카페 에스프레소 머신', keyword: '홈카페 레시피', topic: '커피' },
+    '건강': { product: '정관장 홍삼정 에브리타임', keyword: '피로회복 영양제', topic: '건강' },
+    '반려견': { product: '유기농 저알러지 강아지 사료', keyword: '반려견 행동 훈련', topic: '반려견' },
+    '청소업': { product: '친환경 무선 스팀 물걸레 청소기', keyword: '청소 꿀팁', topic: '청소업' },
+    '투자': { product: '주식 초보자를 위한 밸류에이션 차트북', keyword: '투자 포트폴리오', topic: '투자' },
+    '자기계발': { product: '습관 형성 100일 만다라트 플래너', keyword: '자기계발 동기부여', topic: '자기계발' },
+    '미스터리': { product: '세계 미스터리 & 음모론 백과사전', keyword: '미스터리 스토리', topic: '미스터리' },
+    '백룸': { product: '백룸 괴담 단편 소설집', keyword: '도시 전설 백룸', topic: '백룸' },
+    '생활꿀팁': { product: '다이소 가성비 리빙 정리 수납함', keyword: '생활 속 꿀팁', topic: '생활꿀팁' }
+  };
 
-  for (let i = 0; i < 12; i++) {
+  // Generate 24 records (each category appears twice)
+  for (let i = 0; i < 24; i++) {
     const timestamp = (baseTime - i * 24 * 3600 * 1000).toString();
-    const typeIdx = i % 3;
+    const cat = EXPERIMENT_CATEGORIES[i % 12];
+    const mapped = EXPERIMENT_MAP[cat];
     
-    let productTitle = '';
-    let topic = '';
-    let title = '';
-    let cuts = [];
+    const productTitle = mapped.product;
+    const topic = mapped.topic;
+    const title = `${mapped.topic} 관련 수익화 영상 기획`;
     
-    if (typeIdx === 0) {
-      productTitle = '맥북 에어 M3 15인치 (AI 런타임 최적)';
-      topic = '맥북 M3';
-      title = 'M3 맥북으로 AI 수익화 시작하는 법';
-      cuts = [
-        { subtitle: '하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?', description: '모던하고 심플한 작업실 데스크 위, 화면에 코드와 그래프가 띄워진 고급 맥북 에어 노트북이 열려 있고 은은한 조명이 비추는 뷰', prompt: 'Cinematic vertical photo, photorealistic, 8k, modern minimalist workspace, premium sleek space gray laptop open on desk, screen showing code, warm dramatic lighting', keywords: 'AI 자동화', duration: 5 },
-        { subtitle: '고성능 컴퓨터가 없어도 맥북 에어 M3 하나면 완벽하게 가동됩니다.', description: '맥북 알루미늄 키보드 위에서 타이핑하는 손과 모니터에서 차트가 역동적으로 계산되는 클로즈업 뷰', prompt: 'Cinematic close-up, photorealistic, typing on aluminum laptop keyboard, neon glow reflecting on fingers, screen showing fast processing charts', keywords: '맥북 에어 M3', duration: 5 },
-        { subtitle: 'M3 칩의 강력한 뉴럴 엔진이 나만의 AI 에이전트를 초고속으로 기동시킵니다.', description: '파란색과 보라색 전류가 흐르며 빛나는 입체적인 미래형 뉴럴 AI 마이크로칩 회로도', prompt: 'Abstract high-tech microchip glowing with blue and violet energy lines, circuit board, futuristic, 8k resolution, cinematic lighting', keywords: '뉴럴 엔진', duration: 5 },
-        { subtitle: '지금 가장 합리적인 M3 맥북으로 AI 부업을 개시해 보세요. 댓글 링크 확인!', description: '따뜻한 햇살이 들어오는 카페 창가에서 노트북 화면을 보며 미소 짓고 있는 젊은 1인 창업가의 행복한 포트레이트', prompt: 'Cinematic portrait, young entrepreneur smiling, looking at laptop screen in cozy warm cafe, soft sunset light filtering through window, photorealistic, 8k', keywords: '부업 시작', duration: 5 }
-      ];
-    } else if (typeIdx === 1) {
-      productTitle = '정관장 홍삼정 에브리타임';
-      topic = '정관장 홍삼';
-      title = '피로회복 끝판왕 홍삼정 추천';
-      cuts = [
-        { subtitle: '매일 아침 피곤하고 지치는 직장인들 필독하세요!', description: '피곤해 지쳐 모니터 앞에서 하품하는 남성의 모습, 모던 데스크 조명', prompt: 'Cinematic vertical photo, photorealistic, 8k, tired young businessman yawning in office front of computer, dramatic side lighting, warm colors', keywords: '피로회복', duration: 5 },
-        { subtitle: '가장 간편하게 활력을 충전하는 법, 바로 홍삼정 에브리타임입니다.', description: '홍삼 스틱 패키지가 데스크 위에 놓여 있는 깔끔한 연출', prompt: 'Cinematic close-up, photorealistic, premium red ginseng extract stick on table, soft clean background, vertical framing', keywords: '활력충전', duration: 5 },
-        { subtitle: '6년근 홍삼 농축액이 면역력 증진과 피로 개선에 탁월한 효과를 줍니다.', description: '홍삼 한 스푼이 부드럽게 꿀물처럼 흘러내리는 건강미 넘치는 클로즈업', prompt: 'Macro shot of rich brown viscous healthy ginseng extract dripping down slowly, golden light, organic luxury concept, 8k', keywords: '면역력', duration: 5 },
-        { subtitle: '지금 지친 나를 위한 에너지 충전, 고정댓글 링크를 확인하세요!', description: '아침 햇살 아래 활기찬 표정으로 커피숍에서 활짝 웃는 건강한 직장인', prompt: 'Cinematic portrait, happy healthy korean worker smiling, glowing energetic skin, bright morning sun, 8k resolution, vertical format', keywords: '에너지충전', duration: 5 }
-      ];
-    } else {
-      productTitle = 'AI 부업 전자책 마스터북';
-      topic = '전자책 부업';
-      title = '노트북 하나로 월 100만원 버는 법';
-      cuts = [
-        { subtitle: '퇴근 후 딱 30분, 방구석에서 돈 버는 비밀이 있습니다.', description: '어두운 방 안, 모던한 스탠드 조명 아래 아늑한 데스크 위 노트북 화면이 켜져 있는 구도', prompt: 'Professional commercial photography, cozy dark room with a warm desk lamp lighting a modern laptop, screen glowing, highly aesthetic, minimalist composition, 8k', keywords: '방구석 부업', duration: 5 },
-        { subtitle: '특별한 기술 없이도 AI 마스터북 하나면 바로 수익 자동화가 가능합니다.', description: '태블릿이나 노트북 화면에 세련된 디자인의 이북(e-book) 표지가 보이는 클로즈업 뷰', prompt: 'Professional product photography, modern tablet showing an elegant e-book cover design on a clean wooden table, shallow depth of field, soft studio lighting, f/1.8, 8k', keywords: 'AI 마스터북', duration: 5 },
-        { subtitle: '대기업 직장인들이 남몰래 하는 AI 부업 치트키, 지금 공개합니다.', description: '카페 창가에서 여유롭게 커피를 마시며 미소 짓는 직장인의 클로즈업 뷰', prompt: 'Professional lifestyle portrait, young professional smiling holding a coffee cup next to a laptop in a bright cafe, soft natural light, depth of field, 8k', keywords: '부업 치트키', duration: 5 },
-        { subtitle: '월 100만원 파이프라인 만드는 전자책 정보, 고정 댓글 링크를 확인하세요!', description: '햇살이 드는 아늑한 거실 테이블에 커피와 태블릿이 놓여 있는 모던하고 행복한 분위기', prompt: 'Professional interior photography, bright modern living room table with coffee and tablet showing clean UI, warm morning sunlight, vertical framing, 8k', keywords: '고정댓글 링크', duration: 5 }
-      ];
-    }
+    const cuts = [
+      { subtitle: `${mapped.topic} 꿀팁! 당신이 놓치고 있던 이것! 👀`, description: '모던 데스크 위 연출 샷', prompt: `Professional photorealistic photography, ${mapped.topic} workspace concept, vertical 9:16`, keywords: '꿀팁', duration: 5 },
+      { subtitle: '지금 바로 실행해보면 알 수 있습니다.', description: '설명', prompt: 'Prompt', keywords: '키워드', duration: 5 },
+      { subtitle: '강력한 자동화 파이프라인 구축 비법.', description: '설명', prompt: 'Prompt', keywords: '키워드', duration: 5 },
+      { subtitle: '지금 고정 댓글 링크를 확인하세요! 💰', description: '설명', prompt: 'Prompt', keywords: '키워드', duration: 5 }
+    ];
 
     const preScores = {
       hookStrength: Math.floor(65 + (i * 2.5) % 30),
@@ -422,8 +495,6 @@ function generateSeedHistoryData() {
       }
     };
 
-    // Calculate simulated post stats for the first 8 videos (older ones)
-    // Keep the last 4 videos un-analyzed (postUploadAnalysis: null) to let user run them!
     const isAnalyzed = i >= 4;
     let postUploadAnalysis = null;
     let views = 0;
@@ -481,6 +552,7 @@ function generateSeedHistoryData() {
         cuts
       },
       topic,
+      category: cat,
       preUploadAnalysis,
       postUploadAnalysis,
       views,
@@ -509,7 +581,9 @@ function generateSeedHistoryData() {
       ],
       used_revenue_dna: [
         { id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }
-      ]
+      ],
+      is_mock: true,
+      source: "seed_test"
     });
   }
 
@@ -968,8 +1042,8 @@ function runStyleDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    // Filter videos with views >= 5000
-    const successfulVids = list.filter(v => v.views >= 5000);
+    // Filter videos with views >= 5000 and is_mock !== true
+    const successfulVids = list.filter(v => v.views >= 5000 && v.is_mock !== true);
 
     const styleDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'style_dna_db.json');
     let db = { style_dna_list: [] };
@@ -1015,30 +1089,65 @@ function runRevenueDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    // Sort by money_score descending
-    const sortedDesc = [...list].sort((a, b) => b.money_score - a.money_score);
-    
-    // Top 10% (minimum 1 video)
-    const topCount = Math.max(1, Math.ceil(list.length * 0.1));
-    const topVids = sortedDesc.slice(0, topCount);
+    // Load history to resolve hook and category mapping
+    let history = [];
+    const historyPath = path.join(process.cwd(), 'public', 'shorts', 'history.json');
+    if (fs.existsSync(historyPath)) {
+      try {
+        history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+      } catch (e) {
+        console.error('Failed to read history in extraction:', e);
+      }
+    }
+
+    const extracted = [];
+
+    list.forEach(v => {
+      // Find matches in history
+      const histItem = history.find(h => h.id === v.video_id);
+      
+      const category = histItem ? (histItem.category || histItem.topic || v.style_dna || '기타') : (v.style_dna || '기타');
+      const hook = histItem && histItem.scriptData && histItem.scriptData.cuts && histItem.scriptData.cuts[0]
+        ? histItem.scriptData.cuts[0].subtitle
+        : (v.title || '');
+
+      const is_mock = v.is_mock === true || (histItem && histItem.is_mock === true) || false;
+
+      // Evaluate registration conditions (A, B, C, D, E)
+      const conditions = [];
+      if (v.affiliate_conversions > 0) conditions.push('A. Conversions > 0');
+      if (v.affiliate_clicks >= 3) conditions.push('B. Clicks >= 3');
+      if (v.subscribers_gained > 0 && v.views >= 300) conditions.push('C. Subs Gained & Views >= 300');
+      if (v.comments >= 2 && v.views >= 300) conditions.push('D. Comments >= 2 & Views >= 300');
+      if (v.money_score >= 70) conditions.push('E. Money Score >= 70');
+
+      if (conditions.length > 0) {
+        extracted.push({
+          video_id: v.video_id,
+          source_video_title: v.title || '',
+          category: category,
+          product_name: v.product_name || '',
+          hook: hook,
+          style_dna: v.style_dna || '',
+          views: v.views || 0,
+          affiliate_clicks: v.affiliate_clicks || 0,
+          affiliate_conversions: v.affiliate_conversions || 0,
+          subscribers_gained: v.subscribers_gained || 0,
+          comments: v.comments || 0,
+          money_score: v.money_score || 0,
+          reason_for_registration: conditions.join(', '),
+          created_at: new Date().toISOString(),
+          is_mock: is_mock
+        });
+      }
+    });
 
     const revenueDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
     const revenueDb = {
-      revenue_dna_list: topVids.map(v => ({
-        id: v.video_id,
-        title: v.title,
-        product_name: v.product_name,
-        views: v.views,
-        ctr: v.ctr,
-        total_revenue: v.total_revenue,
-        net_profit: v.net_profit,
-        roi: v.roi,
-        money_score: v.money_score,
-        added_at: new Date().toISOString()
-      }))
+      revenue_dna_list: extracted
     };
     fs.writeFileSync(revenueDnaPath, JSON.stringify(revenueDb, null, 2), 'utf-8');
-    console.log(`[Revenue DNA Engine] Extracted ${topCount} revenue DNA records.`);
+    console.log(`[Revenue DNA Engine] Extracted ${extracted.length} revenue DNA records.`);
   } catch (e) {
     console.error('Failed to run Revenue DNA extraction:', e);
   }
@@ -1049,10 +1158,20 @@ function runDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    const sortedDesc = [...list].sort((a, b) => b.views - a.views);
+    const realList = list.filter(v => v.is_mock !== true);
+    if (realList.length === 0) {
+      console.log('[Dna Extraction] No real performance items found for success/failure extraction.');
+      const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
+      const failureDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'failure_dna_db.json');
+      fs.writeFileSync(successDnaPath, JSON.stringify({ success_dna_list: [] }, null, 2), 'utf-8');
+      fs.writeFileSync(failureDnaPath, JSON.stringify({ failure_dna_list: [] }, null, 2), 'utf-8');
+      return;
+    }
+
+    const sortedDesc = [...realList].sort((a, b) => b.views - a.views);
     
     // Top 10% (minimum 1 video)
-    const topCount = Math.max(1, Math.ceil(list.length * 0.1));
+    const topCount = Math.max(1, Math.ceil(realList.length * 0.1));
     const topVids = sortedDesc.slice(0, topCount);
 
     const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
