@@ -1,14 +1,14 @@
 [
   {
-    "id": "1780798587224",
+    "id": "1780815183276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780798587224",
+    "youtubeVideoId": "MOCK_YT_1780815183276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "AI 자동화 마스터 클래스 수강권",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780798587224",
-    "commentText": "오늘 영상에서 활약한 [AI 자동화 마스터 클래스 수강권] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780798587224",
-    "created_at": "2026-06-07T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780815183276",
+    "commentText": "오늘 영상에서 활약한 [AI 자동화 마스터 클래스 수강권] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780815183276",
+    "created_at": "2026-06-07T06:53:03.276Z",
     "scriptData": {
       "title": "AI 관련 수익화 영상 기획",
       "cuts": [
@@ -76,8 +76,8 @@
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": false,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 85,
+    "similarity_score": 15,
     "style_dna": "Luxury Tech",
     "used_style": "Photorealistic",
     "hook_type": "호기심형",
@@ -96,10 +96,6 @@
       {
         "id": "1780103900042",
         "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
       }
     ],
     "used_revenue_dna": [
@@ -108,19 +104,25 @@
         "title": "M3 맥북으로 AI 수익화 시작하는 법"
       }
     ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      }
+    ],
     "is_mock": true,
     "source": "seed_test"
   },
   {
-    "id": "1780712187224",
+    "id": "1780728783276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780712187224",
+    "youtubeVideoId": "MOCK_YT_1780728783276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "무자본 1인 창업 올인원 패키지",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780712187224",
-    "commentText": "오늘 영상에서 활약한 [무자본 1인 창업 올인원 패키지] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780712187224",
-    "created_at": "2026-06-06T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780728783276",
+    "commentText": "오늘 영상에서 활약한 [무자본 1인 창업 올인원 패키지] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780728783276",
+    "created_at": "2026-06-06T06:53:03.276Z",
     "scriptData": {
       "title": "부업 관련 수익화 영상 기획",
       "cuts": [
@@ -188,8 +190,8 @@
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
-    "diversity_score": 74,
-    "similarity_score": 26,
+    "diversity_score": 87,
+    "similarity_score": 13,
     "style_dna": "Emotional",
     "used_style": "Cinematic",
     "hook_type": "비밀형",
@@ -208,10 +210,6 @@
       {
         "id": "1780103900042",
         "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
       }
     ],
     "used_revenue_dna": [
@@ -220,19 +218,25 @@
         "title": "M3 맥북으로 AI 수익화 시작하는 법"
       }
     ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      }
+    ],
     "is_mock": true,
     "source": "seed_test"
   },
   {
-    "id": "1780625787224",
+    "id": "1780642383276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780625787224",
+    "youtubeVideoId": "MOCK_YT_1780642383276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "월 100만원 수익형 전자책 템플릿",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780625787224",
-    "commentText": "오늘 영상에서 활약한 [월 100만원 수익형 전자책 템플릿] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780625787224",
-    "created_at": "2026-06-05T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780642383276",
+    "commentText": "오늘 영상에서 활약한 [월 100만원 수익형 전자책 템플릿] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780642383276",
+    "created_at": "2026-06-05T06:53:03.276Z",
     "scriptData": {
       "title": "전자책 관련 수익화 영상 기획",
       "cuts": [
@@ -300,8 +304,8 @@
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
-    "diversity_score": 83,
-    "similarity_score": 17,
+    "diversity_score": 79,
+    "similarity_score": 21,
     "style_dna": "Motivation",
     "used_style": "Documentary",
     "hook_type": "충격형",
@@ -320,10 +324,6 @@
       {
         "id": "1780103900042",
         "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
       }
     ],
     "used_revenue_dna": [
@@ -332,19 +332,25 @@
         "title": "M3 맥북으로 AI 수익화 시작하는 법"
       }
     ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      }
+    ],
     "is_mock": true,
     "source": "seed_test"
   },
   {
-    "id": "1780539387224",
+    "id": "1780555983276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780539387224",
+    "youtubeVideoId": "MOCK_YT_1780555983276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "가성비 홈카페 에스프레소 머신",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780539387224",
-    "commentText": "오늘 영상에서 활약한 [가성비 홈카페 에스프레소 머신] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780539387224",
-    "created_at": "2026-06-04T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780555983276",
+    "commentText": "오늘 영상에서 활약한 [가성비 홈카페 에스프레소 머신] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780555983276",
+    "created_at": "2026-06-04T06:53:03.276Z",
     "scriptData": {
       "title": "커피 관련 수익화 영상 기획",
       "cuts": [
@@ -412,8 +418,8 @@
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
-    "diversity_score": 82,
-    "similarity_score": 18,
+    "diversity_score": 78,
+    "similarity_score": 22,
     "style_dna": "Curiosity",
     "used_style": "Anime",
     "hook_type": "비교형",
@@ -432,10 +438,6 @@
       {
         "id": "1780103900042",
         "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
       }
     ],
     "used_revenue_dna": [
@@ -444,19 +446,25 @@
         "title": "M3 맥북으로 AI 수익화 시작하는 법"
       }
     ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      }
+    ],
     "is_mock": true,
     "source": "seed_test"
   },
   {
-    "id": "1780452987224",
+    "id": "1780469583276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780452987224",
+    "youtubeVideoId": "MOCK_YT_1780469583276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "정관장 홍삼정 에브리타임",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780452987224",
-    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780452987224",
-    "created_at": "2026-06-03T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780469583276",
+    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780469583276",
+    "created_at": "2026-06-03T06:53:03.276Z",
     "scriptData": {
       "title": "건강 관련 수익화 영상 기획",
       "cuts": [
@@ -517,12 +525,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 753,
-      "likeRate": 2.2,
-      "commentCount": 1,
-      "avgRetention": 25,
-      "evaluated_at": "2026-06-03T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 753회\n- **성과 요약**: 사전 예측한 후킹 점수(75점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 2183,
+      "likeRate": 3.2,
+      "commentCount": 4,
+      "avgRetention": 47,
+      "evaluated_at": "2026-06-03T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,183회\n- **성과 요약**: 사전 예측한 후킹 점수(75점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -530,21 +538,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 753회 기록.",
+        "q5_expected_views": "실제 2,183회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 6.4,
-      "subscribers_gained": 1
+      "ctr": 11,
+      "subscribers_gained": 4
     },
-    "views": 753,
-    "likeRate": 2.2,
-    "commentCount": 1,
-    "avgRetention": 25,
+    "views": 2183,
+    "likeRate": 3.2,
+    "commentCount": 4,
+    "avgRetention": 47,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 73,
+    "similarity_score": 27,
     "style_dna": "Luxury Tech",
     "used_style": "Photorealistic",
     "hook_type": "호기심형",
@@ -563,10 +571,6 @@
       {
         "id": "1780103900042",
         "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
       }
     ],
     "used_revenue_dna": [
@@ -575,21 +579,27 @@
         "title": "M3 맥북으로 AI 수익화 시작하는 법"
       }
     ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      }
+    ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.4,
-    "subscribers_gained": 1
+    "ctr": 11,
+    "subscribers_gained": 4
   },
   {
-    "id": "1780366587224",
+    "id": "1780383183276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780366587224",
+    "youtubeVideoId": "MOCK_YT_1780383183276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "유기농 저알러지 강아지 사료",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780366587224",
-    "commentText": "오늘 영상에서 활약한 [유기농 저알러지 강아지 사료] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780366587224",
-    "created_at": "2026-06-02T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780383183276",
+    "commentText": "오늘 영상에서 활약한 [유기농 저알러지 강아지 사료] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780383183276",
+    "created_at": "2026-06-02T06:53:03.276Z",
     "scriptData": {
       "title": "반려견 관련 수익화 영상 기획",
       "cuts": [
@@ -650,12 +660,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1697,
-      "likeRate": 3,
-      "commentCount": 3,
-      "avgRetention": 40,
-      "evaluated_at": "2026-06-02T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,697회\n- **성과 요약**: 사전 예측한 후킹 점수(77점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 1193,
+      "likeRate": 1.3,
+      "commentCount": 2,
+      "avgRetention": 43,
+      "evaluated_at": "2026-06-02T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,193회\n- **성과 요약**: 사전 예측한 후킹 점수(77점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -663,21 +673,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,697회 기록.",
+        "q5_expected_views": "실제 1,193회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 3.9,
-      "subscribers_gained": 3
+      "ctr": 6.6,
+      "subscribers_gained": 2
     },
-    "views": 1697,
-    "likeRate": 3,
-    "commentCount": 3,
-    "avgRetention": 40,
+    "views": 1193,
+    "likeRate": 1.3,
+    "commentCount": 2,
+    "avgRetention": 43,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 86,
+    "similarity_score": 14,
     "style_dna": "Emotional",
     "used_style": "Cinematic",
     "hook_type": "비밀형",
@@ -694,35 +704,37 @@
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 3.9,
-    "subscribers_gained": 3
+    "ctr": 6.6,
+    "subscribers_gained": 2
   },
   {
-    "id": "1780280187224",
+    "id": "1780296783276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780280187224",
+    "youtubeVideoId": "MOCK_YT_1780296783276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "친환경 무선 스팀 물걸레 청소기",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780280187224",
-    "commentText": "오늘 영상에서 활약한 [친환경 무선 스팀 물걸레 청소기] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780280187224",
-    "created_at": "2026-06-01T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780296783276",
+    "commentText": "오늘 영상에서 활약한 [친환경 무선 스팀 물걸레 청소기] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780296783276",
+    "created_at": "2026-06-01T06:53:03.276Z",
     "scriptData": {
       "title": "청소업 관련 수익화 영상 기획",
       "cuts": [
@@ -783,12 +795,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 26775,
-      "likeRate": 11.2,
-      "commentCount": 214,
-      "avgRetention": 86,
-      "evaluated_at": "2026-06-01T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 26,775회\n- **성과 요약**: 사전 예측한 후킹 점수(80점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "views": 12051,
+      "likeRate": 7.4,
+      "commentCount": 96,
+      "avgRetention": 88,
+      "evaluated_at": "2026-06-01T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 12,051회\n- **성과 요약**: 사전 예측한 후킹 점수(80점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
       "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
       "failureFactors": "없음",
       "answers": {
@@ -796,21 +808,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 26,775회 기록.",
+        "q5_expected_views": "실제 12,051회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 4.5,
-      "subscribers_gained": 53
+      "ctr": 11.7,
+      "subscribers_gained": 24
     },
-    "views": 26775,
-    "likeRate": 11.2,
-    "commentCount": 214,
-    "avgRetention": 86,
+    "views": 12051,
+    "likeRate": 7.4,
+    "commentCount": 96,
+    "avgRetention": 88,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
-    "diversity_score": 75,
-    "similarity_score": 25,
+    "diversity_score": 88,
+    "similarity_score": 12,
     "style_dna": "Motivation",
     "used_style": "Documentary",
     "hook_type": "충격형",
@@ -827,35 +839,37 @@
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 4.5,
-    "subscribers_gained": 53
+    "ctr": 11.7,
+    "subscribers_gained": 24
   },
   {
-    "id": "1780193787224",
+    "id": "1780210383276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780193787224",
+    "youtubeVideoId": "MOCK_YT_1780210383276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "주식 초보자를 위한 밸류에이션 차트북",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780193787224",
-    "commentText": "오늘 영상에서 활약한 [주식 초보자를 위한 밸류에이션 차트북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780193787224",
-    "created_at": "2026-05-31T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780210383276",
+    "commentText": "오늘 영상에서 활약한 [주식 초보자를 위한 밸류에이션 차트북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780210383276",
+    "created_at": "2026-05-31T06:53:03.276Z",
     "scriptData": {
       "title": "투자 관련 수익화 영상 기획",
       "cuts": [
@@ -916,12 +930,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1253,
-      "likeRate": 1.9,
-      "commentCount": 2,
-      "avgRetention": 42,
-      "evaluated_at": "2026-05-31T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,253회\n- **성과 요약**: 사전 예측한 후킹 점수(82점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 474,
+      "likeRate": 2.5,
+      "commentCount": 0,
+      "avgRetention": 26,
+      "evaluated_at": "2026-05-31T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 474회\n- **성과 요약**: 사전 예측한 후킹 점수(82점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -929,21 +943,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,253회 기록.",
+        "q5_expected_views": "실제 474회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 8.9,
-      "subscribers_gained": 2
+      "ctr": 6.9,
+      "subscribers_gained": 0
     },
-    "views": 1253,
-    "likeRate": 1.9,
-    "commentCount": 2,
-    "avgRetention": 42,
+    "views": 474,
+    "likeRate": 2.5,
+    "commentCount": 0,
+    "avgRetention": 26,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 89,
+    "similarity_score": 11,
     "style_dna": "Curiosity",
     "used_style": "Anime",
     "hook_type": "비교형",
@@ -954,41 +968,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 8.9,
-    "subscribers_gained": 2
+    "ctr": 6.9,
+    "subscribers_gained": 0
   },
   {
-    "id": "1780107387224",
+    "id": "1780123983276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780107387224",
+    "youtubeVideoId": "MOCK_YT_1780123983276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "습관 형성 100일 만다라트 플래너",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780107387224",
-    "commentText": "오늘 영상에서 활약한 [습관 형성 100일 만다라트 플래너] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780107387224",
-    "created_at": "2026-05-30T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780123983276",
+    "commentText": "오늘 영상에서 활약한 [습관 형성 100일 만다라트 플래너] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780123983276",
+    "created_at": "2026-05-30T06:53:03.276Z",
     "scriptData": {
       "title": "자기계발 관련 수익화 영상 기획",
       "cuts": [
@@ -1049,12 +1065,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 219,
-      "likeRate": 3.3,
-      "commentCount": 0,
-      "avgRetention": 44,
-      "evaluated_at": "2026-05-30T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 219회\n- **성과 요약**: 사전 예측한 후킹 점수(85점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 2047,
+      "likeRate": 2.3,
+      "commentCount": 4,
+      "avgRetention": 48,
+      "evaluated_at": "2026-05-30T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,047회\n- **성과 요약**: 사전 예측한 후킹 점수(85점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -1062,21 +1078,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 219회 기록.",
+        "q5_expected_views": "실제 2,047회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 12.7,
-      "subscribers_gained": 0
+      "ctr": 13,
+      "subscribers_gained": 4
     },
-    "views": 219,
-    "likeRate": 3.3,
-    "commentCount": 0,
-    "avgRetention": 44,
+    "views": 2047,
+    "likeRate": 2.3,
+    "commentCount": 4,
+    "avgRetention": 48,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 85,
-    "similarity_score": 15,
+    "diversity_score": 83,
+    "similarity_score": 17,
     "style_dna": "Luxury Tech",
     "used_style": "Photorealistic",
     "hook_type": "호기심형",
@@ -1087,41 +1103,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 12.7,
-    "subscribers_gained": 0
+    "ctr": 13,
+    "subscribers_gained": 4
   },
   {
-    "id": "1780020987224",
+    "id": "1780037583276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1780020987224",
+    "youtubeVideoId": "MOCK_YT_1780037583276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "세계 미스터리 & 음모론 백과사전",
-    "affiliateLink": "https://link.coupang.com/a/mock_1780020987224",
-    "commentText": "오늘 영상에서 활약한 [세계 미스터리 & 음모론 백과사전] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780020987224",
-    "created_at": "2026-05-29T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1780037583276",
+    "commentText": "오늘 영상에서 활약한 [세계 미스터리 & 음모론 백과사전] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1780037583276",
+    "created_at": "2026-05-29T06:53:03.276Z",
     "scriptData": {
       "title": "미스터리 관련 수익화 영상 기획",
       "cuts": [
@@ -1182,12 +1200,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 84187,
-      "likeRate": 8.9,
-      "commentCount": 673,
-      "avgRetention": 83,
-      "evaluated_at": "2026-05-29T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 84,187회\n- **성과 요약**: 사전 예측한 후킹 점수(87점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "views": 55611,
+      "likeRate": 10.6,
+      "commentCount": 444,
+      "avgRetention": 78,
+      "evaluated_at": "2026-05-29T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 55,611회\n- **성과 요약**: 사전 예측한 후킹 점수(87점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
       "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
       "failureFactors": "없음",
       "answers": {
@@ -1195,21 +1213,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 84,187회 기록.",
+        "q5_expected_views": "실제 55,611회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 14.9,
-      "subscribers_gained": 168
+      "ctr": 10.2,
+      "subscribers_gained": 111
     },
-    "views": 84187,
-    "likeRate": 8.9,
-    "commentCount": 673,
-    "avgRetention": 83,
+    "views": 55611,
+    "likeRate": 10.6,
+    "commentCount": 444,
+    "avgRetention": 78,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
-    "diversity_score": 86,
-    "similarity_score": 14,
+    "diversity_score": 76,
+    "similarity_score": 24,
     "style_dna": "Emotional",
     "used_style": "Cinematic",
     "hook_type": "비밀형",
@@ -1220,41 +1238,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 14.9,
-    "subscribers_gained": 168
+    "ctr": 10.2,
+    "subscribers_gained": 111
   },
   {
-    "id": "1779934587224",
+    "id": "1779951183276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779934587224",
+    "youtubeVideoId": "MOCK_YT_1779951183276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "백룸 괴담 단편 소설집",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779934587224",
-    "commentText": "오늘 영상에서 활약한 [백룸 괴담 단편 소설집] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779934587224",
-    "created_at": "2026-05-28T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779951183276",
+    "commentText": "오늘 영상에서 활약한 [백룸 괴담 단편 소설집] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779951183276",
+    "created_at": "2026-05-28T06:53:03.276Z",
     "scriptData": {
       "title": "백룸 관련 수익화 영상 기획",
       "cuts": [
@@ -1315,12 +1335,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 2222,
-      "likeRate": 3.6,
-      "commentCount": 4,
-      "avgRetention": 39,
-      "evaluated_at": "2026-05-28T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,222회\n- **성과 요약**: 사전 예측한 후킹 점수(90점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 1057,
+      "likeRate": 2.4,
+      "commentCount": 2,
+      "avgRetention": 49,
+      "evaluated_at": "2026-05-28T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,057회\n- **성과 요약**: 사전 예측한 후킹 점수(90점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -1328,21 +1348,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 2,222회 기록.",
+        "q5_expected_views": "실제 1,057회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 12.1,
-      "subscribers_gained": 4
+      "ctr": 13.8,
+      "subscribers_gained": 2
     },
-    "views": 2222,
-    "likeRate": 3.6,
-    "commentCount": 4,
-    "avgRetention": 39,
+    "views": 1057,
+    "likeRate": 2.4,
+    "commentCount": 2,
+    "avgRetention": 49,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 74,
-    "similarity_score": 26,
+    "diversity_score": 77,
+    "similarity_score": 23,
     "style_dna": "Motivation",
     "used_style": "Documentary",
     "hook_type": "충격형",
@@ -1353,41 +1373,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 12.1,
-    "subscribers_gained": 4
+    "ctr": 13.8,
+    "subscribers_gained": 2
   },
   {
-    "id": "1779848187224",
+    "id": "1779864783276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779848187224",
+    "youtubeVideoId": "MOCK_YT_1779864783276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "다이소 가성비 리빙 정리 수납함",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779848187224",
-    "commentText": "오늘 영상에서 활약한 [다이소 가성비 리빙 정리 수납함] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779848187224",
-    "created_at": "2026-05-27T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779864783276",
+    "commentText": "오늘 영상에서 활약한 [다이소 가성비 리빙 정리 수납함] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779864783276",
+    "created_at": "2026-05-27T06:53:03.276Z",
     "scriptData": {
       "title": "생활꿀팁 관련 수익화 영상 기획",
       "cuts": [
@@ -1448,12 +1470,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1095,
-      "likeRate": 3.6,
-      "commentCount": 2,
+      "views": 2642,
+      "likeRate": 2,
+      "commentCount": 5,
       "avgRetention": 33,
-      "evaluated_at": "2026-05-27T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,095회\n- **성과 요약**: 사전 예측한 후킹 점수(92점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "evaluated_at": "2026-05-27T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,642회\n- **성과 요약**: 사전 예측한 후킹 점수(92점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -1461,15 +1483,15 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,095회 기록.",
+        "q5_expected_views": "실제 2,642회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 11.2,
-      "subscribers_gained": 2
+      "ctr": 7.4,
+      "subscribers_gained": 5
     },
-    "views": 1095,
-    "likeRate": 3.6,
-    "commentCount": 2,
+    "views": 2642,
+    "likeRate": 2,
+    "commentCount": 5,
     "avgRetention": 33,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
@@ -1486,41 +1508,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 11.2,
-    "subscribers_gained": 2
+    "ctr": 7.4,
+    "subscribers_gained": 5
   },
   {
-    "id": "1779761787224",
+    "id": "1779778383276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779761787224",
+    "youtubeVideoId": "MOCK_YT_1779778383276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "AI 자동화 마스터 클래스 수강권",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779761787224",
-    "commentText": "오늘 영상에서 활약한 [AI 자동화 마스터 클래스 수강권] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779761787224",
-    "created_at": "2026-05-26T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779778383276",
+    "commentText": "오늘 영상에서 활약한 [AI 자동화 마스터 클래스 수강권] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779778383276",
+    "created_at": "2026-05-26T06:53:03.276Z",
     "scriptData": {
       "title": "AI 관련 수익화 영상 기획",
       "cuts": [
@@ -1581,12 +1605,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 17999,
-      "likeRate": 8.7,
-      "commentCount": 143,
-      "avgRetention": 76,
-      "evaluated_at": "2026-05-26T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 17,999회\n- **성과 요약**: 사전 예측한 후킹 점수(65점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "views": 18133,
+      "likeRate": 8.5,
+      "commentCount": 145,
+      "avgRetention": 75,
+      "evaluated_at": "2026-05-26T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 18,133회\n- **성과 요약**: 사전 예측한 후킹 점수(65점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
       "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
       "failureFactors": "없음",
       "answers": {
@@ -1594,21 +1618,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 17,999회 기록.",
+        "q5_expected_views": "실제 18,133회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 11.8,
-      "subscribers_gained": 35
+      "ctr": 10.7,
+      "subscribers_gained": 36
     },
-    "views": 17999,
-    "likeRate": 8.7,
-    "commentCount": 143,
-    "avgRetention": 76,
+    "views": 18133,
+    "likeRate": 8.5,
+    "commentCount": 145,
+    "avgRetention": 75,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
-    "diversity_score": 83,
-    "similarity_score": 17,
+    "diversity_score": 75,
+    "similarity_score": 25,
     "style_dna": "Luxury Tech",
     "used_style": "Photorealistic",
     "hook_type": "호기심형",
@@ -1619,41 +1643,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 11.8,
-    "subscribers_gained": 35
+    "ctr": 10.7,
+    "subscribers_gained": 36
   },
   {
-    "id": "1779675387224",
+    "id": "1779691983276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779675387224",
+    "youtubeVideoId": "MOCK_YT_1779691983276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "무자본 1인 창업 올인원 패키지",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779675387224",
-    "commentText": "오늘 영상에서 활약한 [무자본 1인 창업 올인원 패키지] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779675387224",
-    "created_at": "2026-05-25T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779691983276",
+    "commentText": "오늘 영상에서 활약한 [무자본 1인 창업 올인원 패키지] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779691983276",
+    "created_at": "2026-05-25T06:53:03.276Z",
     "scriptData": {
       "title": "부업 관련 수익화 영상 기획",
       "cuts": [
@@ -1714,12 +1740,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1876,
-      "likeRate": 3.4,
-      "commentCount": 3,
-      "avgRetention": 37,
-      "evaluated_at": "2026-05-25T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,876회\n- **성과 요약**: 사전 예측한 후킹 점수(67점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 2458,
+      "likeRate": 3.6,
+      "commentCount": 4,
+      "avgRetention": 36,
+      "evaluated_at": "2026-05-25T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,458회\n- **성과 요약**: 사전 예측한 후킹 점수(67점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -1727,21 +1753,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,876회 기록.",
+        "q5_expected_views": "실제 2,458회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 12.4,
-      "subscribers_gained": 3
+      "ctr": 9.3,
+      "subscribers_gained": 4
     },
-    "views": 1876,
-    "likeRate": 3.4,
-    "commentCount": 3,
-    "avgRetention": 37,
+    "views": 2458,
+    "likeRate": 3.6,
+    "commentCount": 4,
+    "avgRetention": 36,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 75,
-    "similarity_score": 25,
+    "diversity_score": 79,
+    "similarity_score": 21,
     "style_dna": "Emotional",
     "used_style": "Cinematic",
     "hook_type": "비밀형",
@@ -1752,41 +1778,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 12.4,
-    "subscribers_gained": 3
+    "ctr": 9.3,
+    "subscribers_gained": 4
   },
   {
-    "id": "1779588987224",
+    "id": "1779605583276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779588987224",
+    "youtubeVideoId": "MOCK_YT_1779605583276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "월 100만원 수익형 전자책 템플릿",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779588987224",
-    "commentText": "오늘 영상에서 활약한 [월 100만원 수익형 전자책 템플릿] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779588987224",
-    "created_at": "2026-05-24T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779605583276",
+    "commentText": "오늘 영상에서 활약한 [월 100만원 수익형 전자책 템플릿] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779605583276",
+    "created_at": "2026-05-24T06:53:03.276Z",
     "scriptData": {
       "title": "전자책 관련 수익화 영상 기획",
       "cuts": [
@@ -1847,12 +1875,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 478,
-      "likeRate": 3.2,
-      "commentCount": 0,
-      "avgRetention": 35,
-      "evaluated_at": "2026-05-24T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 478회\n- **성과 요약**: 사전 예측한 후킹 점수(70점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 1084,
+      "likeRate": 1.6,
+      "commentCount": 2,
+      "avgRetention": 41,
+      "evaluated_at": "2026-05-24T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,084회\n- **성과 요약**: 사전 예측한 후킹 점수(70점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -1860,21 +1888,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 478회 기록.",
+        "q5_expected_views": "실제 1,084회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 6.9,
-      "subscribers_gained": 0
+      "ctr": 7.8,
+      "subscribers_gained": 2
     },
-    "views": 478,
-    "likeRate": 3.2,
-    "commentCount": 0,
-    "avgRetention": 35,
+    "views": 1084,
+    "likeRate": 1.6,
+    "commentCount": 2,
+    "avgRetention": 41,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 82,
-    "similarity_score": 18,
+    "diversity_score": 84,
+    "similarity_score": 16,
     "style_dna": "Motivation",
     "used_style": "Documentary",
     "hook_type": "충격형",
@@ -1885,41 +1913,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.9,
-    "subscribers_gained": 0
+    "ctr": 7.8,
+    "subscribers_gained": 2
   },
   {
-    "id": "1779502587224",
+    "id": "1779519183276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779502587224",
+    "youtubeVideoId": "MOCK_YT_1779519183276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "가성비 홈카페 에스프레소 머신",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779502587224",
-    "commentText": "오늘 영상에서 활약한 [가성비 홈카페 에스프레소 머신] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779502587224",
-    "created_at": "2026-05-23T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779519183276",
+    "commentText": "오늘 영상에서 활약한 [가성비 홈카페 에스프레소 머신] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779519183276",
+    "created_at": "2026-05-23T06:53:03.276Z",
     "scriptData": {
       "title": "커피 관련 수익화 영상 기획",
       "cuts": [
@@ -1980,12 +2010,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 89819,
-      "likeRate": 7.1,
-      "commentCount": 718,
-      "avgRetention": 77,
-      "evaluated_at": "2026-05-23T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 89,819회\n- **성과 요약**: 사전 예측한 후킹 점수(72점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "views": 56762,
+      "likeRate": 7.8,
+      "commentCount": 454,
+      "avgRetention": 82,
+      "evaluated_at": "2026-05-23T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 56,762회\n- **성과 요약**: 사전 예측한 후킹 점수(72점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
       "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
       "failureFactors": "없음",
       "answers": {
@@ -1993,21 +2023,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 89,819회 기록.",
+        "q5_expected_views": "실제 56,762회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 6.9,
-      "subscribers_gained": 179
+      "ctr": 9.9,
+      "subscribers_gained": 113
     },
-    "views": 89819,
-    "likeRate": 7.1,
-    "commentCount": 718,
-    "avgRetention": 77,
+    "views": 56762,
+    "likeRate": 7.8,
+    "commentCount": 454,
+    "avgRetention": 82,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
-    "diversity_score": 89,
-    "similarity_score": 11,
+    "diversity_score": 80,
+    "similarity_score": 20,
     "style_dna": "Curiosity",
     "used_style": "Anime",
     "hook_type": "비교형",
@@ -2018,41 +2048,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.9,
-    "subscribers_gained": 179
+    "ctr": 9.9,
+    "subscribers_gained": 113
   },
   {
-    "id": "1779416187224",
+    "id": "1779432783276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779416187224",
+    "youtubeVideoId": "MOCK_YT_1779432783276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "정관장 홍삼정 에브리타임",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779416187224",
-    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779416187224",
-    "created_at": "2026-05-22T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779432783276",
+    "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779432783276",
+    "created_at": "2026-05-22T06:53:03.276Z",
     "scriptData": {
       "title": "건강 관련 수익화 영상 기획",
       "cuts": [
@@ -2113,12 +2145,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1448,
+      "views": 2371,
       "likeRate": 2.6,
-      "commentCount": 2,
-      "avgRetention": 42,
-      "evaluated_at": "2026-05-22T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,448회\n- **성과 요약**: 사전 예측한 후킹 점수(75점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "commentCount": 4,
+      "avgRetention": 30,
+      "evaluated_at": "2026-05-22T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,371회\n- **성과 요약**: 사전 예측한 후킹 점수(75점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -2126,21 +2158,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,448회 기록.",
+        "q5_expected_views": "실제 2,371회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 10.3,
-      "subscribers_gained": 2
+      "ctr": 13.4,
+      "subscribers_gained": 4
     },
-    "views": 1448,
+    "views": 2371,
     "likeRate": 2.6,
-    "commentCount": 2,
-    "avgRetention": 42,
+    "commentCount": 4,
+    "avgRetention": 30,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 81,
+    "similarity_score": 19,
     "style_dna": "Luxury Tech",
     "used_style": "Photorealistic",
     "hook_type": "호기심형",
@@ -2151,41 +2183,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 10.3,
-    "subscribers_gained": 2
+    "ctr": 13.4,
+    "subscribers_gained": 4
   },
   {
-    "id": "1779329787224",
+    "id": "1779346383276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779329787224",
+    "youtubeVideoId": "MOCK_YT_1779346383276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "유기농 저알러지 강아지 사료",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779329787224",
-    "commentText": "오늘 영상에서 활약한 [유기농 저알러지 강아지 사료] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779329787224",
-    "created_at": "2026-05-21T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779346383276",
+    "commentText": "오늘 영상에서 활약한 [유기농 저알러지 강아지 사료] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779346383276",
+    "created_at": "2026-05-21T06:53:03.276Z",
     "scriptData": {
       "title": "반려견 관련 수익화 영상 기획",
       "cuts": [
@@ -2246,12 +2280,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1823,
-      "likeRate": 1.6,
-      "commentCount": 3,
-      "avgRetention": 34,
-      "evaluated_at": "2026-05-21T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,823회\n- **성과 요약**: 사전 예측한 후킹 점수(77점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 506,
+      "likeRate": 2.7,
+      "commentCount": 1,
+      "avgRetention": 26,
+      "evaluated_at": "2026-05-21T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 506회\n- **성과 요약**: 사전 예측한 후킹 점수(77점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -2259,21 +2293,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,823회 기록.",
+        "q5_expected_views": "실제 506회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 7.7,
-      "subscribers_gained": 3
+      "ctr": 6.4,
+      "subscribers_gained": 1
     },
-    "views": 1823,
-    "likeRate": 1.6,
-    "commentCount": 3,
-    "avgRetention": 34,
+    "views": 506,
+    "likeRate": 2.7,
+    "commentCount": 1,
+    "avgRetention": 26,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 74,
+    "similarity_score": 26,
     "style_dna": "Emotional",
     "used_style": "Cinematic",
     "hook_type": "비밀형",
@@ -2284,41 +2318,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 7.7,
-    "subscribers_gained": 3
+    "ctr": 6.4,
+    "subscribers_gained": 1
   },
   {
-    "id": "1779243387224",
+    "id": "1779259983276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779243387224",
+    "youtubeVideoId": "MOCK_YT_1779259983276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "친환경 무선 스팀 물걸레 청소기",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779243387224",
-    "commentText": "오늘 영상에서 활약한 [친환경 무선 스팀 물걸레 청소기] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779243387224",
-    "created_at": "2026-05-20T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779259983276",
+    "commentText": "오늘 영상에서 활약한 [친환경 무선 스팀 물걸레 청소기] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779259983276",
+    "created_at": "2026-05-20T06:53:03.276Z",
     "scriptData": {
       "title": "청소업 관련 수익화 영상 기획",
       "cuts": [
@@ -2379,12 +2415,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 59605,
-      "likeRate": 6.7,
-      "commentCount": 476,
-      "avgRetention": 86,
-      "evaluated_at": "2026-05-20T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 59,605회\n- **성과 요약**: 사전 예측한 후킹 점수(80점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "views": 44976,
+      "likeRate": 8.7,
+      "commentCount": 359,
+      "avgRetention": 77,
+      "evaluated_at": "2026-05-20T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 44,976회\n- **성과 요약**: 사전 예측한 후킹 점수(80점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
       "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
       "failureFactors": "없음",
       "answers": {
@@ -2392,21 +2428,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 59,605회 기록.",
+        "q5_expected_views": "실제 44,976회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 10.6,
-      "subscribers_gained": 119
+      "ctr": 10.9,
+      "subscribers_gained": 89
     },
-    "views": 59605,
-    "likeRate": 6.7,
-    "commentCount": 476,
-    "avgRetention": 86,
+    "views": 44976,
+    "likeRate": 8.7,
+    "commentCount": 359,
+    "avgRetention": 77,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
-    "diversity_score": 86,
-    "similarity_score": 14,
+    "diversity_score": 74,
+    "similarity_score": 26,
     "style_dna": "Motivation",
     "used_style": "Documentary",
     "hook_type": "충격형",
@@ -2417,41 +2453,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 10.6,
-    "subscribers_gained": 119
+    "ctr": 10.9,
+    "subscribers_gained": 89
   },
   {
-    "id": "1779156987224",
+    "id": "1779173583276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779156987224",
+    "youtubeVideoId": "MOCK_YT_1779173583276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "주식 초보자를 위한 밸류에이션 차트북",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779156987224",
-    "commentText": "오늘 영상에서 활약한 [주식 초보자를 위한 밸류에이션 차트북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779156987224",
-    "created_at": "2026-05-19T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779173583276",
+    "commentText": "오늘 영상에서 활약한 [주식 초보자를 위한 밸류에이션 차트북] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779173583276",
+    "created_at": "2026-05-19T06:53:03.276Z",
     "scriptData": {
       "title": "투자 관련 수익화 영상 기획",
       "cuts": [
@@ -2512,12 +2550,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1566,
-      "likeRate": 1.4,
-      "commentCount": 3,
-      "avgRetention": 42,
-      "evaluated_at": "2026-05-19T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,566회\n- **성과 요약**: 사전 예측한 후킹 점수(82점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 2363,
+      "likeRate": 2.7,
+      "commentCount": 4,
+      "avgRetention": 33,
+      "evaluated_at": "2026-05-19T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,363회\n- **성과 요약**: 사전 예측한 후킹 점수(82점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -2525,21 +2563,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,566회 기록.",
+        "q5_expected_views": "실제 2,363회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 9.2,
-      "subscribers_gained": 3
+      "ctr": 9.9,
+      "subscribers_gained": 4
     },
-    "views": 1566,
-    "likeRate": 1.4,
-    "commentCount": 3,
-    "avgRetention": 42,
+    "views": 2363,
+    "likeRate": 2.7,
+    "commentCount": 4,
+    "avgRetention": 33,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 76,
-    "similarity_score": 24,
+    "diversity_score": 84,
+    "similarity_score": 16,
     "style_dna": "Curiosity",
     "used_style": "Anime",
     "hook_type": "비교형",
@@ -2550,41 +2588,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 9.2,
-    "subscribers_gained": 3
+    "ctr": 9.9,
+    "subscribers_gained": 4
   },
   {
-    "id": "1779070587224",
+    "id": "1779087183276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1779070587224",
+    "youtubeVideoId": "MOCK_YT_1779087183276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "습관 형성 100일 만다라트 플래너",
-    "affiliateLink": "https://link.coupang.com/a/mock_1779070587224",
-    "commentText": "오늘 영상에서 활약한 [습관 형성 100일 만다라트 플래너] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779070587224",
-    "created_at": "2026-05-18T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779087183276",
+    "commentText": "오늘 영상에서 활약한 [습관 형성 100일 만다라트 플래너] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779087183276",
+    "created_at": "2026-05-18T06:53:03.276Z",
     "scriptData": {
       "title": "자기계발 관련 수익화 영상 기획",
       "cuts": [
@@ -2645,12 +2685,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 971,
-      "likeRate": 2.8,
-      "commentCount": 1,
-      "avgRetention": 44,
-      "evaluated_at": "2026-05-18T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 971회\n- **성과 요약**: 사전 예측한 후킹 점수(85점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 1195,
+      "likeRate": 1.9,
+      "commentCount": 2,
+      "avgRetention": 46,
+      "evaluated_at": "2026-05-18T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,195회\n- **성과 요약**: 사전 예측한 후킹 점수(85점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -2658,21 +2698,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 971회 기록.",
+        "q5_expected_views": "실제 1,195회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 8.4,
-      "subscribers_gained": 1
+      "ctr": 6.2,
+      "subscribers_gained": 2
     },
-    "views": 971,
-    "likeRate": 2.8,
-    "commentCount": 1,
-    "avgRetention": 44,
+    "views": 1195,
+    "likeRate": 1.9,
+    "commentCount": 2,
+    "avgRetention": 46,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 85,
-    "similarity_score": 15,
+    "diversity_score": 72,
+    "similarity_score": 28,
     "style_dna": "Luxury Tech",
     "used_style": "Photorealistic",
     "hook_type": "호기심형",
@@ -2683,41 +2723,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 8.4,
-    "subscribers_gained": 1
+    "ctr": 6.2,
+    "subscribers_gained": 2
   },
   {
-    "id": "1778984187224",
+    "id": "1779000783276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1778984187224",
+    "youtubeVideoId": "MOCK_YT_1779000783276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "세계 미스터리 & 음모론 백과사전",
-    "affiliateLink": "https://link.coupang.com/a/mock_1778984187224",
-    "commentText": "오늘 영상에서 활약한 [세계 미스터리 & 음모론 백과사전] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1778984187224",
-    "created_at": "2026-05-17T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1779000783276",
+    "commentText": "오늘 영상에서 활약한 [세계 미스터리 & 음모론 백과사전] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1779000783276",
+    "created_at": "2026-05-17T06:53:03.276Z",
     "scriptData": {
       "title": "미스터리 관련 수익화 영상 기획",
       "cuts": [
@@ -2778,12 +2820,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 25898,
-      "likeRate": 7.5,
-      "commentCount": 207,
-      "avgRetention": 84,
-      "evaluated_at": "2026-05-17T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 25,898회\n- **성과 요약**: 사전 예측한 후킹 점수(87점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
+      "views": 65630,
+      "likeRate": 8.9,
+      "commentCount": 525,
+      "avgRetention": 81,
+      "evaluated_at": "2026-05-17T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 65,630회\n- **성과 요약**: 사전 예측한 후킹 점수(87점)와 대본 템포가 실제 성과에 적절히 작용하여 떡상함.",
       "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
       "failureFactors": "없음",
       "answers": {
@@ -2791,21 +2833,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 25,898회 기록.",
+        "q5_expected_views": "실제 65,630회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 7.8,
-      "subscribers_gained": 51
+      "ctr": 6,
+      "subscribers_gained": 131
     },
-    "views": 25898,
-    "likeRate": 7.5,
-    "commentCount": 207,
-    "avgRetention": 84,
+    "views": 65630,
+    "likeRate": 8.9,
+    "commentCount": 525,
+    "avgRetention": 81,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
-    "diversity_score": 73,
-    "similarity_score": 27,
+    "diversity_score": 82,
+    "similarity_score": 18,
     "style_dna": "Emotional",
     "used_style": "Cinematic",
     "hook_type": "비밀형",
@@ -2816,41 +2858,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 7.8,
-    "subscribers_gained": 51
+    "ctr": 6,
+    "subscribers_gained": 131
   },
   {
-    "id": "1778897787224",
+    "id": "1778914383276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1778897787224",
+    "youtubeVideoId": "MOCK_YT_1778914383276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "백룸 괴담 단편 소설집",
-    "affiliateLink": "https://link.coupang.com/a/mock_1778897787224",
-    "commentText": "오늘 영상에서 활약한 [백룸 괴담 단편 소설집] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1778897787224",
-    "created_at": "2026-05-16T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1778914383276",
+    "commentText": "오늘 영상에서 활약한 [백룸 괴담 단편 소설집] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1778914383276",
+    "created_at": "2026-05-16T06:53:03.276Z",
     "scriptData": {
       "title": "백룸 관련 수익화 영상 기획",
       "cuts": [
@@ -2911,12 +2955,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 1879,
-      "likeRate": 2.9,
+      "views": 1665,
+      "likeRate": 1.9,
       "commentCount": 3,
-      "avgRetention": 37,
-      "evaluated_at": "2026-05-16T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,879회\n- **성과 요약**: 사전 예측한 후킹 점수(90점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "avgRetention": 35,
+      "evaluated_at": "2026-05-16T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,665회\n- **성과 요약**: 사전 예측한 후킹 점수(90점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -2924,21 +2968,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 1,879회 기록.",
+        "q5_expected_views": "실제 1,665회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 8.5,
+      "ctr": 10.4,
       "subscribers_gained": 3
     },
-    "views": 1879,
-    "likeRate": 2.9,
+    "views": 1665,
+    "likeRate": 1.9,
     "commentCount": 3,
-    "avgRetention": 37,
+    "avgRetention": 35,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 73,
-    "similarity_score": 27,
+    "diversity_score": 76,
+    "similarity_score": 24,
     "style_dna": "Motivation",
     "used_style": "Documentary",
     "hook_type": "충격형",
@@ -2949,41 +2993,43 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 8.5,
+    "ctr": 10.4,
     "subscribers_gained": 3
   },
   {
-    "id": "1778811387224",
+    "id": "1778827983276",
     "videoUrl": "/shorts/test_video_output.mp4",
-    "youtubeVideoId": "MOCK_YT_1778811387224",
+    "youtubeVideoId": "MOCK_YT_1778827983276",
     "isMockUpload": true,
     "uploadMessage": "시뮬레이션 업로드 완료",
     "productTitle": "다이소 가성비 리빙 정리 수납함",
-    "affiliateLink": "https://link.coupang.com/a/mock_1778811387224",
-    "commentText": "오늘 영상에서 활약한 [다이소 가성비 리빙 정리 수납함] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1778811387224",
-    "created_at": "2026-05-15T02:16:27.224Z",
+    "affiliateLink": "https://link.coupang.com/a/mock_1778827983276",
+    "commentText": "오늘 영상에서 활약한 [다이소 가성비 리빙 정리 수납함] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock_1778827983276",
+    "created_at": "2026-05-15T06:53:03.276Z",
     "scriptData": {
       "title": "생활꿀팁 관련 수익화 영상 기획",
       "cuts": [
@@ -3044,12 +3090,12 @@
       }
     },
     "postUploadAnalysis": {
-      "views": 2695,
-      "likeRate": 3.5,
-      "commentCount": 5,
-      "avgRetention": 41,
-      "evaluated_at": "2026-05-15T02:16:27.224Z",
-      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 2,695회\n- **성과 요약**: 사전 예측한 후킹 점수(92점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
+      "views": 1150,
+      "likeRate": 2.9,
+      "commentCount": 2,
+      "avgRetention": 26,
+      "evaluated_at": "2026-05-15T06:53:03.276Z",
+      "comparisonReport": "### 📊 예상 vs 실제 비교 리포트\n- **실제 조회수**: 1,150회\n- **성과 요약**: 사전 예측한 후킹 점수(92점)와 대본 템포가 실제 성과에 이탈로 연결되어 저조함.",
       "successFactors": "BGM 매칭은 적절했음.",
       "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
       "answers": {
@@ -3057,21 +3103,21 @@
         "q2_dropoff": "2번째 컷 설명 나레이션 구간에서 긴장감 저하로 이탈",
         "q3_diff_from_viral": "1. 전환 템포(우리 5초 vs 인기 2초)\n2. 자막의 이모지 활용 부재\n3. 강력한 페인포인트 부족",
         "q4_must_fix": "대본 2번째 컷의 지루한 설명을 질문형으로 수정할 것",
-        "q5_expected_views": "실제 2,695회 기록.",
+        "q5_expected_views": "실제 1,150회 기록.",
         "q6_multiplier_10x": "첫 컷의 대본 문구의 후킹 강도를 높이고, 자막 강조 효과를 추가할 것."
       },
-      "ctr": 6.5,
-      "subscribers_gained": 5
+      "ctr": 12.6,
+      "subscribers_gained": 2
     },
-    "views": 2695,
-    "likeRate": 3.5,
-    "commentCount": 5,
-    "avgRetention": 41,
+    "views": 1150,
+    "likeRate": 2.9,
+    "commentCount": 2,
+    "avgRetention": 26,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
-    "diversity_score": 77,
-    "similarity_score": 23,
+    "diversity_score": 74,
+    "similarity_score": 26,
     "style_dna": "Curiosity",
     "used_style": "Anime",
     "hook_type": "비교형",
@@ -3082,29 +3128,31 @@
     "custom_caption_position": "bottom",
     "used_success_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780296783276",
+        "title": "친환경 무선 스팀 물걸레 청소기"
       }
     ],
     "used_failure_dna": [
       {
-        "id": "1780103900042",
-        "title": "노트북 하나로 월 100만원 버는 법"
-      },
-      {
-        "id": "1779931100042",
-        "title": "피로회복 끝판왕 홍삼정 추천"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
       }
     ],
     "used_revenue_dna": [
       {
-        "id": "1780017500042",
-        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+        "id": "1780469583276",
+        "title": "정관장 홍삼정 에브리타임"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
       }
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.5,
-    "subscribers_gained": 5
+    "ctr": 12.6,
+    "subscribers_gained": 2
   }
 ]

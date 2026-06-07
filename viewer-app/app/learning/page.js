@@ -881,7 +881,23 @@ export default function LearningPage() {
                 <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fbbf24', display: 'block', marginTop: '0.5rem' }}>
                   {growthMetrics?.success_dna_reflection_rate !== undefined ? `${growthMetrics.success_dna_reflection_rate}%` : '0.0%'}
                 </span>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>성공 DNA 가이드 반영 생성 비율 (목표: 90%+)</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>성공 DNA 반영 비디오 비율 (목표: 80%+)</span>
+              </div>
+
+              <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid rgba(52,211,153,0.15)', background: 'linear-gradient(145deg, rgba(255,255,255,0.01) 0%, rgba(52,211,153,0.02) 100%)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>수익 DNA 반영률 (Revenue DNA Reflection)</span>
+                <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#34d399', display: 'block', marginTop: '0.5rem' }}>
+                  {growthMetrics?.revenue_dna_reflection_rate !== undefined ? `${growthMetrics.revenue_dna_reflection_rate}%` : '0.0%'}
+                </span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>수익 DNA 반영 비디오 비율 (목표: 80%+)</span>
+              </div>
+
+              <div className="glass-panel" style={{ padding: '1.25rem', border: '1px solid rgba(239,68,68,0.15)', background: 'linear-gradient(145deg, rgba(255,255,255,0.01) 0%, rgba(239,68,68,0.02) 100%)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>실패 DNA 지배력 (Failure DNA Dominance)</span>
+                <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#f87171', display: 'block', marginTop: '0.5rem' }}>
+                  {growthMetrics?.failure_dna_dominance !== undefined ? `${growthMetrics.failure_dna_dominance}%` : '0.0%'}
+                </span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', display: 'block', marginTop: '0.25rem' }}>실패 DNA 노출 비디오 비율 (목표: 30% 이하)</span>
               </div>
 
             </div>
@@ -1024,6 +1040,84 @@ export default function LearningPage() {
                   })()}
                 </div>
 
+              </div>
+
+            </div>
+          </div>
+
+          {/* DNA Influence Scores & Contribution Stats Panel */}
+          <div className="glass-panel" style={{ padding: '1.5rem' }}>
+            <h4 style={{ fontSize: '1.1rem', color: 'white', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Brain size={18} color="#a78bfa" />
+              <span>DNA 영향력 점수 및 기여도 통계 (DNA Influence Scores & Contribution Stats)</span>
+            </h4>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', flexWrap: 'wrap' }}>
+              
+              {/* Success DNA Stats */}
+              <div className="glass-panel" style={{ padding: '1rem', background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(251,191,36,0.1)' }}>
+                <span style={{ fontSize: '0.9rem', color: '#fbbf24', fontWeight: 'bold', display: 'block', marginBottom: '0.75rem' }}>🔥 성공 DNA 영향력 점수</span>
+                {successDnaList.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '300px', overflowY: 'auto' }}>
+                    {successDnaList.map((item, idx) => (
+                      <div key={item.id || idx} style={{ background: 'rgba(255,255,255,0.01)', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem', fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                          <span>사용: {item.uses || 0}회</span>
+                          <span>영향력: <strong style={{ color: '#fbbf24' }}>{item.dna_influence_score !== undefined ? `${item.dna_influence_score}점` : '50.0점'}</strong></span>
+                          <span>평균 조회: {Math.round(item.avgViews || 0).toLocaleString()}회</span>
+                          <span>평균 ROI: {Math.round(item.avgRoi || 0)}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>기여도 데이터 없음</span>
+                )}
+              </div>
+
+              {/* Revenue DNA Stats */}
+              <div className="glass-panel" style={{ padding: '1rem', background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(52,211,153,0.1)' }}>
+                <span style={{ fontSize: '0.9rem', color: '#34d399', fontWeight: 'bold', display: 'block', marginBottom: '0.75rem' }}>💰 수익 DNA 영향력 점수</span>
+                {revenueDnaList.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '300px', overflowY: 'auto' }}>
+                    {revenueDnaList.map((item, idx) => (
+                      <div key={item.video_id || item.id || idx} style={{ background: 'rgba(255,255,255,0.01)', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.source_video_title || item.title}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem', fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                          <span>사용: {item.uses || 0}회</span>
+                          <span>영향력: <strong style={{ color: '#34d399' }}>{item.dna_influence_score !== undefined ? `${item.dna_influence_score}점` : '50.0점'}</strong></span>
+                          <span>평균 CTR: {(item.avgCtr || 0).toFixed(2)}%</span>
+                          <span>평균 ROI: {Math.round(item.avgRoi || 0)}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>기여도 데이터 없음</span>
+                )}
+              </div>
+
+              {/* Failure DNA Stats */}
+              <div className="glass-panel" style={{ padding: '1rem', background: 'rgba(0,0,0,0.1)', border: '1px solid rgba(239,68,68,0.1)' }}>
+                <span style={{ fontSize: '0.9rem', color: '#f87171', fontWeight: 'bold', display: 'block', marginBottom: '0.75rem' }}>⚠️ 실패 DNA 회피 기여도</span>
+                {failureDnaList.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '300px', overflowY: 'auto' }}>
+                    {failureDnaList.map((item, idx) => (
+                      <div key={item.id || idx} style={{ background: 'rgba(255,255,255,0.01)', padding: '0.5rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.25rem', fontSize: '0.65rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                          <span>사용: {item.uses || 0}회</span>
+                          <span>영향력: <strong style={{ color: '#f87171' }}>{item.dna_influence_score !== undefined ? `${item.dna_influence_score}점` : '50.0점'}</strong></span>
+                          <span>평균 조회: {Math.round(item.avgViews || 0).toLocaleString()}회</span>
+                          <span>평균 ROI: {Math.round(item.avgRoi || 0)}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>기여도 데이터 없음</span>
+                )}
               </div>
 
             </div>

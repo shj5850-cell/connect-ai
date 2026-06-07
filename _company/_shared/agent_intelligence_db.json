@@ -473,9 +473,65 @@
       "agent": "CEO",
       "decision": "현빈의 코드 수정 작업 예정",
       "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "인스타그램 캡션 및 해시태그 작성",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현재 가장 가치 있는 단일 작업을 다시 고려하고, 메모리에 비슷한 항목이 있으면 다른 각도로 진전시키세요.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram 작업은 캡션 및 해시태그 작성으로 바뀌었습니다.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "최근 의사결정: 메모리 검토 후, 가장 가치 있는 단일 작업을 결정하고, 적절한 1~2명 에이전트에게 분배.",
+      "date": "2026-06-07"
     }
   ],
   "agent_lessons": [
+    {
+      "agent": "Content Strategist",
+      "lesson": "성공 DNA 확보: \"미스터리 관련 수익화 영상 기획\" - 후킹 점수 87점 및 비주얼 점수 69점 시너지로 높은 성과 기록.",
+      "source": "success_dna_db.json",
+      "type": "success_dna"
+    },
+    {
+      "agent": "Content Strategist",
+      "lesson": "성공 DNA 확보: \"커피 관련 수익화 영상 기획\" - 후킹 점수 72점 및 비주얼 점수 91점 시너지로 높은 성과 기록.",
+      "source": "success_dna_db.json",
+      "type": "success_dna"
+    },
+    {
+      "agent": "Vision Critic",
+      "lesson": "실패 원인 식별: \"투자 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려",
+      "source": "failure_dna_db.json",
+      "type": "failure_dna"
+    },
+    {
+      "agent": "Vision Critic",
+      "lesson": "실패 원인 식별: \"반려견 관련 수익화 영상 기획\" - 비주얼 컷의 단조로움 및 불일치",
+      "source": "failure_dna_db.json",
+      "type": "failure_dna"
+    },
+    {
+      "agent": "Vision Critic",
+      "lesson": "실패 원인 식별: \"백룸 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려",
+      "source": "failure_dna_db.json",
+      "type": "failure_dna"
+    },
+    {
+      "agent": "Vision Critic",
+      "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려",
+      "source": "failure_dna_db.json",
+      "type": "failure_dna"
+    },
     {
       "agent": "hook_specialist",
       "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득",
@@ -506,15 +562,15 @@
       "name": "walkthrough.md",
       "type": "documentation",
       "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\6ca2731a-fafd-4f1a-aa1e-d71002104549\\walkthrough.md",
-      "size": 5376,
-      "updated_at": "2026-06-07T02:13:21.155Z"
+      "size": 3155,
+      "updated_at": "2026-06-07T06:55:00.861Z"
     },
     {
       "name": "task.md",
       "type": "task_tracker",
       "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\6ca2731a-fafd-4f1a-aa1e-d71002104549\\task.md",
-      "size": 1260,
-      "updated_at": "2026-06-07T02:13:16.817Z"
+      "size": 483,
+      "updated_at": "2026-06-07T06:54:13.167Z"
     },
     {
       "name": "quality_board_veto.log",
@@ -539,15 +595,15 @@
     }
   ],
   "agent_growth_metrics": {
-    "views_before_average": 1255,
-    "views_after_average": 31171,
-    "ctr_before_average": 8.2,
-    "ctr_after_average": 10,
-    "retention_before_average": 38,
-    "retention_after_average": 65,
-    "roi_before_average": 1640.2,
-    "roi_after_average": 56256.7,
-    "diversity_score_average": 79.1,
+    "views_before_average": 7660,
+    "views_after_average": 19896,
+    "ctr_before_average": 8.4,
+    "ctr_after_average": 11,
+    "retention_before_average": 41,
+    "retention_after_average": 59,
+    "roi_before_average": 8676.2,
+    "roi_after_average": 37991,
+    "diversity_score_average": 79.8,
     "novelty_score_average": 40,
     "experiment_success_rate": 20,
     "success_dna_reflection_rate": 100
@@ -555,25 +611,25 @@
   "agent_skill_scores": {
     "ceo": {
       "score": 100,
-      "completed_tasks": 88,
+      "completed_tasks": 92,
       "lessons_learned": 0,
-      "success_patterns_found": 0,
+      "success_patterns_found": 2,
       "failure_patterns_avoided": 1,
-      "roi_contribution": 22590
+      "roi_contribution": 10206
     },
     "writer": {
-      "score": 36,
+      "score": 60,
       "completed_tasks": 6,
       "lessons_learned": 0,
-      "success_patterns_found": 0,
-      "failure_patterns_avoided": 0,
-      "roi_contribution": 83
+      "success_patterns_found": 2,
+      "failure_patterns_avoided": 4,
+      "roi_contribution": 73
     },
     "researcher": {
-      "score": 46,
+      "score": 54,
       "completed_tasks": 7,
       "lessons_learned": 0,
-      "success_patterns_found": 0,
+      "success_patterns_found": 2,
       "failure_patterns_avoided": 1,
       "roi_contribution": 75
     },
@@ -586,11 +642,11 @@
       "roi_contribution": 88
     },
     "vision_critic": {
-      "score": 56,
+      "score": 72,
       "completed_tasks": 6,
       "lessons_learned": 2,
       "success_patterns_found": 1,
-      "failure_patterns_avoided": 0,
+      "failure_patterns_avoided": 4,
       "roi_contribution": 80
     },
     "video_director": {
@@ -602,19 +658,19 @@
       "roi_contribution": 50
     },
     "hook_specialist": {
-      "score": 62,
+      "score": 70,
       "completed_tasks": 7,
       "lessons_learned": 2,
-      "success_patterns_found": 0,
+      "success_patterns_found": 2,
       "failure_patterns_avoided": 1,
-      "roi_contribution": 94
+      "roi_contribution": 81
     },
     "quality_board": {
-      "score": 40,
+      "score": 56,
       "completed_tasks": 6,
       "lessons_learned": 0,
       "success_patterns_found": 1,
-      "failure_patterns_avoided": 0,
+      "failure_patterns_avoided": 4,
       "roi_contribution": 85
     }
   }

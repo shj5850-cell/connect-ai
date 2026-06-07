@@ -119,6 +119,60 @@
       "views": 17888,
       "roi": 24652.7,
       "added_at": "2026-06-07T02:11:11.359Z"
+    },
+    {
+      "style": "Motivation",
+      "video_id": "1780296783276",
+      "title": "청소업 관련 수익화 영상 기획",
+      "views": 12051,
+      "roi": 25251.8,
+      "added_at": "2026-06-07T06:53:03.290Z",
+      "is_mock": true
+    },
+    {
+      "style": "Emotional",
+      "video_id": "1780037583276",
+      "title": "미스터리 관련 수익화 영상 기획",
+      "views": 55611,
+      "roi": 102058.3,
+      "added_at": "2026-06-07T06:53:03.290Z",
+      "is_mock": true
+    },
+    {
+      "style": "Luxury Tech",
+      "video_id": "1779778383276",
+      "title": "AI 관련 수익화 영상 기획",
+      "views": 18133,
+      "roi": 34852.7,
+      "added_at": "2026-06-07T06:53:03.290Z",
+      "is_mock": true
+    },
+    {
+      "style": "Curiosity",
+      "video_id": "1779519183276",
+      "title": "커피 관련 수익화 영상 기획",
+      "views": 56762,
+      "roi": 101008.5,
+      "added_at": "2026-06-07T06:53:03.290Z",
+      "is_mock": true
+    },
+    {
+      "style": "Motivation",
+      "video_id": "1779259983276",
+      "title": "청소업 관련 수익화 영상 기획",
+      "views": 44976,
+      "roi": 88106.7,
+      "added_at": "2026-06-07T06:53:03.290Z",
+      "is_mock": true
+    },
+    {
+      "style": "Emotional",
+      "video_id": "1779000783276",
+      "title": "미스터리 관련 수익화 영상 기획",
+      "views": 65630,
+      "roi": 70859.8,
+      "added_at": "2026-06-07T06:53:03.290Z",
+      "is_mock": true
     }
   ]
 }

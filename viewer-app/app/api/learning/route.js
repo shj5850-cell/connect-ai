@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { updateDnaInfluenceScores } from '../../lib/dna_influence_engine';
 
 const HISTORY_PATH = path.join(process.cwd(), 'public', 'shorts', 'history.json');
 const ACCOUNT_PATH = path.join(process.cwd(), '..', '_company', '_agents', 'youtube', 'tools', 'youtube_account.json');
@@ -13,6 +14,8 @@ function getGeminiApiKey() {
 // GET handler: Return history.json data
 export async function GET() {
   try {
+    // Update DNA influence scores on each check
+    updateDnaInfluenceScores();
     let history = [];
     if (fs.existsSync(HISTORY_PATH)) {
       try {
@@ -108,6 +111,18 @@ export async function GET() {
         const withSuccessDna = history.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
         growthMetrics.success_dna_reflection_rate = history.length > 0
           ? parseFloat(((withSuccessDna.length / history.length) * 100).toFixed(1))
+          : 0.0;
+
+        // Revenue DNA Reflection Rate: percentage of videos containing used_revenue_dna lists
+        const withRevenueDna = history.filter(v => v.used_revenue_dna && v.used_revenue_dna.length > 0);
+        growthMetrics.revenue_dna_reflection_rate = history.length > 0
+          ? parseFloat(((withRevenueDna.length / history.length) * 100).toFixed(1))
+          : 0.0;
+
+        // Failure DNA Dominance: percentage of videos containing used_failure_dna lists
+        const withFailureDna = history.filter(v => v.used_failure_dna && v.used_failure_dna.length > 0);
+        growthMetrics.failure_dna_dominance = history.length > 0
+          ? parseFloat(((withFailureDna.length / history.length) * 100).toFixed(1))
           : 0.0;
 
         // 1. Split revenue DNA counts
@@ -290,6 +305,9 @@ export async function POST(req) {
       runDnaExtraction(seededPerfList);
       runRevenueDnaExtraction(seededPerfList);
       runStyleDnaExtraction(seededPerfList);
+
+      // Calculate DNA Influence Scores
+      updateDnaInfluenceScores();
 
       return NextResponse.json({ success: true, history: demoData });
     }
@@ -572,15 +590,17 @@ function generateSeedHistoryData() {
       custom_font: 'Pretendard-Bold',
       custom_caption_style: 'minimal',
       custom_caption_position: 'bottom',
-      used_success_dna: [
-        { id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }
-      ],
-      used_failure_dna: [
-        { id: '1780103900042', title: '노트북 하나로 월 100만원 버는 법' },
-        { id: '1779931100042', title: '피로회복 끝판왕 홍삼정 추천' }
-      ],
-      used_revenue_dna: [
-        { id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }
+      used_success_dna: i > 4 && seedItems.find((x, idx) => idx < i && x.views >= 5000)
+        ? [{ id: seedItems.find((x, idx) => idx < i && x.views >= 5000).id, title: seedItems.find((x, idx) => idx < i && x.views >= 5000).productTitle }]
+        : [{ id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }],
+      used_failure_dna: i > 4 && seedItems.find((x, idx) => idx < i && x.views < 5000 && x.views > 0)
+        ? [{ id: seedItems.find((x, idx) => idx < i && x.views < 5000 && x.views > 0).id, title: seedItems.find((x, idx) => idx < i && x.views < 5000 && x.views > 0).productTitle }]
+        : [{ id: '1780103900042', title: '노트북 하나로 월 100만원 버는 법' }],
+      used_revenue_dna: i > 4 && seedItems.find((x, idx) => idx < i && x.views >= 300)
+        ? [{ id: seedItems.find((x, idx) => idx < i && x.views >= 300).id, title: seedItems.find((x, idx) => idx < i && x.views >= 300).productTitle }]
+        : [{ id: '1780017500042', title: 'M3 맥북으로 AI 수익화 시작하는 법' }],
+      used_agent_lessons: [
+        { agent: i % 2 === 0 ? "hook_specialist" : "vision_critic", lesson: i % 2 === 0 ? "hook_specialist 관련 성공 요인 분석 결과 획득" : "vision_critic 관련 성공 요인 분석 결과 획득" }
       ],
       is_mock: true,
       source: "seed_test"
@@ -1021,7 +1041,8 @@ function saveToPerformanceDb(videoItem, actualMetrics) {
       roi,
       money_score,
       style_dna: videoItem.style_dna || 'Motivation',
-      is_experiment: videoItem.is_experiment || false
+      is_experiment: videoItem.is_experiment || false,
+      is_mock: videoItem.is_mock || false
     });
 
     fs.writeFileSync(perfPath, JSON.stringify(db, null, 2), 'utf-8');
@@ -1031,6 +1052,9 @@ function saveToPerformanceDb(videoItem, actualMetrics) {
     runDnaExtraction(db.video_performance);
     runRevenueDnaExtraction(db.video_performance);
     runStyleDnaExtraction(db.video_performance);
+
+    // Calculate DNA Influence Scores
+    updateDnaInfluenceScores();
 
   } catch (e) {
     console.error('Failed to save to performance DB:', e);
@@ -1042,8 +1066,8 @@ function runStyleDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    // Filter videos with views >= 5000 and is_mock !== true
-    const successfulVids = list.filter(v => v.views >= 5000 && v.is_mock !== true);
+    // Filter videos with views >= 5000
+    const successfulVids = list.filter(v => v.views >= 5000);
 
     const styleDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'style_dna_db.json');
     let db = { style_dna_list: [] };
@@ -1069,7 +1093,8 @@ function runStyleDnaExtraction(list) {
           title: v.title,
           views: v.views,
           roi: v.roi,
-          added_at: new Date().toISOString()
+          added_at: new Date().toISOString(),
+          is_mock: v.is_mock || false
         });
         styleDnaListModified = true;
       }
@@ -1158,9 +1183,9 @@ function runDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    const realList = list.filter(v => v.is_mock !== true);
-    if (realList.length === 0) {
-      console.log('[Dna Extraction] No real performance items found for success/failure extraction.');
+    const targetList = list;
+    if (targetList.length === 0) {
+      console.log('[Dna Extraction] No performance items found for success/failure extraction.');
       const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
       const failureDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'failure_dna_db.json');
       fs.writeFileSync(successDnaPath, JSON.stringify({ success_dna_list: [] }, null, 2), 'utf-8');
@@ -1168,10 +1193,10 @@ function runDnaExtraction(list) {
       return;
     }
 
-    const sortedDesc = [...realList].sort((a, b) => b.views - a.views);
+    const sortedDesc = [...targetList].sort((a, b) => b.views - a.views);
     
     // Top 10% (minimum 1 video)
-    const topCount = Math.max(1, Math.ceil(realList.length * 0.1));
+    const topCount = Math.max(1, Math.ceil(targetList.length * 0.1));
     const topVids = sortedDesc.slice(0, topCount);
 
     const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
@@ -1186,7 +1211,8 @@ function runDnaExtraction(list) {
         hook_score: v.hook_score,
         visual_score: v.visual_score,
         subtitle_score: v.subtitle_score,
-        added_at: new Date().toISOString()
+        added_at: new Date().toISOString(),
+        is_mock: v.is_mock || false
       }))
     };
     fs.writeFileSync(successDnaPath, JSON.stringify(successDb, null, 2), 'utf-8');
@@ -1216,7 +1242,8 @@ function runDnaExtraction(list) {
           hook_score: v.hook_score,
           visual_score: v.visual_score,
           subtitle_score: v.subtitle_score,
-          added_at: new Date().toISOString()
+          added_at: new Date().toISOString(),
+          is_mock: v.is_mock || false
         };
       })
     };

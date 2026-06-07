@@ -1,3 +1,76 @@
 {
-  "failure_dna_list": []
+  "failure_dna_list": [
+    {
+      "id": "1780210383276",
+      "title": "투자 관련 수익화 영상 기획",
+      "views": 474,
+      "avgRetention": 26,
+      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
+      "hook_score": 82,
+      "visual_score": 74,
+      "subtitle_score": 75,
+      "added_at": "2026-06-07T06:53:03.285Z",
+      "is_mock": true,
+      "uses": 0,
+      "avgViews": 0,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 0,
+      "dna_influence_score": 50
+    },
+    {
+      "id": "1779346383276",
+      "title": "반려견 관련 수익화 영상 기획",
+      "views": 506,
+      "avgRetention": 26,
+      "failureFactors": "비주얼 컷의 단조로움 및 불일치",
+      "hook_score": 77,
+      "visual_score": 60,
+      "subtitle_score": 65,
+      "added_at": "2026-06-07T06:53:03.285Z",
+      "is_mock": true,
+      "uses": 0,
+      "avgViews": 0,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 0,
+      "dna_influence_score": 50
+    },
+    {
+      "id": "1779951183276",
+      "title": "백룸 관련 수익화 영상 기획",
+      "views": 1057,
+      "avgRetention": 49,
+      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
+      "hook_score": 90,
+      "visual_score": 81,
+      "subtitle_score": 80,
+      "added_at": "2026-06-07T06:53:03.285Z",
+      "is_mock": true,
+      "uses": 0,
+      "avgViews": 0,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 0,
+      "dna_influence_score": 50
+    },
+    {
+      "id": "1779605583276",
+      "title": "전자책 관련 수익화 영상 기획",
+      "views": 1084,
+      "avgRetention": 41,
+      "failureFactors": "설명 위주 전개로 인한 도입부 이탈 우려",
+      "hook_score": 70,
+      "visual_score": 89,
+      "subtitle_score": 86,
+      "added_at": "2026-06-07T06:53:03.285Z",
+      "is_mock": true,
+      "uses": 0,
+      "avgViews": 0,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 0,
+      "dna_influence_score": 50
+    }
+  ]
 }
