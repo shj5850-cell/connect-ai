@@ -423,6 +423,56 @@
       "agent": "CEO",
       "decision": "Instagram의 디자인 커스터마이징 작업을 진행하겠습니다.",
       "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "이 게시물의 대상인 관심사 파악 및 전문성 확보",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram의 해시태그를 선택하여 게시물에 자연스럽게 소개",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "Instagram 릴스 이미지 준비",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "상호작용 및 리더십 강화 연구",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현재 회사가 따를 결정: 모델 로드 오류로 인해 작업을 중단합니다.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "프론트엔드 업데이트",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "레오는 영상 개발/기획에서 최신 트렌드 반영",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "업무 분석 및 리뷰를 진행하여 가장 가치 있는 작업을 선택하고, 이를 우선적으로 수행한다.",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "디자이너가 각 에이전트에게 디자인 작업을 분배",
+      "date": "2026-06-07"
+    },
+    {
+      "agent": "CEO",
+      "decision": "현빈의 코드 수정 작업 예정",
+      "date": "2026-06-07"
     }
   ],
   "agent_lessons": [
@@ -505,7 +555,7 @@
   "agent_skill_scores": {
     "ceo": {
       "score": 100,
-      "completed_tasks": 78,
+      "completed_tasks": 88,
       "lessons_learned": 0,
       "success_patterns_found": 0,
       "failure_patterns_avoided": 1,
