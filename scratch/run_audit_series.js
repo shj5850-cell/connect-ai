@@ -57,38 +57,57 @@ async function runSingleAutopilot(params, index) {
     await sleep(5000); // Poll every 5s
     attempts++;
     
+    let data;
     try {
       const statusRes = await fetch(`${BASE_URL}/api/autopilot`);
       if (!statusRes.ok) {
         console.warn(`[Poll Warning] HTTP status: ${statusRes.status}`);
         continue;
       }
-      const data = await statusRes.json();
-      
-      if (data.status === 'completed') {
-        console.log(`\n[Run ${index + 1} Success] completed in ${attempts * 5} seconds!`);
-        return data;
-      } else if (data.status === 'error' || data.step === 'error' || data.error_message) {
-        console.error(`\n[Run ${index + 1} Error] Autopilot reported failure:`, data.error_message || data.message);
-        throw new Error(data.error_message || data.message || 'Unknown autopilot error');
-      } else {
-        // Log progress
-        if (attempts % 3 === 0) {
-          console.log(`Progress: ${data.progress}% | Step: ${data.step} | Message: ${data.message}`);
-        }
-      }
+      data = await statusRes.json();
     } catch (e) {
-      console.warn(`[Poll Error] Failed to get status: ${e.message}`);
+      console.warn(`[Poll Error] Failed to fetch status: ${e.message}`);
+      continue;
+    }
+    
+    if (data.status === 'completed') {
+      console.log(`\n[Run ${index + 1} Success] completed in ${attempts * 5} seconds!`);
+      return data;
+    } else if (data.status === 'error' || data.step === 'error' || data.error_message) {
+      console.error(`\n[Run ${index + 1} Error] Autopilot reported failure:`, data.error_message || data.message);
+      throw new Error(data.error_message || data.message || 'Unknown autopilot error');
+    } else {
+      // Log progress
+      if (attempts % 3 === 0) {
+        console.log(`Progress: ${data.progress}% | Step: ${data.step} | Message: ${data.message}`);
+      }
     }
   }
 }
 
 async function runAudit() {
   console.log(`Starting Phase 5: Real Output Quality Audit of 20 Shorts Videos...`);
-  const results = [];
+  
+  let results = [];
+  if (fs.existsSync(AUDIT_LOG_PATH)) {
+    try {
+      results = JSON.parse(fs.readFileSync(AUDIT_LOG_PATH, 'utf-8'));
+      console.log(`Loaded ${results.length} existing results from ${AUDIT_LOG_PATH}`);
+    } catch (e) {
+      console.warn('Failed to parse existing audit results, starting fresh:', e.message);
+    }
+  }
 
   for (let i = 0; i < AUDIT_RUNS.length; i++) {
     const runParams = AUDIT_RUNS[i];
+    
+    // Skip if already completed in previous attempt
+    const alreadyDone = results.find(r => r.index === i + 1);
+    if (alreadyDone) {
+      console.log(`[Run ${i + 1}/20] Already completed: ${runParams.category} / ${runParams.productTitle}. Skipping.`);
+      continue;
+    }
+
     let retryCount = 0;
     const maxRetries = 2;
     let completedData = null;

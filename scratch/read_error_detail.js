@@ -11,20 +11,19 @@ const content = fs.readFileSync(logPath, 'utf-8');
 const lines = content.split('\n');
 
 let foundIndex = -1;
-// Find the last occurrence of "Failed to run pre-upload analysis:"
 for (let i = lines.length - 1; i >= 0; i--) {
-  if (lines[i].includes("Failed to run pre-upload analysis:")) {
+  if (lines[i].includes("--- RAW GEMINI RESPONSE ---")) {
     foundIndex = i;
     break;
   }
 }
 
 if (foundIndex === -1) {
-  console.log("No pre-upload analysis failure found in logs.");
+  console.log("No RAW GEMINI RESPONSE found in logs.");
 } else {
   console.log(`Total lines: ${lines.length}`);
-  const start = Math.max(0, foundIndex - 20);
-  const end = Math.min(lines.length, foundIndex + 40);
-  console.log('--- Context around the error ---');
+  const start = Math.max(0, foundIndex - 2);
+  const end = Math.min(lines.length, foundIndex + 20);
+  console.log('--- Context around RAW GEMINI RESPONSE ---');
   console.log(lines.slice(start, end).join('\n'));
 }

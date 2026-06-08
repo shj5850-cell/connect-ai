@@ -9,14 +9,14 @@
       "hook_score": 82,
       "visual_score": 74,
       "subtitle_score": 75,
-      "added_at": "2026-06-07T06:53:03.285Z",
+      "added_at": "2026-06-08T03:09:59.014Z",
       "is_mock": true,
-      "uses": 0,
-      "avgViews": 0,
-      "avgCtr": 0,
-      "avgConversionRate": 0,
-      "avgRoi": 0,
-      "dna_influence_score": 50
+      "uses": 3,
+      "avgViews": 173.7,
+      "avgCtr": 9.21,
+      "avgConversionRate": 12.5,
+      "avgRoi": 266.7,
+      "dna_influence_score": 54.6
     },
     {
       "id": "1779346383276",
@@ -27,14 +27,32 @@
       "hook_score": 77,
       "visual_score": 60,
       "subtitle_score": 65,
-      "added_at": "2026-06-07T06:53:03.285Z",
+      "added_at": "2026-06-08T03:09:59.014Z",
       "is_mock": true,
-      "uses": 0,
+      "uses": 3,
+      "avgViews": 173.7,
+      "avgCtr": 9.21,
+      "avgConversionRate": 12.5,
+      "avgRoi": 266.7,
+      "dna_influence_score": 54.6
+    },
+    {
+      "id": "1780821586255",
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "views": 521,
+      "avgRetention": 44,
+      "failureFactors": "첫 3초 후킹 흡입력 부족",
+      "hook_score": 50,
+      "visual_score": 75,
+      "subtitle_score": 50,
+      "added_at": "2026-06-08T03:09:59.014Z",
+      "is_mock": false,
+      "uses": 1,
       "avgViews": 0,
       "avgCtr": 0,
       "avgConversionRate": 0,
       "avgRoi": 0,
-      "dna_influence_score": 50
+      "dna_influence_score": 5
     },
     {
       "id": "1779951183276",
@@ -45,14 +63,14 @@
       "hook_score": 90,
       "visual_score": 81,
       "subtitle_score": 80,
-      "added_at": "2026-06-07T06:53:03.285Z",
+      "added_at": "2026-06-08T03:09:59.014Z",
       "is_mock": true,
-      "uses": 0,
-      "avgViews": 0,
-      "avgCtr": 0,
-      "avgConversionRate": 0,
-      "avgRoi": 0,
-      "dna_influence_score": 50
+      "uses": 3,
+      "avgViews": 173.7,
+      "avgCtr": 9.21,
+      "avgConversionRate": 12.5,
+      "avgRoi": 266.7,
+      "dna_influence_score": 54.6
     },
     {
       "id": "1779605583276",
@@ -63,14 +81,14 @@
       "hook_score": 70,
       "visual_score": 89,
       "subtitle_score": 86,
-      "added_at": "2026-06-07T06:53:03.285Z",
+      "added_at": "2026-06-08T03:09:59.014Z",
       "is_mock": true,
-      "uses": 0,
-      "avgViews": 0,
-      "avgCtr": 0,
-      "avgConversionRate": 0,
-      "avgRoi": 0,
-      "dna_influence_score": 50
+      "uses": 3,
+      "avgViews": 173.7,
+      "avgCtr": 9.21,
+      "avgConversionRate": 12.5,
+      "avgRoi": 266.7,
+      "dna_influence_score": 54.6
     }
   ]
 }

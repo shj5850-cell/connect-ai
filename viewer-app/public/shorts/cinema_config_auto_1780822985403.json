@@ -1,0 +1,63 @@
+{
+  "cuts": [
+    {
+      "cutIndex": 1,
+      "subtitle": "하루 10분, 노트북 하나로 돈 버는 AI 자동화 비법, 알고 계신가요?",
+      "description": "Side angle tracking action shot. 모던하고 심플한 작업실 데스크 위, 화면에 코드와 그래프가 띄워진 고급 맥북 에어 노트북이 열려 있고 은은한 조명이 비추는 뷰",
+      "prompt": "Side angle tracking action shot, Cinematic vertical photo, photorealistic, 8k, modern minimalist workspace, premium sleek space gray laptop open on desk, screen showing code, warm dramatic lighting",
+      "cameraMovement": "panning",
+      "duration": 5,
+      "keywords": "AI 자동화",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780822985403_r3_cut_1_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    },
+    {
+      "cutIndex": 2,
+      "subtitle": "고성능 컴퓨터가 없어도 맥북 에어 M3 하나면 완벽하게 가동됩니다.",
+      "description": "Side angle tracking action shot. 맥북 알루미늄 키보드 위에서 타이핑하는 손과 모니터에서 차트가 역동적으로 계산되는 클로즈업 뷰",
+      "prompt": "Side angle tracking action shot, Cinematic close-up, photorealistic, typing on aluminum laptop keyboard, neon glow reflecting on fingers, screen showing fast processing charts",
+      "cameraMovement": "zoom out",
+      "duration": 5,
+      "keywords": "맥북 에어 M3",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780822985403_r3_cut_2_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    },
+    {
+      "cutIndex": 3,
+      "subtitle": "M3 칩의 강력한 뉴럴 엔진이 나만의 AI 에이전트를 초고속으로 기동시킵니다.",
+      "description": "High angle static workspace layout. 파란색과 보라색 전류가 흐르며 빛나는 입체적인 미래형 뉴럴 AI 마이크로칩 회로도",
+      "prompt": "High angle static workspace layout, Abstract high-tech microchip glowing with blue and violet energy lines, circuit board, futuristic, 8k resolution, cinematic lighting",
+      "cameraMovement": "panning",
+      "duration": 5,
+      "keywords": "뉴럴 엔진",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780822985403_r3_cut_3_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    },
+    {
+      "cutIndex": 4,
+      "subtitle": "지금 가장 합리적인 M3 맥북으로 AI 부업을 개시해 보세요. 댓글 링크 확인!",
+      "description": "Side angle tracking action shot. 따뜻한 햇살이 들어오는 카페 창가에서 노트북 화면을 보며 미소 짓고 있는 젊은 1인 창업가의 행복한 포트레이트",
+      "prompt": "Side angle tracking action shot, Cinematic portrait, young entrepreneur smiling, looking at laptop screen in cozy warm cafe, soft sunset light filtering through window, photorealistic, 8k",
+      "cameraMovement": "panning",
+      "duration": 5,
+      "keywords": "부업 시작",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780822985403_r3_cut_4_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    }
+  ],
+  "bgm_style": "시네마틱 앰비언트",
+  "bgm_volume": 15,
+  "bgm_upload_path": "",
+  "output_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_shorts_auto_1780822985403.mp4",
+  "template_style": "감성 광고형",
+  "color_preset": "warm",
+  "caption_style": "hooking",
+  "caption_position": "center",
+  "font_name": "TmonMonsori",
+  "transition_effect": "페이드",
+  "voice": "female"
+}

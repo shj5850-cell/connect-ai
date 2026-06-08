@@ -201,10 +201,15 @@ export default function ArchivePage() {
                 <div style={{ padding: '1rem 0.25rem 0.25rem 0.25rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', flexGrow: 1 }}>
                   
                   <div>
-                    <span style={{ fontSize: '0.75rem', color: '#fb7185', fontWeight: 'bold', background: 'rgba(251,113,133,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-                      {item.productTitle}
-                    </span>
-                    <h3 style={{ fontSize: '1.05rem', color: 'white', marginTop: '0.5rem', marginBottom: '0.25rem', fontWeight: 600 }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '0.4rem' }}>
+                      <span style={{ fontSize: '0.7rem', color: '#60a5fa', fontWeight: 'bold', background: 'rgba(96,165,250,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                        📁 {item.category || '기타'}
+                      </span>
+                      <span style={{ fontSize: '0.7rem', color: '#fb7185', fontWeight: 'bold', background: 'rgba(251,113,133,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                        {item.productTitle}
+                      </span>
+                    </div>
+                    <h3 style={{ fontSize: '1.05rem', color: 'white', marginTop: '0.25rem', marginBottom: '0.25rem', fontWeight: 600 }}>
                       {item.scriptData?.title || '제목 없음'}
                     </h3>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
@@ -213,79 +218,104 @@ export default function ArchivePage() {
                   </div>
 
                   {/* Diversity & Revenue Metrics Grid */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>
-                    <div>
-                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧬 사용한 DNA</span>
-                      <span style={{ color: '#a78bfa', fontWeight: 700 }}>{item.style_dna || 'Motivation'}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🎨 사용한 스타일</span>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>{item.used_style || 'Cinematic'}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⚡ 후킹 유형</span>
-                      <span style={{ color: '#60a5fa', fontWeight: 600 }}>{item.hook_type || '호기심형'}</span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>💰 Revenue Score</span>
-                      <span style={{ color: '#10b981', fontWeight: 700 }}>{item.postUploadAnalysis?.money_score || item.preUploadAnalysis?.scores?.hookStrength || 78}점</span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>📊 Diversity Score</span>
-                      <span style={{ color: (item.diversity_score || 80) >= 70 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
-                        {item.diversity_score || 80}%
-                      </span>
-                    </div>
-                    <div>
-                      <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🔍 Similarity Score</span>
-                      <span style={{ color: (item.similarity_score || 20) < 30 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
-                        {item.similarity_score || 20}%
-                      </span>
-                    </div>
-                    <div style={{ gridColumn: 'span 2', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>🧠 적용된 DNA 유형</span>
-                      <span style={{ color: item.is_experiment ? '#a78bfa' : '#34d399', fontWeight: 'bold', fontSize: '0.75rem', background: item.is_experiment ? 'rgba(167,139,250,0.1)' : 'rgba(52,211,153,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>
-                        {item.is_experiment ? '🧪 자가 실험 DNA' : '🔥 Revenue DNA'}
-                      </span>
-                    </div>
-                  </div>
+                  {(() => {
+                    const scores = item.preUploadAnalysis?.scores;
+                    const qualityScore = scores 
+                      ? Math.round((scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign) / 5) 
+                      : 75;
+                    const revenueScore = item.postUploadAnalysis?.money_score || scores?.hookStrength || 78;
 
-                  {/* DNA Trace Info */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(0,0,0,0.15)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
-                    <div style={{ fontWeight: 'bold', color: 'white', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.25rem', marginBottom: '0.25rem', fontSize: '0.7rem', color: '#a78bfa' }}>🧬 DNA Trace (모델 대본 프롬프트 반영)</div>
-                    <div>
-                      <span style={{ color: '#fbbf24', fontWeight: 600 }}>성공 DNA (50%):</span>{' '}
-                      <span style={{ color: 'var(--text-secondary)' }}>
-                        {item.used_success_dna && item.used_success_dna.length > 0
-                          ? item.used_success_dna.map(x => x.title).join(', ')
-                          : '없음'}
-                      </span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#f87171', fontWeight: 600 }}>실패 DNA (회피 15%):</span>{' '}
-                      <span style={{ color: 'var(--text-secondary)' }}>
-                        {item.used_failure_dna && item.used_failure_dna.length > 0
-                          ? item.used_failure_dna.map(x => x.title).join(', ')
-                          : '없음'}
-                      </span>
-                    </div>
-                    <div>
-                      <span style={{ color: '#34d399', fontWeight: 600 }}>수익 DNA (25%):</span>{' '}
-                      <span style={{ color: 'var(--text-secondary)' }}>
-                        {item.used_revenue_dna && item.used_revenue_dna.length > 0
-                          ? item.used_revenue_dna.map(x => x.title).join(', ')
-                          : '없음'}
-                      </span>
-                    </div>
-                  </div>
+                    return (
+                      <>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧬 사용한 DNA</span>
+                            <span style={{ color: '#a78bfa', fontWeight: 700 }}>{item.style_dna || 'Motivation'}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🎨 사용한 스타일</span>
+                            <span style={{ color: '#fff', fontWeight: 600 }}>{item.used_style || 'Cinematic'}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⚡ 후킹 유형 (Hook Type)</span>
+                            <span style={{ color: '#60a5fa', fontWeight: 600 }}>{item.hook_type || '호기심형'}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⭐ Quality Score (품질 점수)</span>
+                            <span style={{ color: qualityScore >= 80 ? '#10b981' : '#fbbf24', fontWeight: 700 }}>{qualityScore}점</span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>💰 Revenue Score (수익 점수)</span>
+                            <span style={{ color: revenueScore >= 60 ? '#10b981' : '#fbbf24', fontWeight: 700 }}>{revenueScore}점</span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>📊 Diversity Score</span>
+                            <span style={{ color: (item.diversity_score || 80) >= 70 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
+                              {item.diversity_score || 80}%
+                            </span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🔍 Similarity Score</span>
+                            <span style={{ color: (item.similarity_score || 20) < 30 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
+                              {item.similarity_score || 20}%
+                            </span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧠 DNA 적용 유형</span>
+                            <span style={{ color: item.is_experiment ? '#a78bfa' : '#34d399', fontWeight: 'bold' }}>
+                              {item.is_experiment ? '🧪 자가 실험 DNA' : '🔥 Revenue DNA'}
+                            </span>
+                          </div>
+                        </div>
 
-                  {/* YouTube upload Status Badge */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.isMockUpload ? '#fbbf24' : '#10b981' }} />
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                      {item.isMockUpload ? '시뮬레이션 업로드 완료' : '실제 채널 업로드 완료'}
-                    </span>
-                  </div>
+                        {/* DNA Trace Info */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(0,0,0,0.15)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
+                          <div style={{ fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.25rem', marginBottom: '0.25rem', fontSize: '0.7rem', color: '#a78bfa' }}>🧬 DNA Trace (대본 생성 반영 현황)</div>
+                          <div>
+                            <span style={{ color: '#fbbf24', fontWeight: 600 }}>성공 DNA (Success DNA - 50%):</span>{' '}
+                            <span style={{ color: 'var(--text-secondary)' }}>
+                              {item.used_success_dna && item.used_success_dna.length > 0
+                                ? item.used_success_dna.map(x => x.title).join(', ')
+                                : '없음'}
+                            </span>
+                          </div>
+                          <div>
+                            <span style={{ color: '#fb7185', fontWeight: 600 }}>수익 DNA (Revenue DNA - 25%):</span>{' '}
+                            <span style={{ color: 'var(--text-secondary)' }}>
+                              {item.used_revenue_dna && item.used_revenue_dna.length > 0
+                                ? item.used_revenue_dna.map(x => x.title).join(', ')
+                                : '없음'}
+                            </span>
+                          </div>
+                          <div>
+                            <span style={{ color: '#f87171', fontWeight: 600 }}>실패 DNA (Failure DNA - 15%):</span>{' '}
+                            <span style={{ color: 'var(--text-secondary)' }}>
+                              {item.used_failure_dna && item.used_failure_dna.length > 0
+                                ? item.used_failure_dna.map(x => x.title).join(', ')
+                                : '없음'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Upload Readiness Status Badge */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: qualityScore >= 80 ? '#10b981' : '#f87171' }} />
+                          <span style={{ fontSize: '0.8rem', color: 'white', fontWeight: 'bold' }}>
+                            업로드 가능 여부: {qualityScore >= 80 ? '업로드 가능 ✅' : '업로드 보류 ❌'}
+                          </span>
+                        </div>
+
+                        {/* YouTube Upload Status Badge */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)', marginTop: '-0.4rem' }}>
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.isMockUpload ? '#fbbf24' : '#10b981' }} />
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                            채널 업로드 상태: {item.isMockUpload ? '시뮬레이션 업로드 완료' : '실제 채널 업로드 완료'}
+                          </span>
+                        </div>
+                      </>
+                    );
+                  })()}
+
 
                   {/* Action row */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: 'auto', paddingTop: '0.5rem' }}>

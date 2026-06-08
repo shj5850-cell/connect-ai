@@ -1,8 +1,8 @@
 {
   "status": "running",
   "step": "error",
-  "message": "오류 발생으로 일시정지됨: 품질 심사 결과 70점 이하(평균 55.0점)로 3회 재시도했으나 품질 기준을 통과하지 못했습니다. 작업을 중단합니다.",
+  "message": "오류 발생으로 일시정지됨: revenueDnaDbPath is not defined",
   "progress": 0,
-  "updated_at": "2026-06-07T07:06:47.345Z",
-  "error_message": "품질 심사 결과 70점 이하(평균 55.0점)로 3회 재시도했으나 품질 기준을 통과하지 못했습니다. 작업을 중단합니다."
+  "updated_at": "2026-06-08T03:03:15.092Z",
+  "error_message": "revenueDnaDbPath is not defined"
 }

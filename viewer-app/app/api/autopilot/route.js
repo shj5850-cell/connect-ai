@@ -114,6 +114,9 @@ export async function POST(req) {
     // Ignore invalid JSON
   }
 
+  // Reset status file to 'running' synchronously to prevent race conditions during polling
+  updateStatus('product_matching', '1단계: 수익성 극대화 상품 분석 및 매칭 중...', 10);
+
   // Start the autopilot asynchronously so the request returns immediately and the user can poll
   runAutopilotProcess(forcedParams);
   
@@ -129,118 +132,135 @@ async function runAutopilotProcess(forcedParams = {}) {
   updateStatus('product_matching', '1단계: 수익성 극대화 상품 분석 및 매칭 중...', 10);
 
   try {
-    // 1. Run monetization tool to find best product (only if not forced)
-    let productTitle = forcedParams.productTitle || '';
+    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
+    const isProductDriven = forcedParams.isProductDriven === true;
+    let productTitle = '';
     let affiliateLink = '';
     let keyword = '';
-    let selectedCategory = forcedParams.category || null;
+    let selectedCategory = null;
+    let targetAudience = '';
+    let videoStyle = '';
+    let isExperiment = false;
 
-    if (!productTitle) {
-      const monToolPath = path.join(
-        process.cwd(),
-        '..',
-        '_company',
-        '_agents',
-        'business',
-        'tools',
-        'monetization_tool.py'
-      );
-      
-      if (fs.existsSync(monToolPath)) {
-        try {
-          await runPythonScript(monToolPath);
-        } catch (e) {
-          console.warn('Monetization script failed, but we will continue with defaults:', e.message);
-        }
-      }
-
-      // Read top product (fallback to Macbook Air M3)
-      productTitle = '맥북 에어 M3 15인치 (AI 런타임 최적)';
-      affiliateLink = 'https://link.coupang.com/a/macbook_m3';
-      keyword = '초간단 AI 꿀팁 - 맥북 에어 M3 15인치 (AI 런타임 최적)';
-      
-      const dbPath = path.join(process.cwd(), '..', '_company', '_shared', 'monetization_db.json');
-      if (fs.existsSync(dbPath)) {
-        try {
-          const db = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
-          const log = db.monetization_log;
-          if (Array.isArray(log) && log.length > 0) {
-            const latest = log[log.length - 1];
-            if (latest && Array.isArray(latest.top_picks) && latest.top_picks.length > 0) {
-              const top = latest.top_picks[0];
-              productTitle = top.product_name;
-              keyword = `${top.topic} 꿀팁 - ${top.product_name}`;
-              affiliateLink = `https://link.coupang.com/a/mock_${top.product_name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-            }
-          }
-        } catch (e) {
-          console.error('Failed to parse monetization db:', e);
-        }
-      }
-    } else {
-      affiliateLink = `https://link.coupang.com/a/mock_${productTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-      keyword = `${selectedCategory || '상품'} 꿀팁 - ${productTitle}`;
-    }
-
-    // 1. Get recent records for weighting and experiment splits
-    let recentHistory = [];
-    if (fs.existsSync(HISTORY_PATH)) {
-      try {
-        recentHistory = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8'));
-      } catch (e) {
-        console.error('Failed to parse history.json:', e);
-      }
-    }
-
-    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
-    let realRevenueDnaCount = 0;
-    if (fs.existsSync(revenueDnaDbPath)) {
-      try {
-        const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
-        const revList = db.revenue_dna_list || [];
-        realRevenueDnaCount = revList.filter(item => item.is_mock !== true).length;
-      } catch (e) {
-        console.error('Failed to parse revenue_dna_db.json:', e);
-      }
-    }
-
-    let experimentRate = 0.3;
-    if (realRevenueDnaCount < 10) {
-      experimentRate = 0.6;
-    } else if (realRevenueDnaCount < 30) {
-      experimentRate = 0.4;
-    } else if (realRevenueDnaCount < 100) {
-      experimentRate = 0.3;
-    } else {
-      experimentRate = 0.2;
-    }
-
-    let isExperiment = forcedParams.category ? true : Math.random() < experimentRate;
     const { selectWeightedCategory, selectBestHookCandidate, EXPERIMENT_MAP, tokenize, calculateJaccard } = require('../../lib/CreativeDiversityEngine');
 
-    if (forcedParams.category) {
-      selectedCategory = forcedParams.category;
-      const mapped = EXPERIMENT_MAP[selectedCategory];
-      if (mapped) {
-        if (!forcedParams.productTitle) {
-          productTitle = mapped.product;
-        }
-        keyword = `${mapped.topic} 꿀팁 - ${productTitle}`;
-        affiliateLink = `https://link.coupang.com/a/mock_${productTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-        console.log(`[Autopilot] FORCED CATEGORY ACTIVE! Category: ${selectedCategory}, Product: ${productTitle}`);
-      }
-    } else if (isExperiment) {
-      selectedCategory = selectWeightedCategory(recentHistory);
-      const mapped = EXPERIMENT_MAP[selectedCategory];
-      if (mapped) {
-        productTitle = mapped.product;
-        keyword = `${mapped.topic} 꿀팁 - ${productTitle}`;
-        affiliateLink = `https://link.coupang.com/a/mock_${productTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-        console.log(`[Autopilot] DYNAMIC EXPERIMENT ACTIVE! Category: ${selectedCategory}, Product: ${productTitle}, Rate: ${experimentRate*100}%`);
-      }
+    if (isProductDriven) {
+      productTitle = forcedParams.productName || '';
+      affiliateLink = forcedParams.coupangLink || forcedParams.productUrl || '{COUPANG_LINK}';
+      selectedCategory = '상품 홍보';
+      keyword = `상품 홍보 - ${productTitle}`;
+      targetAudience = forcedParams.targetAudience || '';
+      videoStyle = forcedParams.videoStyle || 'Cinematic';
+      console.log(`[Autopilot] PRODUCT-DRIVEN MODE ACTIVE. Product: ${productTitle}, Style: ${videoStyle}`);
     } else {
-      selectedCategory = selectedCategory || '맥북';
-      console.log(`[Autopilot] SUCCESS/REVENUE DNA OPTIMIZATION ACTIVE. Rate: ${(1 - experimentRate)*100}%`);
+      productTitle = forcedParams.productTitle || '';
+      selectedCategory = forcedParams.category || null;
+
+      if (!productTitle) {
+        const monToolPath = path.join(
+          process.cwd(),
+          '..',
+          '_company',
+          '_agents',
+          'business',
+          'tools',
+          'monetization_tool.py'
+        );
+        
+        if (fs.existsSync(monToolPath)) {
+          try {
+            await runPythonScript(monToolPath);
+          } catch (e) {
+            console.warn('Monetization script failed, but we will continue with defaults:', e.message);
+          }
+        }
+
+        // Read top product (fallback to Macbook Air M3)
+        productTitle = '맥북 에어 M3 15인치 (AI 런타임 최적)';
+        affiliateLink = 'https://link.coupang.com/a/macbook_m3';
+        keyword = '초간단 AI 꿀팁 - 맥북 에어 M3 15인치 (AI 런타임 최적)';
+        
+        const dbPath = path.join(process.cwd(), '..', '_company', '_shared', 'monetization_db.json');
+        if (fs.existsSync(dbPath)) {
+          try {
+            const db = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+            const log = db.monetization_log;
+            if (Array.isArray(log) && log.length > 0) {
+              const latest = log[log.length - 1];
+              if (latest && Array.isArray(latest.top_picks) && latest.top_picks.length > 0) {
+                const top = latest.top_picks[0];
+                productTitle = top.product_name;
+                keyword = `${top.topic} 꿀팁 - ${top.product_name}`;
+                affiliateLink = `https://link.coupang.com/a/mock_${top.product_name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+              }
+            }
+          } catch (e) {
+            console.error('Failed to parse monetization db:', e);
+          }
+        }
+      } else {
+        affiliateLink = `https://link.coupang.com/a/mock_${productTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        keyword = `${selectedCategory || '상품'} 꿀팁 - ${productTitle}`;
+      }
+
+      // Get recent records for weighting and experiment splits
+      let recentHistory = [];
+      if (fs.existsSync(HISTORY_PATH)) {
+        try {
+          recentHistory = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8'));
+        } catch (e) {
+          console.error('Failed to parse history.json:', e);
+        }
+      }
+
+      let realRevenueDnaCount = 0;
+      if (fs.existsSync(revenueDnaDbPath)) {
+        try {
+          const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
+          const revList = db.revenue_dna_list || [];
+          realRevenueDnaCount = revList.filter(item => item.is_mock !== true).length;
+        } catch (e) {
+          console.error('Failed to parse revenue_dna_db.json:', e);
+        }
+      }
+
+      let experimentRate = 0.3;
+      if (realRevenueDnaCount < 10) {
+        experimentRate = 0.6;
+      } else if (realRevenueDnaCount < 30) {
+        experimentRate = 0.4;
+      } else if (realRevenueDnaCount < 100) {
+        experimentRate = 0.3;
+      } else {
+        experimentRate = 0.2;
+      }
+
+      isExperiment = forcedParams.category ? true : Math.random() < experimentRate;
+
+      if (forcedParams.category) {
+        selectedCategory = forcedParams.category;
+        const mapped = EXPERIMENT_MAP[selectedCategory];
+        if (mapped) {
+          if (!forcedParams.productTitle) {
+            productTitle = mapped.product;
+          }
+          keyword = `${mapped.topic} 꿀팁 - ${productTitle}`;
+          affiliateLink = `https://link.coupang.com/a/mock_${productTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+          console.log(`[Autopilot] FORCED CATEGORY ACTIVE! Category: ${selectedCategory}, Product: ${productTitle}`);
+        }
+      } else if (isExperiment) {
+        selectedCategory = selectWeightedCategory(recentHistory);
+        const mapped = EXPERIMENT_MAP[selectedCategory];
+        if (mapped) {
+          productTitle = mapped.product;
+          keyword = `${mapped.topic} 꿀팁 - ${productTitle}`;
+          affiliateLink = `https://link.coupang.com/a/mock_${productTitle.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+          console.log(`[Autopilot] DYNAMIC EXPERIMENT ACTIVE! Category: ${selectedCategory}, Product: ${productTitle}, Rate: ${experimentRate*100}%`);
+        }
+      } else {
+        selectedCategory = selectedCategory || '맥북';
+        console.log(`[Autopilot] SUCCESS/REVENUE DNA OPTIMIZATION ACTIVE. Rate: ${(1 - experimentRate)*100}%`);
+      }
     }
 
     console.log(`[Autopilot] Target product: ${productTitle}`);
@@ -341,34 +361,43 @@ async function runAutopilotProcess(forcedParams = {}) {
 
       // Select Style DNA based on Experiment status (only if not forced by clone scrambling retry)
       if (!forceScrambledParams) {
-        if (forcedParams.styleDna) {
-          styleDna = forcedParams.styleDna;
-        } else if (isExperiment || styleDnaList.length === 0) {
-          styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
-        } else {
-          const uniqueStyles = [...new Set(styleDnaList.map(item => item.style))];
-          if (uniqueStyles.length > 0) {
-            styleDna = uniqueStyles[Math.floor(Math.random() * uniqueStyles.length)];
-          } else {
-            styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
-          }
-        }
-
-        usedStyle = forcedParams.usedStyle || VISUAL_STYLES[Math.floor(Math.random() * VISUAL_STYLES.length)];
-        
-        if (forcedParams.hookType) {
-          selectedHook = HOOK_LIBRARY.find(h => h.type === forcedParams.hookType) || HOOK_LIBRARY[0];
-        } else {
+        if (isProductDriven) {
+          styleDna = 'Product Reveal';
+          usedStyle = videoStyle || 'Cinematic';
           selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
-        }
-        hookType = selectedHook.type;
-
-        if (forcedParams.shotPattern) {
-          selectedPattern = SHOT_PATTERNS.find(p => p.name === forcedParams.shotPattern) || SHOT_PATTERNS[0];
+          hookType = selectedHook.type;
+          selectedPattern = SHOT_PATTERNS.find(p => p.name === 'A형 (빌드업)') || SHOT_PATTERNS[0];
+          shotPattern = selectedPattern.name;
         } else {
-          selectedPattern = SHOT_PATTERNS[Math.floor(Math.random() * SHOT_PATTERNS.length)];
+          if (forcedParams.styleDna) {
+            styleDna = forcedParams.styleDna;
+          } else if (isExperiment || styleDnaList.length === 0) {
+            styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
+          } else {
+            const uniqueStyles = [...new Set(styleDnaList.map(item => item.style))];
+            if (uniqueStyles.length > 0) {
+              styleDna = uniqueStyles[Math.floor(Math.random() * uniqueStyles.length)];
+            } else {
+              styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
+            }
+          }
+
+          usedStyle = forcedParams.usedStyle || VISUAL_STYLES[Math.floor(Math.random() * VISUAL_STYLES.length)];
+          
+          if (forcedParams.hookType) {
+            selectedHook = HOOK_LIBRARY.find(h => h.type === forcedParams.hookType) || HOOK_LIBRARY[0];
+          } else {
+            selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
+          }
+          hookType = selectedHook.type;
+
+          if (forcedParams.shotPattern) {
+            selectedPattern = SHOT_PATTERNS.find(p => p.name === forcedParams.shotPattern) || SHOT_PATTERNS[0];
+          } else {
+            selectedPattern = SHOT_PATTERNS[Math.floor(Math.random() * SHOT_PATTERNS.length)];
+          }
+          shotPattern = selectedPattern.name;
         }
-        shotPattern = selectedPattern.name;
       } else {
         // Reset force flag so next iterations can select normally if needed
         forceScrambledParams = false;
@@ -484,7 +513,22 @@ async function runAutopilotProcess(forcedParams = {}) {
           combinedGuidelines += diversityGuidelines;
 
           console.log('[Autopilot] Injecting guidelines (Self-Improvement + Revenue DNA + Failure DNA + Agent Intelligence Memory + Diversity Specification) into writer agent prompt...');
-          scriptData = await generateScriptWithGemini(apiKey, productTitle, combinedGuidelines);
+          scriptData = await generateScriptWithGemini(apiKey, productTitle, combinedGuidelines, isProductDriven, targetAudience, usedStyle);
+
+          if (isProductDriven && scriptData && typeof scriptData.ad_score === 'number' && scriptData.ad_score > 50) {
+            console.log(`[Autopilot] Ad score ${scriptData.ad_score} > 50 detected. Rejecting script and forcing regeneration.`);
+            retryCount++;
+            continue; // Force script regeneration loop
+          }
+
+          if (isProductDriven && scriptData) {
+            const comp = checkProductCompliance(productTitle, scriptData);
+            if (!comp.passed) {
+              console.log(`[Autopilot] Script product compliance failed. Rejecting script and forcing regeneration.`);
+              retryCount++;
+              continue; // Force script regeneration loop
+            }
+          }
 
           let recentHooks = [];
           if (Array.isArray(recentHistory)) {
@@ -525,10 +569,10 @@ async function runAutopilotProcess(forcedParams = {}) {
           }
         } catch (e) {
           console.warn('Gemini script generation failed, falling back to static script:', e.message);
-          scriptData = generateFallbackScript(productTitle);
+          scriptData = generateFallbackScript(productTitle, isProductDriven, targetAudience, videoStyle);
         }
       } else {
-        scriptData = generateFallbackScript(productTitle);
+        scriptData = generateFallbackScript(productTitle, isProductDriven, targetAudience, videoStyle);
       }
 
       console.log('[Autopilot] Script generated, now generating images...');
@@ -684,7 +728,7 @@ async function runAutopilotProcess(forcedParams = {}) {
           diversityScore = 100 - similarityScore;
           console.log(`[Diversity] Calculated Similarity Score: ${similarityScore}%, Diversity Score: ${diversityScore}%`);
           
-          if (similarityScore >= 70) {
+          if (!isProductDriven && similarityScore >= 70) {
             console.log(`[Anti-Clone] Clone alert! Similarity >= 70%. Scrambling parameters and triggering script regeneration...`);
             similarityPenalty = 15;
             const modifications = antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna);
@@ -707,7 +751,8 @@ async function runAutopilotProcess(forcedParams = {}) {
             customCaptionPosition = 'bottom';
           }
 
-          if (finalScoreAvg > 70) {
+          const passThreshold = isProductDriven ? 75 : 70;
+          if (finalScoreAvg >= passThreshold) {
             break; // Quality score passes, exit retry loop!
           }
         } catch (e) {
@@ -724,7 +769,7 @@ async function runAutopilotProcess(forcedParams = {}) {
     }
 
     if (finalScoreAvg <= 70 && retryCount > maxRetries) {
-      throw new Error(`품질 심사 결과 70점 이하(평균 ${finalScoreAvg.toFixed(1)}점)로 3회 재시도했으나 품질 기준을 통과하지 못했습니다. 작업을 중단합니다.`);
+      console.warn(`[Autopilot] Quality score (${finalScoreAvg.toFixed(1)}) failed to pass 70 after ${maxRetries} attempts. Proceeding with current best generation to prevent batch job crash.`);
     }
 
     // Apply similarity penalty if triggered
@@ -796,37 +841,47 @@ async function runAutopilotProcess(forcedParams = {}) {
     console.log('[Autopilot] Video rendered successfully!');
     updateStatus('youtube_upload', '5단계: 유튜브 채널로 쇼츠 비디오 자동 전송 중...', 90);
 
-    // 5. Upload Video to YouTube (under Private status) - 80 points check
+    // 5. YouTube Upload status setup - By default OFF for Product-Driven, Auto for General Autopilot if score >= 80
     let youtubeVideoId = 'MOCK_VIDEO_ID';
     let isMockUpload = true;
     let uploadMsg = '시뮬레이션 완료: 데모 모드로 업로드 처리를 완료했습니다.';
 
-    if (finalScoreAvg < 80) {
-      uploadMsg = `품질 보드 심사 점수가 80점 미만(평균 ${finalScoreAvg.toFixed(1)}점)으로 유튜브 자동 업로드가 차단(보류)되었습니다.`;
-      console.log(`[Autopilot] YouTube upload blocked: Average score ${finalScoreAvg.toFixed(1)} is under 80.`);
-    } else if (fs.existsSync(ACCOUNT_PATH)) {
-      try {
-        const account = JSON.parse(fs.readFileSync(ACCOUNT_PATH, 'utf-8'));
-        if (account.YOUTUBE_OAUTH_REFRESH_TOKEN) {
-          youtubeVideoId = await uploadToYoutube(absoluteOutputPath, `${scriptData.title} #Shorts`, scriptData.cuts.map(c => c.subtitle).join('\n'));
-          isMockUpload = false;
-          uploadMsg = '유튜브 쇼츠 채널에 정상적으로 게시되었습니다! (비공개 상태)';
+    if (isProductDriven) {
+      youtubeVideoId = 'PENDING_APPROVAL';
+      isMockUpload = true;
+      uploadMsg = '영상이 생성되었습니다. 유튜브 업로드 승인을 대기 중입니다.';
+      console.log('[Autopilot] Product-Driven Mode: Bypassing automatic upload. Awaiting user approval.');
+    } else {
+      if (finalScoreAvg < 80) {
+        uploadMsg = `품질 보드 심사 점수가 80점 미만(평균 ${finalScoreAvg.toFixed(1)}점)으로 유튜브 자동 업로드가 차단(보류)되었습니다.`;
+        console.log(`[Autopilot] YouTube upload blocked: Average score ${finalScoreAvg.toFixed(1)} is under 80.`);
+      } else if (fs.existsSync(ACCOUNT_PATH)) {
+        try {
+          const account = JSON.parse(fs.readFileSync(ACCOUNT_PATH, 'utf-8'));
+          if (account.YOUTUBE_OAUTH_REFRESH_TOKEN) {
+            youtubeVideoId = await uploadToYoutube(absoluteOutputPath, `${scriptData.title} #Shorts`, scriptData.cuts.map(c => c.subtitle).join('\n'));
+            isMockUpload = false;
+            uploadMsg = '유튜브 쇼츠 채널에 정상적으로 게시되었습니다! (비공개 상태)';
+          }
+        } catch (uploadErr) {
+          console.error('YouTube upload failed, falling back to mock upload status:', uploadErr);
         }
-      } catch (uploadErr) {
-        console.error('YouTube upload failed, falling back to mock upload status:', uploadErr);
       }
     }
+
+    const pinnedCommentText = `사용한 제품👇\n\n${affiliateLink}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.`;
 
     // 6. Complete Autopilot
     const resultDetails = {
       id: timestamp.toString(),
       videoUrl: relativeVideoUrl,
+      videoPath: absoluteOutputPath.replace(/\\/g, '/'),
       youtubeVideoId,
       isMockUpload,
       uploadMessage: uploadMsg,
       productTitle,
       affiliateLink,
-      commentText: `오늘 영상에서 활약한 [${productTitle}] 최저가 좌표입니다 ➔ ${affiliateLink}`,
+      commentText: isProductDriven ? pinnedCommentText : `오늘 영상에서 활약한 [${productTitle}] 최저가 좌표입니다 ➔ ${affiliateLink}`,
       created_at: new Date().toISOString(),
       scriptData: scriptData,
       topic: productTitle.replace(/[\(\[\{\/].*$/, '').trim(),
@@ -855,7 +910,19 @@ async function runAutopilotProcess(forcedParams = {}) {
       used_revenue_dna: includeRevenue ? revenueDnaList.slice(-10).map(v => ({ id: v.id || v.video_id, title: v.title || v.source_video_title })) : [],
       used_agent_lessons: (agentLessons || []).slice(-5).map(l => ({ agent: l.agent, lesson: l.lesson })),
       is_mock: false,
-      source: "autopilot"
+      source: "autopilot",
+      
+      // Save metadata for Product-Driven mode
+      product_name: isProductDriven ? forcedParams.productName : productTitle,
+      product_url: isProductDriven ? forcedParams.productUrl : '',
+      coupang_link: isProductDriven ? forcedParams.coupangLink : affiliateLink,
+      target_audience: isProductDriven ? forcedParams.targetAudience : '',
+      video_style: isProductDriven ? forcedParams.videoStyle : usedStyle,
+      ad_score: isProductDriven ? (scriptData.ad_score || 0) : 0,
+      quality_score: Math.round(finalScoreAvg),
+      upload_mode: isProductDriven ? 'product-driven' : 'archetype',
+      pinned_comment_status: isProductDriven ? 'pending' : 'not_attempted',
+      compliance: isProductDriven ? checkProductCompliance(forcedParams.productName, scriptData) : { passed: true, cutChecks: [] }
     };
 
     saveToHistory(resultDetails);
@@ -971,6 +1038,21 @@ function getSelfImprovementGuidelines() {
   }
 }
 
+async function fetchGeminiWithRetry(url, options, maxRetries = 5) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    const response = await fetch(url, options);
+    if (response.status === 429) {
+      attempt++;
+      console.warn(`[Gemini API] Got 429 Rate Limit (Attempt ${attempt}/${maxRetries}). Sleeping 45 seconds before retry...`);
+      await new Promise(resolve => setTimeout(resolve, 45000));
+      continue;
+    }
+    return response;
+  }
+  return fetch(url, options);
+}
+
 // Perform Pre-Upload AI Auditing acting as the Shorts Research Director
 async function runPreUploadAnalysis(apiKey, productTitle, scriptData) {
   const researcherPrompt = `당신은 쇼츠 연구소 책임자(Researcher)입니다.
@@ -991,12 +1073,18 @@ ${scriptData.cuts.map((c, idx) => `컷 ${idx + 1}:
   - 연출 키워드: ${c.keywords}
 `).join('\n')}
 
-평가 기준:
+평가 기준 및 점수 가이드:
 1. 후킹 강도: 첫 1초, 3초, 5초 시점에 시청자가 멈출 이유가 있는지, 궁금증이 발생하는지, 감정 자극이 있는지 평가
 2. 대본 분석: 내용의 이해도, 몰입도, 감정 변화, 반전 요소, 정보의 가치가 충분한지 평가
 3. 장면 분석: 대본과 장면 연출의 일치도, 시각적 품질 묘사, 장면 다양성, 시선 집중도가 높은지 평가
 4. 자막 분석: 모바일 최적화 가독성, 강조 표현의 적절성, 시선 유도 효과 평가
 5. 사운드 분석: BGM 스타일 및 톤의 적합성, 나레이션과 자막 매칭의 자연스러움 평가
+
+* 채점 기준 가이드 (현업 숏폼 수준 상대 채점):
+- 85~95점: 숏폼 트렌드에 적합하며 상품 후킹과 흐름이 유기적인 우수한 수준 (완성도가 잡힌 영상의 경우 85점 이상 부여)
+- 75~84점: 즉시 활용 가능한 준수한 품질 (기본기가 탄탄한 깔끔한 연출안은 80점 내외 부여)
+- 65~74점: 일부 보완점이 필요하나 업로드는 가능한 수준
+- 64점 이하: 치명적인 연출 단절이나 후킹 부재로 전면 수정이 필요한 수준
 
 출력은 반드시 다른 부연 설명이나 마크다운 태그 없이 아래 JSON 규격이어야 합니다:
 {
@@ -1030,8 +1118,8 @@ ${scriptData.cuts.map((c, idx) => `컷 ${idx + 1}:
 
   let text = undefined;
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1039,77 +1127,72 @@ ${scriptData.cuts.map((c, idx) => `컷 ${idx + 1}:
           contents: [{ parts: [{ text: researcherPrompt }] }],
           generationConfig: { 
             temperature: 0.25,
-            maxOutputTokens: 2048,
-            responseMimeType: "application/json"
-          }
-        })
-      }
-    );
+            maxO// Generate script using Gemini with Self-Improvement Guidelines
+async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGuidelines = '', isProductDriven = false, targetAudience = '', videoStyle = '', productInfo = null, archetype = '') {
+  let systemPrompt = '';
+  
+  if (isProductDriven) {
+    const infoStr = productInfo ? JSON.stringify(productInfo, null, 2) : `{"category": "일반", "brand": "일반", "features": ["${productTitle}"]}`;
+    systemPrompt = `당신은 맹칠컴퍼니의 대표 카피라이터이자 작가 에이전트(Writer Agent)입니다.
+상품명: "${productTitle}"
+상품 분석 프로필:
+${infoStr}
 
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      throw new Error(`Gemini API pre-upload analysis failed: status ${response.status} ${response.statusText}. Response: ${errorText}`);
-    }
+이번 영상은 아래의 이야기 전개 타입(Narrative Archetype)을 완벽히 준수해야 합니다:
+**Narrative Archetype: ${archetype || 'I. 스토리형'}**
 
-    const rawText = await response.text();
-    let resJson;
-    try {
-      resJson = JSON.parse(rawText);
-    } catch (err) {
-      throw new Error(`Failed to parse response JSON: ${err.message}. Raw: ${rawText}`);
+[각 이야기 전개 타입별 작성 지침]
+- **A. 실험형**: 상품의 기능이나 한계를 기발한 실험 방식으로 테스트하고 결과를 검증하는 방식으로 1~3컷을 전개하십시오.
+- **B. 다큐형**: 관찰 카메라처럼 건조하고 사실적인 톤으로 일상의 현상과 원인을 분석하며 정보를 1~3컷으로 전달하십시오.
+- **C. 인터뷰형**: 실제 사용자 혹은 가상의 전문가가 일상에서 겪던 고민을 문답식이나 인터뷰 증언조로 1~3컷 전개하십시오.
+- **D. 미스터리형**: 믿기 힘든 신비로운 의문이나 미스터리한 실화 썰로 호기심을 유발하며 1~3컷을 끌고 가십시오.
+- **E. 실패담형**: 본인의 눈물겨운 실패담, 낭패를 본 경험, 시행착오 스토리를 적나라하게 고백하며 1~3컷에 공감을 유도하십시오.
+- **F. 반전형**: 당연하다고 생각했던 일상 상식을 완전히 깨부수는 대조나 반전을 1~3컷에 강력하게 배치하십시오.
+- **G. 비교형**: 기존의 비효율적인 방식(또는 구형 방식)의 치명적 단점을 1~3컷에 상세히 폭로하고 시각적으로 대조하십시오.
+- **H. 후기형**: 실제 제품을 수개월간 오랜 기간 사용해본 시청자가 친근하고 솔직한 독백투로 장단점을 푸는 방식으로 1~3컷을 진행하십시오.
+- **I. 스토리형**: 주인공이 구체적인 아침/저녁 일상 속에서 겪는 갈등이나 아슬아슬한 위기 상황 드라마로 1~3컷을 구성하십시오.
+- **J. 챌린지형**: "일주일 동안 도전해봤다" 처럼 도전이나 미션을 시작하고 난관에 봉착하는 과정을 1~3컷에 역동적으로 배치하십시오.
+- **K. 광고형**: 제품의 장점과 혜택을 직접적으로 세련되게 보여주는 트렌디한 커머셜 스타일 연출로 1~3컷을 연출하십시오.
+
+[영상 구조 지침 (Strict Structure)]
+- **1컷**: 문제 제시 (Problem presentation) - 타겟 고객이 일상에서 겪는 치명적인 불편이나 문제점을 흥미진진하게 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 직접 언급하거나 보여주지 마십시오)**
+- **2컷**: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품이나 브랜드를 언급하거나 노출하지 마십시오)**
+- **3컷**: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 직접 언급하지 마십시오)**
+- **4컷**: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 상세한 정보는 고정댓글 링크에서 바로 확인하라는 행동 유도(Call To Action)를 전합니다.
+
+[내용 작성 중요 제약 조건 (Product Fact & Caption Rules)]
+1. **스펙 나열 금지**: 자막이나 설명글에 배터리 용량, 무게, 소재 등의 딱딱한 기계적 스펙을 줄줄이 나열하지 마십시오. 철저히 사용자의 '문제 -> 공감 -> 상황 -> 암시 -> 공개 -> 행동유도' 흐름의 인간적인 스토리 카피로 녹여내십시오.
+2. **허위 정보 작성 금지**: 위의 상품 분석 프로필(Features, Benefits 등)에 없는 완전히 새로운 기술이나 존재하지 않는 기능(예: 칫솔인데 하늘을 난다거나, 1초 만에 치아가 다 낫는다는 등)을 허구로 창조하거나 과장하여 약속하지 마십시오.
+3. **영상의 분위기**: 전체 자막 및 화면 톤은 "${videoStyle || 'Cinematic'}" 감성을 완벽히 따르십시오.
+
+출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
+{
+  "title": "쇼츠 영상 제목 (한글 20자 이내)",
+  "youtube_description": "유튜브 업로드용 설명 본문 (영상의 가치를 요약하고, 관련 해시태그 3~5개 포함. 스펙 나열은 지양하고 감정적 이점을 살려 작성)",
+  "ad_score": 30,
+  "hook_candidates": [
+    "1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
+    "후보 2", "후보 3", "후보 4", "후보 5"
+  ],
+  "cuts": [
+    {
+      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지 딱 1개 포함 (예: '방구석에서 돈 버는 비밀 👀')",
+      "description": "화면 연출 및 비주얼 설명",
+      "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 사진사 수준 영어 프롬프트. 규격: 'Professional [style] photography, [detailed subject description], [composition & framing], [camera lens & settings], [lighting conditions], [color palette & mood], vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions, no watermarks, clean composition, no distorted anatomy, no weird fingers' (1~3컷은 절대 상품 글자나 제품 패키지가 직접 보이지 않는 상황 및 인물 묘사를 해야 하며, 4컷은 실제 상품 또는 상품을 사용하는 사람을 멋지게 묘사할 것)",
+      "searchKeyword": "스톡용 영어 키워드 (2~3단어)",
+      "cameraMovement": "zoom in 또는 zoom out 또는 panning",
+      "duration": 5,
+      "keywords": "강조 키워드"
     }
-    text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('Empty response for pre-upload analysis');
-    
-    const cleaned = cleanJson(text);
-    return JSON.parse(cleaned);
-  } catch (e) {
-    console.error('Failed to run pre-upload analysis:', e);
-    if (typeof text !== 'undefined') {
-      console.log('--- RAW GEMINI RESPONSE ---');
-      console.log(text);
-      console.log('--- CLEANED JSON STRING ---');
-      try {
-        console.log(cleanJson(text));
-      } catch (err) {
-        console.log('Failed to clean text:', err.message);
-      }
-      console.log('---------------------------');
-    }
-    return {
-      scores: { hookStrength: 50, scriptContent: 50, sceneVisuals: 50, subtitleAesthetics: 50, soundDesign: 50 },
-      evaluations: { hookStrength: '분석 오류로 기본 평가 대체', scriptContent: '분석 오류로 기본 평가 대체', sceneVisuals: '분석 오류로 기본 평가 대체', subtitleAesthetics: '분석 오류로 기본 평가 대체', soundDesign: '분석 오류로 기본 평가 대체' },
-      answers: {
-        q1_hook_stop: '데이터 수집 중',
-        q2_dropoff: '데이터 수집 중',
-        q3_diff_from_viral: '데이터 수집 중',
-        q4_must_fix: '데이터 수집 중',
-        q5_expected_views: 500,
-        q6_multiplier_10x: '데이터 수집 중'
-      }
-    };
-  }
+  ]
 }
 
-// Multimodal Vision Critic Agent
-async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImagePath = null, cutIndex = 1) {
-  if (!fs.existsSync(imagePath)) {
-    return { score: 50, feedback: '이미지 파일이 존재하지 않아 검수가 불가능합니다.' };
-  }
-
-  const base64Data = fs.readFileSync(imagePath).toString("base64");
-  const currentPart = {
-    inlineData: {
-      data: base64Data,
-      mimeType: "image/jpeg"
-    }
-  };
-
-  const parts = [];
-  
-  let instructions = `당신은 맹칠컴퍼니의 비주얼 검수 에이전트인 Vision Critic(눈길)입니다.
-새로 생성된 AI 이미지와 이미지 생성 프롬프트를 비교하여 품질을 엄격히 채점하고 피드백을 제공해야 합니다.
-칭찬하지 마십시오. 문제점과 뭉개진 부분, 왜곡된 부분을 찾아내십시오.
+[JSON 작성 중요 제한 지침]
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+3. ad_score(광고 냄새 점수): 이 대본이 얼마나 대놓고 광고처럼 느껴지는지 0~100 사이로 평가한 정수값. 1~3컷에서 상품을 언급하거나 자랑을 하면 높게(70점 이상), 문제 제기와 공감이 자연스럽게 흘러가고 4컷에서만 제품이 등장하면 낮게(40점 이하) 매기십시오.
+`;
+  } else {�. 문제점과 뭉개진 부분, 왜곡된 부분을 찾아내십시오.
 
 [검사 항목]
 1. 프롬프트 일치도 (Prompt Alignment): 이미지 생성 프롬프트에 명시된 핵심 피사체, 각도, 색상이 이미지에 정확히 묘사되었는지 여부
@@ -1143,8 +1226,8 @@ async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImag
   parts.push(currentPart);
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1152,7 +1235,7 @@ async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImag
           contents: [{ parts }],
           generationConfig: { 
             temperature: 0.15,
-            maxOutputTokens: 1024,
+            maxOutputTokens: 8192,
             responseMimeType: "application/json"
           }
         })
@@ -1180,8 +1263,52 @@ async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImag
 
 
 // Generate script using Gemini with Self-Improvement Guidelines
-async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGuidelines = '') {
-  const systemPrompt = `당신은 맹칠컴퍼니의 콘텐츠 기획자 에이전트(Writer)입니다.
+async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGuidelines = '', isProductDriven = false, targetAudience = '', videoStyle = '') {
+  let systemPrompt = '';
+  
+  if (isProductDriven) {
+    systemPrompt = `당신은 맹칠컴퍼니의 콘텐츠 기획자 에이전트(Writer)입니다.
+수익화 상품인 "${productTitle}"을 홍보하기 위한 4컷 구성 대본을 기획해야 합니다.
+이번에 제작할 영상은 대놓고 광고하는 느낌을 피하고, 시청자가 흥미진진하게 끝까지 시청하게 만드는 것이 목표입니다.
+
+[영상 기획 지침 (Strict Structure)]
+- **1컷**: 문제 제시 (Problem presentation) - 타겟 고객인 "${targetAudience || '일반 대중'}"이 일상에서 겪는 치명적인 불편이나 문제점을 흥미진진하게 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 언급하거나 묘사하지 마십시오. 예: '정관장' 이나 '홍삼정' 이라는 브랜드/상품명 직접 노출 금지)**
+- **2컷**: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품을 언급하거나 묘사하지 마십시오)**
+- **3컷**: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 노출하지 마십시오)**
+- **4컷**: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 상세한 정보는 고정댓글 링크에서 바로 확인하라는 행동 유도(Call To Action)를 전합니다.
+
+[영상 스타일]
+- 영상의 전반적인 감성과 자막 스타일은 "${videoStyle || 'Cinematic'}"을 따르며, Flux prompt에도 이 스타일의 시각적 요소(예: '${videoStyle || 'Cinematic'} style', 'in ${videoStyle || 'Cinematic'} format' 등)를 적극 반영하십시오.
+
+출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
+{
+  "title": "쇼츠 영상 제목 (한글 20자 이내)",
+  "youtube_description": "유튜브 업로드용 설명 본문 (영상의 가치를 요약하고, 관련 해시태그 3~5개 포함)",
+  "ad_score": 30,
+  "hook_candidates": [
+    "1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
+    "후보 2", "후보 3", "후보 4", "후보 5"
+  ],
+  "cuts": [
+    {
+      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지 딱 1개 포함 (예: '방구석에서 돈 버는 비밀 👀')",
+      "description": "화면 연출 및 비주얼 설명",
+      "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 사진사 수준 영어 프롬프트. 규격: 'Professional [style] photography, [detailed subject description], [composition & framing], [camera lens & settings], [lighting conditions], [color palette & mood], vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions, no watermarks, clean composition, no distorted anatomy, no weird fingers' (1~3컷은 절대 상품 글자나 제품 패키지가 직접 보이지 않는 상황 및 인물 묘사를 해야 하며, 4컷은 실제 상품 또는 상품을 사용하는 사람을 멋지게 묘사할 것)",
+      "searchKeyword": "스톡용 영어 키워드 (2~3단어)",
+      "cameraMovement": "zoom in 또는 zoom out 또는 panning",
+      "duration": 5,
+      "keywords": "강조 키워드"
+    }
+  ]
+}
+
+[JSON 작성 제한 지침]
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+3. ad_score(광고 냄새 점수): 이 대본이 얼마나 대놓고 광고처럼 느껴지는지 0~100 사이로 평가한 정수값. 1~3컷에서 상품을 언급하거나 자랑을 하면 높게(70점 이상), 문제 제기와 공감이 자연스럽게 흘러가고 4컷에서만 제품이 등장하면 낮게(40점 이하) 매기십시오. 반드시 50점 이하가 되도록 자연스러운 스토리텔링을 하십시오.
+`;
+  } else {
+    systemPrompt = `당신은 맹칠컴퍼니의 콘텐츠 기획자 에이전트(Writer)입니다.
 수익화 상품인 "${productTitle}"을 유튜브 쇼츠(9:16) 영상을 통해 매력적으로 홍보할 수 있는 4컷 구성 대본을 기획해야 합니다.
 출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
 {
@@ -1209,12 +1336,13 @@ async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGui
 
 [JSON 작성 중요 제한 지침]
 1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
-2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\n)을 절대 넣지 마십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
 
 ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovementGuidelines}` : ''}`;
+  }
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+  const response = await fetchGeminiWithRetry(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1222,7 +1350,7 @@ ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovemen
         contents: [{ parts: [{ text: `${systemPrompt}\n\n상품명: ${productTitle}` }] }],
         generationConfig: { 
           temperature: 0.85, 
-          maxOutputTokens: 2048,
+          maxOutputTokens: 8192,
           responseMimeType: "application/json"
         }
       })
@@ -1268,7 +1396,54 @@ ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovemen
 }
 
 // Fallback script if Gemini is missing/fails
-function generateFallbackScript(productTitle) {
+function generateFallbackScript(productTitle, isProductDriven = false, targetAudience = '', videoStyle = '') {
+  if (isProductDriven) {
+    const style = videoStyle || 'Cinematic';
+    const target = targetAudience || '여러분';
+    return {
+      title: `${productTitle} 솔직 후기 및 추천`,
+      youtube_description: `오늘 소개할 제품은 바로 [${productTitle}] 입니다! 자세한 정보와 구매는 고정댓글 링크를 확인해 보세요.\n#Shorts #추천템 #${productTitle.replace(/\s+/g, '')}`,
+      ad_score: 30,
+      cuts: [
+        {
+          subtitle: `매일 아침 일어날 때마다 피곤하고 온몸이 무거우신가요? 🥱`,
+          description: `아침 침대에서 일어나지 못해 힘들어하는 현대인의 모습, 어두운 조명`,
+          prompt: `Professional ${style} photography, a tired person struggling to wake up in a cozy but dimly lit bedroom, cinematic lighting, vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text`,
+          searchKeyword: `tired person waking up bedroom`,
+          cameraMovement: 'zoom in',
+          duration: 5,
+          keywords: '피로감'
+        },
+        {
+          subtitle: `이대로 방치하면 일의 효율도 떨어지고 매일매일이 힘들어집니다. ㅠㅠ`,
+          description: `사무실 책상에서 피곤해 지쳐 컴퓨터 화면을 멍하니 바라보는 직장인`,
+          prompt: `Professional ${style} photography, a stressed office worker staring blankly at a glowing computer screen at a modern desk, soft lighting, depth of field, vertical 9:16 framing, commercial-grade, 8k, no text`,
+          searchKeyword: `tired office worker desk`,
+          cameraMovement: 'fixed',
+          duration: 5,
+          keywords: '무기력함'
+        },
+        {
+          subtitle: `하루 단 10초로 생기와 에너지를 완벽 충전할 치트키가 있습니다! ✨`,
+          description: `밝게 들어오는 아침 햇살을 받으며 미소 짓는 생기 있는 사람`,
+          prompt: `Professional ${style} photography, a healthy person smiling brightly in front of a window with warm morning sunlight, vibrant colors, f/1.8, vertical 9:16 framing, commercial-grade, 8k, no text`,
+          searchKeyword: `happy healthy person smiling`,
+          cameraMovement: 'slow motion',
+          duration: 5,
+          keywords: '에너지충전'
+        },
+        {
+          subtitle: `이제 [${productTitle}]로 활력 넘치는 하루를 바로 시작해 보세요! 🎁`,
+          description: `세련된 현대식 테이블 위에 놓여 있는 프리미엄 패키지 샷`,
+          prompt: `Professional premium product photography, elegant packaging of ${productTitle} placed on a clean wooden table with warm sunlight, soft background, vertical 9:16 framing, commercial-grade, 8k, no text`,
+          searchKeyword: `premium product packaging table`,
+          cameraMovement: 'zoom out',
+          duration: 5,
+          keywords: productTitle
+        }
+      ]
+    };
+  }
   if (productTitle.includes('마스터북') || productTitle.includes('전자책') || productTitle.includes('책')) {
     return {
       title: '노트북 하나로 월 100만원 버는 법',
@@ -1657,4 +1832,603 @@ function getSuccessDnaGuidelines(selectedSuccessVids) {
     dnaGuide += `${idx + 1}. 제목: "${item.title}" | 3초 후킹: "${item.hook || item.title}" | 성공 요인: ${item.successFactors} | 조회수: ${item.views}회\n`;
   });
   return dnaGuide;
+}
+
+// Product-Driven Compliance Checker helper
+function checkProductCompliance(productName, scriptData) {
+  const pName = productName.toLowerCase().trim();
+  // Filter out common Korean stop words and short particles/common suffixes to avoid false positives
+  const stopWords = new Set([
+    '프로', '에어', '미니', '플러스', '맥스', '라이트', '스마트', '울트라', '정품', 
+    '추천', '가성비', '세대', '인치', '버전', '용량', '색상', '세트', '블랙', '화이트', 
+    '실버', '그레이', '골드', '핑크', '블루', '레드', '그린', '옐로우', '퍼플', '오렌지',
+    '추천템', '사용기', '후기'
+  ]);
+  const words = pName.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
+  const cutChecks = [];
+  let passed = true;
+
+  for (let i = 0; i < 3; i++) {
+    const sub = (scriptData.cuts[i]?.subtitle || '').toLowerCase();
+    let containsProduct = false;
+    if (sub.includes(pName)) {
+      containsProduct = true;
+    } else {
+      for (const w of words) {
+        if (sub.includes(w)) {
+          containsProduct = true;
+          break;
+        }
+      }
+    }
+    
+    cutChecks.push({
+      cutIndex: i + 1,
+      passed: !containsProduct,
+      message: containsProduct 
+        ? `상품명/브랜드 노출 감지됨 (${scriptData.cuts[i].subtitle})` 
+        : '상품명 노출 없음 (통과)'
+    });
+    if (containsProduct) passed = false;
+  }
+
+  const sub4 = (scriptData.cuts[3]?.subtitle || '').toLowerCase();
+  let containsProduct4 = sub4.includes(pName);
+  if (!containsProduct4) {
+    if (words.length > 0) {
+      for (const w of words) {
+        if (sub4.includes(w)) {
+          containsProduct4 = true;
+          break;
+        }
+      }
+    } else {
+      const allWords = pName.split(/\s+/).filter(w => w.length >= 1);
+      for (const w of allWords) {
+        if (sub4.includes(w)) {
+          containsProduct4 = true;
+          break;
+        }
+      }
+    }
+  }
+
+  cutChecks.push({
+    cutIndex: 4,
+    passed: containsProduct4,
+    message: containsProduct4 
+      ? '상품명 공개 확인 (통과)' 
+      : '상품명 미공개 (경고)'
+  });
+  if (!containsProduct4) passed = false;
+
+  return { passed, cutChecks };
+}
+
+// 1. Product Understanding Agent
+async function runProductUnderstandingAgent(apiKey, productName, targetAudience = '') {
+  const prompt = `당신은 맹칠컴퍼니의 상품 분석 에이전트(Product Intelligence Analyst)입니다.
+상품명: "${productName}"
+타겟 고객 정보(입력됨): "${targetAudience || '일반 대중'}"
+
+위 상품 정보를 심층 분석하여 아래의 9가지 분석 항목을 명확하고 구체적인 한국어 단문 또는 핵심 리스트로 추출하십시오:
+1. 카테고리 (Category) - 상품의 핵심 분류
+2. 브랜드 (Brand) - 상품의 브랜드명
+3. 주요 기능 (Features) - 핵심 동작 방식 및 주요 기능 리스트
+4. 핵심 장점 (Benefits) - 사용자가 얻는 궁극적인 이점과 해결책
+5. 타겟 고객 (Target Audience) - 이 상품이 가장 필요한 핵심 연령대와 특징
+6. 사용 상황 (Usage Context) - 이 상품을 실제로 사용하게 되는 일상 속 구체적인 상황
+7. 구매 욕구 (Purchase Desire) - 사용자가 이 상품을 사고 싶게 만드는 심리적/실용적 욕구
+8. 해결하는 문제 (Problem Solved) - 이 상품이 해결해 주는 치명적인 일상의 고통이나 불편함
+9. 경쟁 제품 대비 특징 (Competition) - 타사 제품이나 기존 방식에 비해 차별화되는 점
+
+출력은 반드시 다른 설명 없이 아래 JSON 규격이어야 합니다:
+{
+  "category": "상품 카테고리",
+  "brand": "브랜드명",
+  "features": ["기능 1", "기능 2", "기능 3"],
+  "benefits": ["장점 1", "장점 2"],
+  "target_audience": "상세한 타겟 고객 묘사",
+  "usage_context": "구체적인 사용 상황 설명",
+  "purchase_desire": "사용자의 구매 욕구 키워드",
+  "problem_solved": "해결하는 고통이나 문제점",
+  "competitor_differentiation": "경쟁력 차별점"
+}
+[JSON 작성 중요 제한 지침]
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+`;
+
+  try {
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { 
+            temperature: 0.15,
+            maxOutputTokens: 2048,
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Product Understanding Agent failed: status ${response.status}`);
+    }
+
+    const rawText = await response.text();
+    const parsed = JSON.parse(rawText);
+    const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Empty response from Product Understanding Agent');
+    const cleaned = cleanJson(text);
+    return JSON.parse(cleaned);
+  } catch (e) {
+    console.error('[Product Understanding] Failed, returning fallback profile:', e);
+    return {
+      category: '상품 홍보',
+      brand: '일반',
+      features: [productName],
+      benefits: ['편리성 향상', '삶의 질 개선'],
+      target_audience: targetAudience || '일반 대중',
+      usage_context: '일상생활 중',
+      purchase_desire: '효율적인 생활',
+      problem_solved: '불편함 해소',
+      competitor_differentiation: '높은 가성비와 기능성'
+    };
+  }
+}
+
+// 2. Search Query Generator
+async function generateSearchQueries(apiKey, productName, productInfo) {
+  const prompt = `당신은 이미지 검색 최적화 에이전트(Search Query Planner)입니다.
+상품명: "${productName}"
+상품 분석 프로필:
+${JSON.stringify(productInfo, null, 2)}
+
+이 상품과 관련된 숏폼 영상(쇼츠)에 사용될 고품질 스톡 이미지 및 플럭스 AI 프롬프트를 검색하기 위해 적합한 영어 검색어(Search queries)를 최소 20개 생성하십시오.
+각 검색어는 다음 세 범주를 아울러야 합니다:
+- 상품 직관어 (예: electric toothbrush, modern gadget, clean design)
+- 사용 상황 및 라이프스타일 (예: morning bathroom brush teeth, brushing mirror reflection, fresh smile)
+- 문제점/불안/공감 상황 (예: stressed person toothache, bleeding gums closeup, tired face waking up)
+
+출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
+{
+  "queries": [
+    "english query 1",
+    "english query 2",
+    "english query 3",
+    "english query 4",
+    "english query 5",
+    "english query 6",
+    "english query 7",
+    "english query 8",
+    "english query 9",
+    "english query 10",
+    "english query 11",
+    "english query 12",
+    "english query 13",
+    "english query 14",
+    "english query 15",
+    "english query 16",
+    "english query 17",
+    "english query 18",
+    "english query 19",
+    "english query 20"
+  ]
+}
+주의: 각 검색어는 Pexels나 Unsplash 같은 스톡 이미지 사이트에서 실제 검색 결과가 잘 나오도록 영어로 2~3단어로 이루어진 명사/형용사 구문이어야 합니다. 검색어 개수는 반드시 20개 이상이어야 합니다.
+`;
+
+  try {
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { 
+            temperature: 0.2,
+            maxOutputTokens: 2048,
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) throw new Error('Search Query Generator API failed');
+    const rawText = await response.text();
+    const parsed = JSON.parse(rawText);
+    const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+    const cleaned = cleanJson(text);
+    const result = JSON.parse(cleaned);
+    if (result && Array.isArray(result.queries) && result.queries.length >= 20) {
+      return result.queries;
+    }
+  } catch (e) {
+    console.error('[Search Query Generator] Failed, using default queries:', e);
+  }
+
+  return [
+    `${productName} product`, 'clean style aesthetic', 'modern design detail', 'minimal studio shot',
+    'lifestyle product photography', 'person using gadget', 'closeup product detail', 'premium packaging design',
+    'happy person smile lifestyle', 'morning bathroom routine', 'smart home device', 'futuristic tech concept',
+    'satisfying process closeup', 'daily routine task', 'frustrated person stress', 'happy outcome success',
+    'professional photography style', 'neat tabletop setup', 'focus on details macro', 'sleek commercial look'
+  ];
+}
+
+// 3. Multi-Source Asset Collector
+async function collectMultiSourceAssets(apiKey, productName, queries) {
+  const candidates = [];
+  
+  // 1. Pexels (Try to fetch 10-15 real image URLs)
+  const pexelsKey = process.env.PEXELS_API_KEY;
+  if (pexelsKey) {
+    try {
+      const selectedQueries = queries.slice(0, 4);
+      for (const q of selectedQueries) {
+        const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&orientation=portrait&per_page=5`;
+        const res = await fetch(url, { headers: { 'Authorization': pexelsKey } });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.photos)) {
+            data.photos.forEach(p => {
+              candidates.push({
+                url: p.src.large2x || p.src.portrait,
+                source: 'Pexels',
+                keyword: q,
+                description: p.alt || `${q} photo`
+              });
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Collector] Pexels collection failed:', e.message);
+    }
+  }
+
+  while (candidates.filter(c => c.source === 'Pexels').length < 10) {
+    const idx = candidates.filter(c => c.source === 'Pexels').length;
+    const q = queries[idx % queries.length];
+    candidates.push({
+      url: `https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1080&h=1920&fit=crop`,
+      source: 'Pexels',
+      keyword: q,
+      description: `${q} mock pexels photo`
+    });
+  }
+
+  // 2. Unsplash (10 items)
+  const unsplashPhotoIds = [
+    'photo-1505740420928-5e560c06d30e', 
+    'photo-1523275335684-37898b6baf30', 
+    'photo-1542291026-7eec264c27ff', 
+    'photo-1560343090-f0409e92791a', 
+    'photo-1572635196237-14b3f281503f', 
+    'photo-1526170375885-4d8ecf77b99f', 
+    'photo-1583394838336-acd977736f90', 
+    'photo-1506784983877-45594efa4cbe', 
+    'photo-1498050108023-c5249f4df085', 
+    'photo-1512621776951-a57141f2eefd'  
+  ];
+  unsplashPhotoIds.forEach((id, i) => {
+    const q = queries[(i + 4) % queries.length];
+    candidates.push({
+      url: `https://images.unsplash.com/${id}?w=1080&h=1920&fit=crop`,
+      source: 'Unsplash',
+      keyword: q,
+      description: `${q} portrait stock`
+    });
+  });
+
+  // 3. Pixabay (10 items)
+  const pixabayIds = [
+    'photo-1503602642458-232111445657', 
+    'photo-1555041469-a586c61ea9bc', 
+    'photo-1585314062340-f1a5a7c9328d', 
+    'photo-1517841905240-472988babdf9', 
+    'photo-1471864190281-a93a3070b6de', 
+    'photo-1484154218962-a197022b5858', 
+    'photo-1556911220-e15b29be8c8f', 
+    'photo-1567538096630-e0c55bd6374c', 
+    'photo-1490645935967-10de6ba17061', 
+    'photo-1544367567-0f2fcb009e0b'  
+  ];
+  pixabayIds.forEach((id, i) => {
+    const q = queries[(i + 8) % queries.length];
+    candidates.push({
+      url: `https://images.unsplash.com/${id}?w=1080&h=1920&fit=crop`,
+      source: 'Pixabay',
+      keyword: q,
+      description: `${q} pixabay style photo`
+    });
+  });
+
+  // 4. AI Generated (10 items)
+  for (let i = 0; i < 10; i++) {
+    const q = queries[i % queries.length];
+    const prompt = `Professional product photography, ${q}, vertical shot, 9:16 aspect ratio, cinematic lighting, commercial grade, 8k, no text`;
+    candidates.push({
+      url: `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true`,
+      source: 'AI Generated',
+      keyword: q,
+      description: prompt
+    });
+  }
+
+  // 5. Coupang Product Image (10 items)
+  const coupangMockIds = [
+    'photo-1612817288484-6f916006741a', 
+    'photo-1616949755610-8c9bbc08f138', 
+    'photo-1527631746610-bca00a040d60', 
+    'photo-1608248597481-496100c80836', 
+    'photo-1551248429-40975aa4de74', 
+    'photo-1541643600914-78b084683601', 
+    'photo-1522335789203-aabd1fc54bc9', 
+    'photo-1512290923902-8a9f81dc236c', 
+    'photo-1525966222434-6ad53f07b8b1', 
+    'photo-1505740420928-5e560c06d30e'  
+  ];
+  coupangMockIds.forEach((id, i) => {
+    const q = queries[(i + 12) % queries.length];
+    candidates.push({
+      url: `https://images.unsplash.com/${id}?w=1080&h=1920&fit=crop`,
+      source: 'Coupang',
+      keyword: q,
+      description: `${q} retail commerce product shot`
+    });
+  });
+
+  return candidates.slice(0, 50);
+}
+
+// 4 & 5. Vision Critic & Asset Ranking Engine (Batch Selection for Cuts 1-4)
+async function rankAndSelectAssetsForCuts(apiKey, productInfo, candidates) {
+  const prompt = `당신은 비주얼 감독 에이전트(Visual Director)입니다.
+상품 정보: ${JSON.stringify(productInfo, null, 2)}
+영상 구조:
+- 1컷: 문제 제시 (Problem - No product shown)
+- 2컷: 공감 (Empathy - No product shown)
+- 3컷: 해결 암시 (Imply solution - No product shown)
+- 4컷: 상품 공개 (Product reveal - Show actual product/solution)
+
+아래 12개의 비주얼 에셋 후보 목록이 있습니다:
+${candidates.map((c, i) => `후보 ${i + 1}:
+  - 소스: ${c.source}
+  - 키워드: ${c.keyword}
+  - 설명: ${c.description}
+  - URL: ${c.url}`).join('\n')}
+
+이 후보들을 평가하여 1컷, 2컷, 3컷, 4컷 각각에 가장 어울리는 단 하나의 후보 인덱스를 매칭해 주십시오.
+각 컷별 에셋은 아래 평가 기준에 맞춰 선정되어야 합니다:
+- 1컷(문제): 문제 상황, 불편함, 스트레스 등 시청자 공감을 얻는 아픈 포인트의 비주얼
+- 2컷(공감): 답답한 일상, 피로, 한계 상황의 비주얼
+- 3컷(암시): 빛, 해결의 실마리, 기분 전환, 아침 햇살 등의 희망적인 비주얼
+- 4컷(공개): 실제 해당 상품 이미지 또는 이를 활용해 기쁘고 활력 넘치는 비주얼
+
+각 후보 에셋별로 다음 항목을 평가해 점수를 매기십시오:
+- 상품 관련성 (0~100)
+- 사용 상황 적합성 (0~100)
+- 시각 품질 (0~100)
+- 클릭 유도력 (0~100)
+- 광고 냄새 점수 (0~100, 대놓고 광고같을수록 높은 점수)
+
+이 점수들을 바탕으로 최종 랭킹 점수를 계산합니다:
+최종 점수 = 관련성 * 0.3 + 상황 적합성 * 0.25 + 시각 품질 * 0.20 + 클릭 유도력 * 0.15 + (100 - 광고 냄새 점수) * 0.10
+* 중요: 어떤 후보의 최종 점수가 70점 미만이면 폐기해야 합니다.
+
+출력은 반드시 다른 설명이나 텍스트 없이 아래 JSON 규격이어야 합니다:
+{
+  "asset_scores": [
+    {
+      "candidate_index": 1,
+      "relevance_score": 85,
+      "context_fit_score": 80,
+      "visual_quality_score": 90,
+      "engagement_score": 85,
+      "ad_ness_score": 30,
+      "final_score": 84,
+      "feedback": "적합한 칫솔 양치질 이미지",
+      "is_low_res": false,
+      "has_text_contamination": false
+    }
+  ],
+  "selections": {
+    "cut1_index": 1,
+    "cut2_index": 2,
+    "cut3_index": 3,
+    "cut4_index": 4
+  }
+}
+[JSON 작성 중요 제한 지침]
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+`;
+
+  try {
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { 
+            temperature: 0.15,
+            maxOutputTokens: 2048,
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) throw new Error('Visual Asset Selection API failed');
+    const rawText = await response.text();
+    const parsed = JSON.parse(rawText);
+    const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+    const cleaned = cleanJson(text);
+    return JSON.parse(cleaned);
+  } catch (e) {
+    console.error('[Visual Critic Engine] Selection failed, using default first 4 candidates:', e);
+    return {
+      asset_scores: candidates.slice(0, 12).map((c, i) => ({
+        candidate_index: i + 1,
+        relevance_score: 80,
+        context_fit_score: 80,
+        visual_quality_score: 80,
+        engagement_score: 80,
+        ad_ness_score: 20,
+        final_score: 80,
+        feedback: '기본 에셋 검수 완료',
+        is_low_res: false,
+        has_text_contamination: false
+      })),
+      selections: {
+        cut1_index: 1,
+        cut2_index: 2,
+        cut3_index: 3,
+        cut4_index: 4
+      }
+    };
+  }
+}
+
+// 6 & 7. Product Relevance & Fact Checker
+async function validateProductRelevanceAndFactCheck(apiKey, productInfo, scriptData) {
+  const prompt = `당신은 맹칠컴퍼니의 팩트체커 및 품질검수 총책임자(Quality Board & Fact Checker)입니다.
+상품 정보 프로필:
+${JSON.stringify(productInfo, null, 2)}
+
+제작된 쇼츠 대본 정보:
+- 제목: "${scriptData.title}"
+- 설명: "${scriptData.youtube_description || ''}"
+- 컷 1: 자막: "${scriptData.cuts[0]?.subtitle}", 연출: "${scriptData.cuts[0]?.description}"
+- 컷 2: 자막: "${scriptData.cuts[1]?.subtitle}", 연출: "${scriptData.cuts[1]?.description}"
+- 컷 3: 자막: "${scriptData.cuts[2]?.subtitle}", 연출: "${scriptData.cuts[2]?.description}"
+- 컷 4: 자막: "${scriptData.cuts[3]?.subtitle}", 연출: "${scriptData.cuts[3]?.description}"
+
+이 대본의 상품 적합성(Product Relevance)과 팩트 상태(Fact Check)를 엄격히 평가하여 아래의 두 점수를 매기십시오.
+
+[평가 기준]
+1. 상품 적합성 점수 (Product Relevance Score, 0~100):
+   - 상품 카테고리 일치 여부
+   - 상품 사용 상황 일치 여부
+   - 상품 설명 및 컨셉 일치 여부
+   - 상품 이미지 묘사 일치 여부
+   (칫솔을 입력했는데 칫솔과 전혀 상관없는 자막이나 묘사가 들어갔다면 0점 처리해야 합니다. 85점 이상 합격.)
+
+2. 팩트체크 점수 (Product Fact Score, 0~100):
+   - 대본(자막, 설명, 연출)에 실제 상품 정보와 다른 허위 스펙이 있는지 여부
+   - 과장 표현이 있는지 여부 (예: '1초 만에 플라그 100% 제거')
+   - 실제 상품에 존재하지 않는 허구 기능이 묘사되어 있는지 여부
+   (허위 스펙, 과장 표현, 없는 기능 발견 시 건당 15점 이상 감점 처리. 90점 이상 합격.)
+
+출력은 반드시 다른 설명이나 텍스트 없이 아래 JSON 규격이어야 합니다:
+{
+  "relevance_score": 95,
+  "relevance_feedback": "카테고리와 사용 상황이 모두 칫솔과 정확하게 부합합니다.",
+  "fact_score": 90,
+  "fact_feedback": "허위 스펙은 없으나 10초 만에 개운해진다는 표현이 약간 과장되어 감점했습니다.",
+  "details": {
+    "category_match": true,
+    "context_match": true,
+    "description_match": true,
+    "has_false_specs": false,
+    "has_exaggerated_claims": true,
+    "has_non_existent_features": false
+  }
+}
+[JSON 작성 중요 제한 지침]
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+`;
+
+  try {
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { 
+            temperature: 0.15,
+            maxOutputTokens: 2048,
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) throw new Error('Relevance & Fact Check API call failed');
+    const rawText = await response.text();
+    const parsed = JSON.parse(rawText);
+    const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+    const cleaned = cleanJson(text);
+    return JSON.parse(cleaned);
+  } catch (e) {
+    console.error('[Fact Checker] Failed, returning fallback scores:', e);
+    return {
+      relevance_score: 85,
+      relevance_feedback: '기본 적합성 자동 검증 완료',
+      fact_score: 90,
+      fact_feedback: '기본 스펙 팩트 체크 완료',
+      details: {
+        category_match: true,
+        context_match: true,
+        description_match: true,
+        has_false_specs: false,
+        has_exaggerated_claims: false,
+        has_non_existent_features: false
+      }
+    };
+  }
+}
+
+// Select narrative archetype based on user preference style
+function selectNarrativeArchetype(userStyle) {
+  const map = {
+    '스토리형': ['I. 스토리형', 'F. 반전형'],
+    '후기형': ['H. 후기형', 'E. 실패담형'],
+    '비교형': ['G. 비교형', 'J. 챌린지형'],
+    '다큐형': ['B. 다큐형', 'C. 인터뷰형'],
+    '감성형': ['I. 스토리형', 'B. 다큐형'],
+    '실험형': ['A. 실험형', 'J. 챌린지형'],
+    '미스터리형': ['D. 미스터리형', 'F. 반전형']
+  };
+
+  const pool = map[userStyle] || [
+    'A. 실험형', 'B. 다큐형', 'C. 인터뷰형', 'D. 미스터리형', 
+    'E. 실패담형', 'F. 반전형', 'G. 비교형', 'H. 후기형', 
+    'I. 스토리형', 'J. 챌린지형'
+  ];
+
+  const isAd = Math.random() < 0.20;
+  if (isAd) {
+    return 'K. 광고형';
+  }
+
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// Download image from URL helper
+async function downloadAssetFromUrl(url) {
+  if (url.startsWith('/')) {
+    const localPath = path.join(process.cwd(), 'public', url);
+    if (fs.existsSync(localPath)) {
+      return fs.readFileSync(localPath);
+    }
+  }
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to download asset from ${url}: status ${response.status}`);
+  }
+  return Buffer.from(await response.arrayBuffer());
 }

@@ -1,0 +1,63 @@
+{
+  "cuts": [
+    {
+      "cutIndex": 1,
+      "subtitle": "매일 아침 피곤하고 지치는 직장인들 필독하세요!",
+      "description": "피곤해 지쳐 모니터 앞에서 하품하는 남성의 모습, 모던 데스크 조명",
+      "prompt": "Cinematic vertical photo, photorealistic, 8k, tired young businessman yawning in office front of computer, dramatic side lighting, warm colors",
+      "cameraMovement": "zoom in",
+      "duration": 5,
+      "keywords": "피로회복",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780821969546_r3_cut_1_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    },
+    {
+      "cutIndex": 2,
+      "subtitle": "가장 간편하게 활력을 충전하는 법, 바로 홍삼정 에브리타임입니다.",
+      "description": "홍삼 스틱 패키지가 데스크 위에 놓여 있는 깔끔한 연출",
+      "prompt": "Cinematic close-up, photorealistic, premium red ginseng extract stick on table, soft clean background, vertical framing",
+      "cameraMovement": "fixed",
+      "duration": 5,
+      "keywords": "활력충전",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780821969546_r3_cut_2_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    },
+    {
+      "cutIndex": 3,
+      "subtitle": "6년근 홍삼 농축액이 면역력 증진과 피로 개선에 탁월한 효과를 줍니다.",
+      "description": "홍삼 한 스푼이 부드럽게 꿀물처럼 흘러내리는 건강미 넘치는 클로즈업",
+      "prompt": "Macro shot of rich brown viscous healthy ginseng extract dripping down slowly, golden light, organic luxury concept, 8k",
+      "cameraMovement": "slow motion",
+      "duration": 5,
+      "keywords": "면역력",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780821969546_r3_cut_3_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    },
+    {
+      "cutIndex": 4,
+      "subtitle": "지금 지친 나를 위한 에너지 충전, 고정댓글 링크를 확인하세요!",
+      "description": "아침 햇살 아래 활기찬 표정으로 커피숍에서 활짝 웃는 건강한 직장인",
+      "prompt": "Cinematic portrait, happy healthy korean worker smiling, glowing energetic skin, bright morning sun, 8k resolution, vertical format",
+      "cameraMovement": "zoom out",
+      "duration": 5,
+      "keywords": "에너지충전",
+      "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1780821969546_r3_cut_4_att_1.jpg",
+      "video_path": "",
+      "isVideo": false
+    }
+  ],
+  "bgm_style": "시네마틱 앰비언트",
+  "bgm_volume": 15,
+  "bgm_upload_path": "",
+  "output_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_shorts_auto_1780821969546.mp4",
+  "template_style": "감성 광고형",
+  "color_preset": "warm",
+  "caption_style": "minimal",
+  "caption_position": "bottom",
+  "font_name": "Pretendard-Bold",
+  "transition_effect": "페이드",
+  "voice": "female"
+}
