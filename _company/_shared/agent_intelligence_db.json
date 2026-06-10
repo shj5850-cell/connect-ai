@@ -15,7 +15,7 @@
     {
       "agent": "designer",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 🎨 Designer (Lead Designer) 개인 메모리\n\n_Designer 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최신 디자인 비주얼 확인 → 산출물 sessions/2026-05-31T03-46/designer.md\n- [2026-06-01] 마케팅 디자인 브리프를 작성하고 썸네일·브랜드 비주얼을 생성합니다. → 산출물 sessions/2026-06-01T03-07/designer.md\n- [2026-06-01] 추적된 데이터를 바탕으로..."
     },
     {
@@ -45,7 +45,7 @@
     {
       "agent": "researcher",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 🔍 Researcher (Trend & Data Researcher) 개인 메모리\n\n_Researcher 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 회사 설정 모달에서 AI 자동화로 수익을 창출하는 아이템을 찾아보기 → 산출물 sessions/2026-05-30T08-52/researcher.md\n- [2026-05-30] AI 자동화로 수익 창출을 위한 아이템을 찾아보고, 결과를 수집 및 요약하여 회사 설정 모달에 반영합니다. → 산출물 sess..."
     },
     {
@@ -643,6 +643,41 @@
       "agent": "CEO",
       "decision": "작업 우선순위에 영숙에게 배분",
       "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "가장 가치 있는 단일 작업은 '브랜드 채널 라우팅'을 결정하고, 레오와 영숙에게 분배.",
+      "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "모델 로드 실패",
+      "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "디자인 작업 추가 및 샘플 확인",
+      "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "개발에 필요한 정보 제공",
+      "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "회의록 보고서 작성",
+      "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "앞으로 회사가 따를 결정: LLM 오케스트레이션에서 작은 모델 선택",
+      "date": "2026-06-10"
+    },
+    {
+      "agent": "CEO",
+      "decision": "작업 중단 및 메모리 체크",
+      "date": "2026-06-10"
     }
   ],
   "agent_lessons": [
@@ -721,6 +756,20 @@
   ],
   "agent_outputs": [
     {
+      "name": "walkthrough.md",
+      "type": "documentation",
+      "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\0cafbc9c-d80f-415d-9784-7066d364aad9\\walkthrough.md",
+      "size": 1816,
+      "updated_at": "2026-06-10T08:46:06.665Z"
+    },
+    {
+      "name": "task.md",
+      "type": "task_tracker",
+      "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\0cafbc9c-d80f-415d-9784-7066d364aad9\\task.md",
+      "size": 843,
+      "updated_at": "2026-06-10T09:24:58.865Z"
+    },
+    {
       "name": "quality_board_veto.log",
       "type": "agent_log",
       "path": "C:\\Users\\user\\Desktop\\명철\\개발\\_company\\agent_logs\\quality_board_veto.log",
@@ -751,15 +800,15 @@
     "retention_after_average": 62,
     "roi_before_average": 1672.9,
     "roi_after_average": 38205.9,
-    "diversity_score_average": 69.2,
+    "diversity_score_average": 59.8,
     "novelty_score_average": 80,
-    "experiment_success_rate": 9.5,
-    "success_dna_reflection_rate": 97.6
+    "experiment_success_rate": 6.1,
+    "success_dna_reflection_rate": 96.3
   },
   "agent_skill_scores": {
     "ceo": {
       "score": 100,
-      "completed_tasks": 122,
+      "completed_tasks": 129,
       "lessons_learned": 0,
       "success_patterns_found": 3,
       "failure_patterns_avoided": 1,

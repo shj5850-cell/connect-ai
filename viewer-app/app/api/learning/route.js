@@ -1066,8 +1066,14 @@ function runStyleDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    // Filter videos with views >= 5000
-    const successfulVids = list.filter(v => v.views >= 5000);
+    const fallbackTitles = [
+      'M3 맥북으로 AI 수익화 시작하는 법',
+      '노트북 하나로 월 100만원 버는 법',
+      '피로회복 끝판왕 홍삼정 추천'
+    ];
+
+    // Filter videos with views >= 5000 and not fallback
+    const successfulVids = list.filter(v => v.views >= 5000 && !fallbackTitles.includes(v.title));
 
     const styleDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'style_dna_db.json');
     let db = { style_dna_list: [] };
@@ -1114,6 +1120,12 @@ function runRevenueDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
+    const fallbackTitles = [
+      'M3 맥북으로 AI 수익화 시작하는 법',
+      '노트북 하나로 월 100만원 버는 법',
+      '피로회복 끝판왕 홍삼정 추천'
+    ];
+
     // Load history to resolve hook and category mapping
     let history = [];
     const historyPath = path.join(process.cwd(), 'public', 'shorts', 'history.json');
@@ -1128,6 +1140,7 @@ function runRevenueDnaExtraction(list) {
     const extracted = [];
 
     list.forEach(v => {
+      if (fallbackTitles.includes(v.title)) return;
       // Find matches in history
       const histItem = history.find(h => h.id === v.video_id);
       
@@ -1183,7 +1196,13 @@ function runDnaExtraction(list) {
   try {
     if (!Array.isArray(list) || list.length === 0) return;
 
-    const targetList = list;
+    const fallbackTitles = [
+      'M3 맥북으로 AI 수익화 시작하는 법',
+      '노트북 하나로 월 100만원 버는 법',
+      '피로회복 끝판왕 홍삼정 추천'
+    ];
+
+    const targetList = list.filter(v => !fallbackTitles.includes(v.title));
     if (targetList.length === 0) {
       console.log('[Dna Extraction] No performance items found for success/failure extraction.');
       const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');

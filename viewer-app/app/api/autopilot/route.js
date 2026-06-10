@@ -4,6 +4,7 @@ import fs from 'fs';
 import { runPythonScript } from '@/app/lib/pythonRunner';
 import { exec } from 'child_process';
 import { HOOK_LIBRARY, VISUAL_STYLES, SHOT_PATTERNS, STYLE_DNA_LIST, calculateSimilarity, antiCloneModify } from '../../lib/CreativeDiversityEngine';
+import { searchYoutubeMarket, extractTrendDNA } from '../../lib/trendEngine';
 
 const STATUS_PATH = path.join(process.cwd(), 'public', 'shorts', 'autopilot_status.json');
 const HISTORY_PATH = path.join(process.cwd(), 'public', 'shorts', 'history.json');
@@ -265,11 +266,28 @@ async function runAutopilotProcess(forcedParams = {}) {
     }
 
     console.log(`[Autopilot] Target product: ${productTitle}`);
+    updateStatus('product_matching', '1단계: 유튜브 시장 조사 및 트렌드 DNA 추출 중...', 15);
+
+    // Run Trend Engine once outside the retry loop to save API calls
+    let trendDNA = null;
+    if (apiKey) {
+      try {
+        console.log(`[Autopilot - Trend Engine] Running YouTube market research for "${productTitle}"...`);
+        const searchRes = await searchYoutubeMarket(productTitle);
+        if (searchRes.success && searchRes.data && searchRes.data.length > 0) {
+          console.log(`[Autopilot - Trend Engine] Extracted ${searchRes.data.length} videos. Running Trend DNA extraction...`);
+          trendDNA = await extractTrendDNA(productTitle, searchRes.data, false);
+        } else {
+          console.warn(`[Autopilot - Trend Engine] YouTube search returned no results or failed:`, searchRes.reason);
+        }
+      } catch (trendErr) {
+        console.error(`[Autopilot - Trend Engine] Trend Engine failed, proceeding without Trend DNA:`, trendErr.message);
+      }
+    }
+
     updateStatus('script_generation', '2단계: AI 대본 및 화면 연출 프롬프트 창작 중...', 30);
 
-    // 2. Generate 4-cut script using Gemini or fallback (with retry loop for Quality Board audit)
     let scriptData = null;
-    const apiKey = process.env.GEMINI_API_KEY;
     let preUploadAnalysis = null;
     let imagePaths = [];
     const outputImgDir = path.join(process.cwd(), 'public', 'shorts', 'cinema_images');
@@ -317,6 +335,7 @@ async function runAutopilotProcess(forcedParams = {}) {
     }
 
     let revenueDnaList = [];
+    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
     if (fs.existsSync(revenueDnaDbPath)) {
       try {
         const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
@@ -337,7 +356,6 @@ async function runAutopilotProcess(forcedParams = {}) {
       }
     }
 
-    // Load agent lessons for tracking
     const intelPath = path.join(process.cwd(), '..', '_company', '_shared', 'agent_intelligence_db.json');
     if (fs.existsSync(intelPath)) {
       try {
@@ -349,434 +367,325 @@ async function runAutopilotProcess(forcedParams = {}) {
     }
 
     let finalScoreAvg = 0;
+    let relevanceScore = 100;
+    let factScore = 100;
+    let productInfo = null;
     let retryCount = 0;
     const maxRetries = 3;
 
     while (retryCount <= maxRetries) {
       if (retryCount > 0) {
-        console.log(`[Autopilot] Quality Board score <= 70 or clone alert. Regenerating content... (Retry attempt ${retryCount}/${maxRetries})`);
+        console.log(`[Autopilot] Quality/Relevance failed. Regenerating... (Retry attempt ${retryCount}/${maxRetries})`);
         updateStatus('script_generation', `품질 보드 심사 또는 유사도 통과 실패로 재시도 중... (${retryCount}/${maxRetries}회)`, 30 + retryCount * 5);
       }
 
-      imagePaths = []; // Reset image paths
+      imagePaths = [];
 
-      // Select Style DNA based on Experiment status (only if not forced by clone scrambling retry)
-      if (!forceScrambledParams) {
-        if (isProductDriven) {
-          styleDna = 'Product Reveal';
-          usedStyle = videoStyle || 'Cinematic';
-          selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
-          hookType = selectedHook.type;
-          selectedPattern = SHOT_PATTERNS.find(p => p.name === 'A형 (빌드업)') || SHOT_PATTERNS[0];
-          shotPattern = selectedPattern.name;
-        } else {
-          if (forcedParams.styleDna) {
-            styleDna = forcedParams.styleDna;
-          } else if (isExperiment || styleDnaList.length === 0) {
-            styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
-          } else {
-            const uniqueStyles = [...new Set(styleDnaList.map(item => item.style))];
-            if (uniqueStyles.length > 0) {
-              styleDna = uniqueStyles[Math.floor(Math.random() * uniqueStyles.length)];
-            } else {
-              styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
-            }
-          }
-
-          usedStyle = forcedParams.usedStyle || VISUAL_STYLES[Math.floor(Math.random() * VISUAL_STYLES.length)];
-          
-          if (forcedParams.hookType) {
-            selectedHook = HOOK_LIBRARY.find(h => h.type === forcedParams.hookType) || HOOK_LIBRARY[0];
-          } else {
-            selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
-          }
-          hookType = selectedHook.type;
-
-          if (forcedParams.shotPattern) {
-            selectedPattern = SHOT_PATTERNS.find(p => p.name === forcedParams.shotPattern) || SHOT_PATTERNS[0];
-          } else {
-            selectedPattern = SHOT_PATTERNS[Math.floor(Math.random() * SHOT_PATTERNS.length)];
-          }
-          shotPattern = selectedPattern.name;
+      try {
+        if (!apiKey) {
+          throw new Error("GEMINI_API_KEY is not defined. Cannot run autopilot loop.");
         }
-      } else {
-        // Reset force flag so next iterations can select normally if needed
-        forceScrambledParams = false;
-      }
 
-      if (apiKey) {
-        try {
-          // Calculate dynamic base weights based on influence scores in DBs
-          let successToAnalyze = successDnaList.filter(item => item.is_mock !== true);
-          if (successToAnalyze.length === 0) successToAnalyze = successDnaList;
-
-          let revenueToAnalyze = revenueDnaList.filter(item => item.is_mock !== true);
-          if (revenueToAnalyze.length === 0) revenueToAnalyze = revenueDnaList;
-
-          let failureToAnalyze = failureDnaList.filter(item => item.is_mock !== true);
-          if (failureToAnalyze.length === 0) failureToAnalyze = failureDnaList;
-
-          const avgSuccessInfluence = successToAnalyze.length > 0
-            ? successToAnalyze.reduce((acc, item) => acc + (item.dna_influence_score || 50.0), 0) / successToAnalyze.length
-            : 50.0;
-          const avgRevenueInfluence = revenueToAnalyze.length > 0
-            ? revenueToAnalyze.reduce((acc, item) => acc + (item.dna_influence_score || 50.0), 0) / revenueToAnalyze.length
-            : 50.0;
-          const avgFailureInfluence = failureToAnalyze.length > 0
-            ? failureToAnalyze.reduce((acc, item) => acc + (item.dna_influence_score || 50.0), 0) / failureToAnalyze.length
-            : 50.0;
-
-          // Influence weight adjustment
-          let rawSuccess = 40 + (avgSuccessInfluence - 50);
-          let rawRevenue = 40 + (avgRevenueInfluence - 50);
-          let rawFailure = 20 - (avgSuccessInfluence + avgRevenueInfluence - 100) / 2;
-
-          rawSuccess = Math.max(10, Math.min(80, rawSuccess));
-          rawRevenue = Math.max(10, Math.min(80, rawRevenue));
-          rawFailure = Math.max(5, Math.min(30, rawFailure));
-
-          // Randomly decide guideline inclusion switches to hit the target reflection rate KPIs:
-          // Success DNA Reflection >= 80%
-          // Revenue DNA Reflection >= 80%
-          // Failure DNA Dominance <= 30%
-          includeSuccess = Math.random() < 0.90;
-          includeRevenue = Math.random() < 0.90;
-          includeFailure = Math.random() < 0.25;
-
-          const wS = includeSuccess ? rawSuccess : 0;
-          const wR = includeRevenue ? rawRevenue : 0;
-          const wF = includeFailure ? rawFailure : 0;
-
-          const totalActive = wS + wR + wF;
-          let finalSuccessWeight = 0;
-          let finalRevenueWeight = 0;
-          let finalFailureWeight = 0;
-
-          if (totalActive > 0) {
-            finalSuccessWeight = (wS / totalActive) * 90;
-            finalRevenueWeight = (wR / totalActive) * 90;
-            finalFailureWeight = (wF / totalActive) * 90;
+        if (!forceScrambledParams) {
+          if (isProductDriven) {
+            styleDna = 'Product Reveal';
+            usedStyle = videoStyle || 'Cinematic';
+            selectedHook = HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
+            hookType = selectedHook.type;
+            selectedPattern = SHOT_PATTERNS.find(p => p.name === 'A형 (빌드업)') || SHOT_PATTERNS[0];
+            shotPattern = selectedPattern.name;
           } else {
-            finalSuccessWeight = 45;
-            finalRevenueWeight = 45;
-            finalFailureWeight = 0;
-          }
-
-          const selfImprovementGuidelines = getSelfImprovementGuidelines();
-          const revenueDnaGuidelines = includeRevenue ? getRevenueDnaGuidelines() : '';
-          const failureDnaGuidelines = includeFailure ? getFailureDnaGuidelines() : '';
-          const agentIntelligenceGuidelines = getAgentIntelligenceGuidelines();
-          
-          // Select 3 to 5 random success DNAs
-          selectedSuccessVids = [];
-          if (includeSuccess && successDnaList.length > 0) {
-            const shuffled = [...successDnaList].sort(() => 0.5 - Math.random());
-            const numToSelect = Math.min(shuffled.length, Math.floor(Math.random() * 3) + 3); // 3, 4, or 5
-            selectedSuccessVids = shuffled.slice(0, numToSelect);
-          }
-          const successDnaGuidelines = includeSuccess ? getSuccessDnaGuidelines(selectedSuccessVids) : '';
-          
-          let combinedGuidelines = '';
-          let experimentNote = '';
-          if (isExperiment) {
-            experimentNote = `\n[💡 자가 실험 모드 가동: 기존 성공 공식을 무시하고 완전히 새로운 카테고리/상품(${productTitle})을 탐험하되, 대본의 구성과 비디오 흐름 등은 아래 가이드의 성공/수익화 DNA 패턴을 접목하십시오]\n`;
-          }
-
-          combinedGuidelines = experimentNote + `
-[📢 대본 작성 가중치 비율 지침 (작가 필독)]
-당신은 대본을 작성할 때 반드시 다음 4가지 성과 요소를 지정된 가중치 비율에 맞추어 완벽히 반영해야 합니다:
-1. **성공 DNA 패턴 (Success DNA)**: ${finalSuccessWeight.toFixed(1)}% 가중치. 과거에 조회수가 높았던 대본 구성, 어조, 장면 아이디어를 가장 적극적으로 모방하고 강화할 것.
-2. **수익화 DNA 패턴 (Revenue DNA)**: ${finalRevenueWeight.toFixed(1)}% 가중치. 고수익 및 고ROI를 유발한 최적 카피 패턴 및 상품 매칭 전환 문구를 벤치마킹할 것.
-3. **실패 DNA 패턴 (Failure DNA)**: ${finalFailureWeight.toFixed(1)}% 가중치. 아래 실패 원인(도입부 설명조 진행, 지루함 등)을 적극적 회피(Constraint)할 것.
-4. **에이전트 최근 교훈 (Agent Intelligence)**: 10.0% 가중치. 에이전트 인텔리전스의 성장 학습 포인트를 준수할 것.
-
-` + successDnaGuidelines + revenueDnaGuidelines + failureDnaGuidelines + agentIntelligenceGuidelines;
-            
-            if (!isExperiment && styleDnaList.length > 0) {
-              combinedGuidelines += `\n[🧠 STYLE DNA REFERENCE]
-- 과거에 성공한 스타일 DNA 패턴을 참고하십시오: ${styleDnaList.slice(-5).map(item => `"${item.style}" (조회수: ${item.views})`).join(', ')}\n`;
+            if (forcedParams.styleDna) {
+              styleDna = forcedParams.styleDna;
+            } else if (isExperiment || styleDnaList.length === 0) {
+              styleDna = STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
+            } else {
+              const uniqueStyles = [...new Set(styleDnaList.map(item => item.style))];
+              styleDna = uniqueStyles.length > 0 ? uniqueStyles[Math.floor(Math.random() * uniqueStyles.length)] : STYLE_DNA_LIST[Math.floor(Math.random() * STYLE_DNA_LIST.length)];
             }
+            usedStyle = forcedParams.usedStyle || VISUAL_STYLES[Math.floor(Math.random() * VISUAL_STYLES.length)];
+            selectedHook = forcedParams.hookType ? (HOOK_LIBRARY.find(h => h.type === forcedParams.hookType) || HOOK_LIBRARY[0]) : HOOK_LIBRARY[Math.floor(Math.random() * HOOK_LIBRARY.length)];
+            hookType = selectedHook.type;
+            selectedPattern = forcedParams.shotPattern ? (SHOT_PATTERNS.find(p => p.name === forcedParams.shotPattern) || SHOT_PATTERNS[0]) : SHOT_PATTERNS[Math.floor(Math.random() * SHOT_PATTERNS.length)];
+            shotPattern = selectedPattern.name;
+          }
+        } else {
+          forceScrambledParams = false;
+        }
 
-          const diversityGuidelines = `
-\n[🎨 CREATIVE DIVERSITY SPECIFICATION (창의적 다양성 지침)]
-- 당신은 이번 영상에 반드시 다음 스타일 DNA 컨셉을 핵심 주제로 반영해야 합니다: **Style DNA: ${styleDna}**
-  (이 DNA 컨셉의 고유한 감성, 스토리 요소, 혹은 정보 전달 방식을 대본 기획에 우선 적용하십시오.)
-- 당신은 이번 영상에 반드시 다음 스타일 화풍을 적용해야 합니다: **Visual Style: ${usedStyle}**
-  (이 화풍을 Flux prompt 영어 키워드에 적절히 혼합하여 최고 품질로 묘사하십시오. 예: 'in ${usedStyle} style')
-- 당신은 이번 영상의 첫 컷(1컷) 도입부 자막에 반드시 다음 후킹 유형을 적용해야 합니다: **Hook Type: ${hookType} (${selectedHook.description})**
-  (이에 부합하는 아주 강력한 한글 3초 후킹 문구를 1컷 자막으로 쓰십시오)
-- 당신은 이번 영상의 컷별 길이(duration)를 반드시 다음 패턴으로 기재해야 합니다: **Shot Pattern: ${shotPattern}**
+        // Calculate dynamic base weights
+        let successToAnalyze = successDnaList.filter(item => item.is_mock !== true);
+        if (successToAnalyze.length === 0) successToAnalyze = successDnaList;
+        let revenueToAnalyze = revenueDnaList.filter(item => item.is_mock !== true);
+        if (revenueToAnalyze.length === 0) revenueToAnalyze = revenueDnaList;
+        let failureToAnalyze = failureDnaList.filter(item => item.is_mock !== true);
+        if (failureToAnalyze.length === 0) failureToAnalyze = failureDnaList;
+
+        const avgSuccessInfluence = successToAnalyze.length > 0 ? successToAnalyze.reduce((acc, item) => acc + (item.dna_influence_score || 50.0), 0) / successToAnalyze.length : 50.0;
+        const avgRevenueInfluence = revenueToAnalyze.length > 0 ? revenueToAnalyze.reduce((acc, item) => acc + (item.dna_influence_score || 50.0), 0) / revenueToAnalyze.length : 50.0;
+
+        includeSuccess = Math.random() < 0.90;
+        includeRevenue = Math.random() < 0.90;
+        includeFailure = Math.random() < 0.25;
+
+        const wS = includeSuccess ? (40 + (avgSuccessInfluence - 50)) : 0;
+        const wR = includeRevenue ? (40 + (avgRevenueInfluence - 50)) : 0;
+        const wF = includeFailure ? (20 - (avgSuccessInfluence + avgRevenueInfluence - 100) / 2) : 0;
+
+        const totalActive = wS + wR + wF;
+        let finalSuccessWeight = totalActive > 0 ? (wS / totalActive) * 90 : 45;
+        let finalRevenueWeight = totalActive > 0 ? (wR / totalActive) * 90 : 45;
+        let finalFailureWeight = totalActive > 0 ? (wF / totalActive) * 90 : 0;
+
+        const selfImprovementGuidelines = getSelfImprovementGuidelines();
+        const revenueDnaGuidelines = includeRevenue ? getRevenueDnaGuidelines() : '';
+        const failureDnaGuidelines = includeFailure ? getFailureDnaGuidelines() : '';
+        const agentIntelligenceGuidelines = getAgentIntelligenceGuidelines();
+
+        selectedSuccessVids = [];
+        if (includeSuccess && successDnaList.length > 0) {
+          const shuffled = [...successDnaList].sort(() => 0.5 - Math.random());
+          selectedSuccessVids = shuffled.slice(0, Math.min(shuffled.length, Math.floor(Math.random() * 3) + 3));
+        }
+        const successDnaGuidelines = includeSuccess ? getSuccessDnaGuidelines(selectedSuccessVids) : '';
+
+        let combinedGuidelines = '';
+        let experimentNote = isExperiment ? `\n[💡 자가 실험 모드 가동: 기존 성공 공식을 무시하고 완전히 새로운 카테고리/상품(${productTitle})을 탐험하되, 대본의 구성과 비디오 흐름 등은 아래 가이드의 성공/수익화 DNA 패턴을 접목하십시오]\n` : '';
+
+        combinedGuidelines = experimentNote + `
+[📢 대본 작성 가중치 비율 지침 (작가 필독)]
+1. 성공 DNA 패턴: ${finalSuccessWeight.toFixed(1)}% 가중치.
+2. 수익화 DNA 패턴: ${finalRevenueWeight.toFixed(1)}% 가중치.
+3. 실패 DNA 패턴: ${finalFailureWeight.toFixed(1)}% 가중치.
+4. 에이전트 최근 교훈: 10.0% 가중치.
+` + successDnaGuidelines + revenueDnaGuidelines + failureDnaGuidelines + agentIntelligenceGuidelines;
+
+        const diversityGuidelines = `
+\n[🎨 CREATIVE DIVERSITY SPECIFICATION]
+- Style DNA: ${styleDna}
+- Visual Style: ${usedStyle}
+- Hook Type: ${hookType} (${selectedHook.description})
+- Shot Pattern: ${shotPattern}
   - 1컷 길이: ${selectedPattern.durations[0]}초
   - 2컷 길이: ${selectedPattern.durations[1]}초
   - 3컷 길이: ${selectedPattern.durations[2]}초
   - 4컷 길이: ${selectedPattern.durations[3]}초
 `;
-          combinedGuidelines += diversityGuidelines;
+        combinedGuidelines += diversityGuidelines;
 
-          console.log('[Autopilot] Injecting guidelines (Self-Improvement + Revenue DNA + Failure DNA + Agent Intelligence Memory + Diversity Specification) into writer agent prompt...');
-          scriptData = await generateScriptWithGemini(apiKey, productTitle, combinedGuidelines, isProductDriven, targetAudience, usedStyle);
-
-          if (isProductDriven && scriptData && typeof scriptData.ad_score === 'number' && scriptData.ad_score > 50) {
-            console.log(`[Autopilot] Ad score ${scriptData.ad_score} > 50 detected. Rejecting script and forcing regeneration.`);
-            retryCount++;
-            continue; // Force script regeneration loop
-          }
-
-          if (isProductDriven && scriptData) {
-            const comp = checkProductCompliance(productTitle, scriptData);
-            if (!comp.passed) {
-              console.log(`[Autopilot] Script product compliance failed. Rejecting script and forcing regeneration.`);
-              retryCount++;
-              continue; // Force script regeneration loop
-            }
-          }
-
-          let recentHooks = [];
-          if (Array.isArray(recentHistory)) {
-            recentHooks = recentHistory.slice(0, 20).map(v => v.scriptData?.cuts?.[0]?.subtitle).filter(Boolean);
-          }
-
-          let chosenHook = '';
-          const hookCandidates = scriptData.hook_candidates || [];
-          if (hookCandidates.length >= 5) {
-            chosenHook = selectBestHookCandidate(hookCandidates, recentHooks);
-            console.log(`[Autopilot] Best Hook selected from candidates: "${chosenHook}"`);
-          } else {
-            chosenHook = scriptData.cuts && scriptData.cuts[0] ? scriptData.cuts[0].subtitle : '';
-          }
-
-          if (scriptData.cuts && scriptData.cuts[0] && chosenHook) {
-            scriptData.cuts[0].subtitle = chosenHook;
-          }
-
-          let hookSimMax = 0;
-          if (recentHooks.length > 0 && chosenHook) {
-            recentHooks.forEach(rHook => {
-              const sim = calculateJaccard(tokenize(chosenHook), tokenize(rHook));
-              if (sim > hookSimMax) {
-                hookSimMax = sim;
-              }
-            });
-          }
-
-          const hookSimMaxPct = Math.round(hookSimMax * 100);
-          console.log(`[Autopilot] Chosen hook max Jaccard similarity: ${hookSimMaxPct}%`);
-
-          if (hookSimMaxPct >= 60) {
-            console.log(`[Autopilot] Hook similarity ${hookSimMaxPct}% >= 60% detected. Rejecting script and forcing regeneration.`);
-            retryCount++;
-            forceScrambledParams = true;
-            continue;
-          }
-        } catch (e) {
-          console.warn('Gemini script generation failed, falling back to static script:', e.message);
-          scriptData = generateFallbackScript(productTitle, isProductDriven, targetAudience, videoStyle);
+        console.log('[Autopilot] Step 1: Merged Product Understanding & Script Generation...');
+        const mergedScriptRes = await generateScriptWithProductUnderstanding(apiKey, productTitle, combinedGuidelines, isProductDriven, targetAudience, usedStyle, styleDna, trendDNA);
+        scriptData = mergedScriptRes;
+        productInfo = mergedScriptRes.product_analysis;
+        
+        if (isProductDriven && scriptData && typeof scriptData.ad_score === 'number' && scriptData.ad_score > 50) {
+          throw new Error(`Script ad_score ${scriptData.ad_score} is above 50 limit.`);
         }
-      } else {
-        scriptData = generateFallbackScript(productTitle, isProductDriven, targetAudience, videoStyle);
-      }
+        if (isProductDriven && scriptData) {
+          const comp = checkProductCompliance(productTitle, scriptData);
+          if (!comp.passed) {
+            throw new Error(`Product compliance check failed: ${comp.cutChecks.map(c=>c.message).join(', ')}`);
+          }
+        }
 
-      console.log('[Autopilot] Script generated, now generating images...');
-      updateStatus('image_generation', `3단계: 4컷 AI 이미지 생성 중 (0/4)...`, 45);
+        let recentHooks = [];
+        if (fs.existsSync(HISTORY_PATH)) {
+          try {
+            recentHooks = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8')).slice(0, 20).map(v => v.scriptData?.cuts?.[0]?.subtitle).filter(Boolean);
+          } catch(e){}
+        }
 
-      // 3. Generate 4 images with individual multimodal Vision Critic retry loop
-      let failedToGenerateImages = false;
-      const visionFeedbackLogs = [];
+        let chosenHook = (scriptData.hook_candidates || []).length >= 5 ? selectBestHookCandidate(scriptData.hook_candidates, recentHooks) : (scriptData.cuts?.[0]?.subtitle || '');
+        if (scriptData.cuts?.[0] && chosenHook) {
+          scriptData.cuts[0].subtitle = chosenHook;
+        }
 
-      for (let i = 0; i < 4; i++) {
-        const cut = scriptData.cuts[i];
-        let passedVisionCheck = false;
-        let imgAttempt = 0;
-        const maxImgAttempts = 3;
-        let bestImagePath = '';
-        let bestScore = 0;
-        let bestFeedback = '';
+        let hookSimMax = 0;
+        if (recentHooks.length > 0 && chosenHook) {
+          recentHooks.forEach(rHook => {
+            const sim = calculateJaccard(tokenize(chosenHook), tokenize(rHook));
+            if (sim > hookSimMax) hookSimMax = sim;
+          });
+        }
+        const hookSimMaxPct = Math.round(hookSimMax * 100);
+        console.log(`[Autopilot] Chosen hook max Jaccard similarity: ${hookSimMaxPct}%`);
 
-        while (imgAttempt < maxImgAttempts && !passedVisionCheck) {
-          imgAttempt++;
-          updateStatus(
-            'image_generation',
-            `3단계: 4컷 AI 이미지 생성 및 검수 중 (Cut ${i + 1}/4, 시도 ${imgAttempt}/${maxImgAttempts})...`,
-            45 + i * 10 + imgAttempt * 2
-          );
+        if (hookSimMaxPct >= 60) {
+          forceScrambledParams = true;
+          throw new Error(`Hook similarity ${hookSimMaxPct}% >= 60% detected. Forcing parameter scrambling.`);
+        }
 
-          const filename = `img_auto_${timestamp}_r${retryCount}_cut_${i + 1}_att_${imgAttempt}.jpg`;
+        console.log('[Autopilot] Step 2: Generating images for 4 cuts...');
+        updateStatus('image_generation', `3단계: 4컷 AI 이미지 생성 및 검수 중...`, 45);
+
+        for (let i = 0; i < 4; i++) {
+          const cut = scriptData.cuts[i];
+          const filename = `img_auto_${timestamp}_r${retryCount}_cut_${i + 1}.jpg`;
           const absolutePath = path.join(outputImgDir, filename);
           const relativePath = absolutePath.replace(/\\/g, '/');
 
           try {
             const buffer = await downloadAiImage(cut.prompt);
             fs.writeFileSync(absolutePath, buffer);
-
-            // Run Multimodal Vision Critic Check
-            if (apiKey) {
-              // Convert previous image's relative path to absolute path for file system read
-              const prevRelativePath = i > 0 ? scriptData.cuts[i - 1].image_path : null;
-              const prevImgPath = prevRelativePath ? path.join(process.cwd(), 'public', prevRelativePath.replace(/^\/shorts\//, 'shorts/')) : null;
-              
-              console.log(`[Autopilot] Running Multimodal Vision Critic for Cut ${i + 1}, Attempt ${imgAttempt}...`);
-              const critique = await runVisionCriticMultimodal(apiKey, absolutePath, cut.prompt, prevImgPath, i + 1);
-              console.log(`[Vision Critic] Cut ${i + 1} Score: ${critique.score}, Feedback: ${critique.feedback}`);
-
-              if (critique.score > bestScore) {
-                bestScore = critique.score;
-                bestImagePath = relativePath;
-                bestFeedback = critique.feedback;
-              }
-
-              if (critique.score >= 70) {
-                passedVisionCheck = true;
-                scriptData.cuts[i].image_path = relativePath;
-                scriptData.cuts[i].vision_score = critique.score;
-                scriptData.cuts[i].vision_feedback = critique.feedback;
-                imagePaths.push(relativePath);
-                visionFeedbackLogs.push({ cutIndex: i + 1, score: critique.score, feedback: critique.feedback, attempt: imgAttempt });
-              } else {
-                console.log(`[Vision Critic] Cut ${i + 1} failed check (score ${critique.score} < 70). Retrying image generation...`);
-              }
-            } else {
-              // No API key, skip vision critic and accept
-              passedVisionCheck = true;
-              scriptData.cuts[i].image_path = relativePath;
-              scriptData.cuts[i].vision_score = 75;
-              scriptData.cuts[i].vision_feedback = 'Gemini API Key 미설정으로 자동 통과';
-              imagePaths.push(relativePath);
-              visionFeedbackLogs.push({ cutIndex: i + 1, score: 75, feedback: 'API key missing', attempt: imgAttempt });
-            }
-
+            imagePaths.push(relativePath);
+            scriptData.cuts[i].image_path = relativePath;
           } catch (e) {
-            console.error(`Failed to generate/critique image for Cut ${i + 1}, Attempt ${imgAttempt}:`, e);
-            console.log(`[Autopilot] Image generation failed. Triggering immediate fallback for Cut ${i + 1}...`);
+            console.error(`Failed to generate AI image for Cut ${i + 1}:`, e.message);
             const searchKeyword = cut.searchKeyword || cut.keywords || productTitle || 'abstract';
-            try {
-              const fallbackBuf = await downloadFallbackImage(searchKeyword);
-              fs.writeFileSync(absolutePath, fallbackBuf);
-              scriptData.cuts[i].image_path = relativePath;
-              scriptData.cuts[i].vision_score = 75; // Set a default passing score
-              scriptData.cuts[i].vision_feedback = '스톡 이미지 대체로 기본 검수 자동 통과 (AI 생성 오류)';
-              imagePaths.push(relativePath);
-              visionFeedbackLogs.push({ cutIndex: i + 1, score: 75, feedback: 'Immediate fallback image used due to API failure', attempt: imgAttempt });
-              passedVisionCheck = true;
-            } catch (errFallback) {
-              console.error('Fallback image failed as well:', errFallback);
-              failedToGenerateImages = true;
-            }
+            const fallbackBuf = await downloadFallbackImage(searchKeyword);
+            fs.writeFileSync(absolutePath, fallbackBuf);
+            imagePaths.push(relativePath);
+            scriptData.cuts[i].image_path = relativePath;
           }
         }
 
-        // If after max attempts we didn't pass but have a best attempt image, use it!
-        if (!passedVisionCheck && bestImagePath) {
-          console.log(`[Vision Critic] Cut ${i + 1} did not reach 70 points after ${maxImgAttempts} attempts. Using best attempt (score ${bestScore}).`);
-          scriptData.cuts[i].image_path = bestImagePath;
-          scriptData.cuts[i].vision_score = bestScore;
-          scriptData.cuts[i].vision_feedback = bestFeedback + ' (기준점 미달이나 최대 시도 도달로 차선책 채택)';
-          imagePaths.push(bestImagePath);
-          visionFeedbackLogs.push({ cutIndex: i + 1, score: bestScore, feedback: bestFeedback, attempt: maxImgAttempts });
-          passedVisionCheck = true;
+        console.log('[Autopilot] Step 3: Running Batch Multimodal Vision Critic...');
+        const criticRes = await runBatchVisionCritic(apiKey, imagePaths, scriptData);
+        criticRes.critiques.forEach(crit => {
+          const idx = crit.cutIndex - 1;
+          if (scriptData.cuts[idx]) {
+            scriptData.cuts[idx].vision_score = crit.score;
+            scriptData.cuts[idx].vision_feedback = crit.feedback;
+          }
+        });
+
+        console.log('[Autopilot] Step 4: Running Merged Quality Board, Relevance & Fact Checker...');
+        preUploadAnalysis = await runMergedQualityBoardAndFactCheck(apiKey, productTitle, productInfo, scriptData);
+        
+        // Inject average vision score
+        const visionScores = scriptData.cuts.map(c => c.vision_score || 70);
+        const visionAvg = visionScores.reduce((a, b) => a + b, 0) / visionScores.length;
+        preUploadAnalysis.scores.sceneVisuals = Math.round(visionAvg);
+
+        const scores = preUploadAnalysis.scores;
+        const scoreSum = scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign;
+        finalScoreAvg = scoreSum / 5.0;
+        relevanceScore = preUploadAnalysis.relevance_score || 85;
+        factScore = preUploadAnalysis.fact_score || 90;
+
+        console.log(`[Autopilot] Quality Score: ${finalScoreAvg.toFixed(1)} | Relevance Score: ${relevanceScore} | Fact Score: ${factScore}`);
+
+        if (relevanceScore < 80) {
+          throw new Error(`Product Relevance Score ${relevanceScore} is below 80 threshold.`);
         }
 
-        if (!passedVisionCheck) {
-          failedToGenerateImages = true;
-          break;
+        let recentRecords = [];
+        if (fs.existsSync(HISTORY_PATH)) {
+          try {
+            recentRecords = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8')).slice(0, 20);
+          } catch(e){}
         }
-      }
 
-      if (failedToGenerateImages) {
-        console.warn('[Autopilot] Failed to generate/pass vision check for some images, retrying entire loop...');
-        retryCount++;
-        continue;
-      }
+        const newMeta = {
+          style_dna: styleDna,
+          used_style: usedStyle,
+          hook_type: hookType,
+          shot_pattern: shotPattern,
+          scriptData: scriptData
+        };
+        similarityScore = calculateSimilarity(newMeta, recentRecords);
+        diversityScore = 100 - similarityScore;
+        console.log(`[Diversity] Calculated Similarity Score: ${similarityScore}%, Diversity Score: ${diversityScore}%`);
 
-
-      // Run Quality Board pre-upload analysis (acting as the Quality Board)
-      if (apiKey) {
-        try {
-          console.log('[Autopilot] Running Quality Board Pre-Upload Performance Evaluation...');
-          preUploadAnalysis = await runPreUploadAnalysis(apiKey, productTitle, scriptData);
-          console.log('[Autopilot] Pre-Upload Analysis complete:', JSON.stringify(preUploadAnalysis.scores));
-          
-          // Inject actual Multimodal Vision Critic scores into Quality Board's sceneVisuals score
-          const visionScores = scriptData.cuts.map(c => c.vision_score || 70);
-          const visionAvg = visionScores.reduce((a, b) => a + b, 0) / visionScores.length;
-          if (preUploadAnalysis && preUploadAnalysis.scores) {
-            preUploadAnalysis.scores.sceneVisuals = Math.round(visionAvg);
-          }
-
-          const scores = preUploadAnalysis.scores;
-          const scoreSum = scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign;
-          finalScoreAvg = scoreSum / 5.0;
-          console.log(`[Autopilot] Quality Board Average Score (with actual Vision Critic): ${finalScoreAvg.toFixed(1)}`);
-
-          // Creative Diversity Engine - Similarity check
-          let recentRecords = [];
-          if (fs.existsSync(HISTORY_PATH)) {
-            try {
-              recentRecords = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8')).slice(0, 20);
-            } catch (e) {
-              console.error('[Diversity] Failed to read history for similarity check:', e);
-            }
-          }
-          
-          const newMeta = {
-            style_dna: styleDna,
-            used_style: usedStyle,
-            hook_type: hookType,
-            shot_pattern: shotPattern,
-            scriptData: scriptData
-          };
-          
-          similarityScore = calculateSimilarity(newMeta, recentRecords);
-          diversityScore = 100 - similarityScore;
-          console.log(`[Diversity] Calculated Similarity Score: ${similarityScore}%, Diversity Score: ${diversityScore}%`);
-          
-          if (!isProductDriven && similarityScore >= 70) {
-            console.log(`[Anti-Clone] Clone alert! Similarity >= 70%. Scrambling parameters and triggering script regeneration...`);
-            similarityPenalty = 15;
-            const modifications = antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna);
-            
-            // Set scrambled parameters to force regeneration in next retry loop
-            customFont = modifications.font;
-            customCaptionStyle = modifications.captionStyle;
-            customCaptionPosition = modifications.captionPosition;
-            usedStyle = modifications.style;
-            hookType = modifications.hookType;
-            shotPattern = modifications.shotPattern;
-            styleDna = modifications.styleDna;
-            
-            forceScrambledParams = true;
-            retryCount++;
-            continue; // Force script regeneration loop
-          } else {
-            customFont = 'Pretendard-Bold';
-            customCaptionStyle = 'minimal';
-            customCaptionPosition = 'bottom';
-          }
-
-          const passThreshold = isProductDriven ? 75 : 70;
-          if (finalScoreAvg >= passThreshold) {
-            break; // Quality score passes, exit retry loop!
-          }
-        } catch (e) {
-          console.error('[Autopilot] Quality Board pre-upload analysis failed:', e);
-          finalScoreAvg = 75; // Fail-safe average
-          break;
+        if (!isProductDriven && similarityScore >= 70) {
+          similarityPenalty = 15;
+          const modifications = antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna);
+          customFont = modifications.font;
+          customCaptionStyle = modifications.captionStyle;
+          customCaptionPosition = modifications.captionPosition;
+          usedStyle = modifications.style;
+          hookType = modifications.hookType;
+          shotPattern = modifications.shotPattern;
+          styleDna = modifications.styleDna;
+          forceScrambledParams = true;
+          throw new Error(`Clone similarity alert ${similarityScore}% >= 70%. Scrambling parameters.`);
+        } else {
+          customFont = 'Pretendard-Bold';
+          customCaptionStyle = 'minimal';
+          customCaptionPosition = 'bottom';
         }
-      } else {
-        finalScoreAvg = 75; // Fail-safe
+
+        const passThreshold = isProductDriven ? 75 : 70;
+        if (finalScoreAvg < passThreshold) {
+          throw new Error(`Quality score ${finalScoreAvg.toFixed(1)} is below pass threshold ${passThreshold}.`);
+        }
+
+        // Successfully passed all checks
         break;
+
+      } catch (err) {
+        console.error(`[Autopilot Attempt Error] Attempt ${retryCount} failed:`, err.message);
+        retryCount++;
+        if (retryCount > maxRetries) {
+          throw new Error(`Autopilot loop failed after ${maxRetries} attempts. Last error: ${err.message}`);
+        }
       }
-
-      retryCount++;
     }
 
-    if (finalScoreAvg <= 70 && retryCount > maxRetries) {
-      console.warn(`[Autopilot] Quality score (${finalScoreAvg.toFixed(1)}) failed to pass 70 after ${maxRetries} attempts. Proceeding with current best generation to prevent batch job crash.`);
-    }
-
-    // Apply similarity penalty if triggered
     finalScoreAvg -= similarityPenalty;
     if (preUploadAnalysis && preUploadAnalysis.scores) {
       preUploadAnalysis.similarityPenaltyApplied = similarityPenalty > 0;
+    }
+
+    if (forcedParams.dryRun === true) {
+      console.log("[Autopilot] Dry run active. Bypassing video rendering and upload.");
+      const resultDetails = {
+        id: timestamp.toString(),
+        videoUrl: '/shorts/dry_run_mock.mp4',
+        videoPath: '',
+        youtubeVideoId: 'DRY_RUN',
+        isMockUpload: true,
+        uploadMessage: 'Dry run completed successfully.',
+        productTitle,
+        affiliateLink,
+        commentText: isProductDriven ? `사용한 제품👇\n\n${affiliateLink}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.` : `오늘 영상에서 활약한 [${productTitle}] 최저가 좌표입니다 ➔ ${affiliateLink}`,
+        created_at: new Date().toISOString(),
+        scriptData: scriptData,
+        topic: productTitle.replace(/[\(\[\{\/].*$/, '').trim(),
+        category: selectedCategory || '기타',
+        preUploadAnalysis,
+        postUploadAnalysis: null,
+        views: 0,
+        likeRate: 0,
+        commentCount: 0,
+        avgRetention: 0,
+        successFactors: '',
+        failureFactors: '',
+        selfImprovementApplied: true,
+        diversity_score: diversityScore,
+        similarity_score: similarityScore,
+        style_dna: styleDna,
+        used_style: usedStyle,
+        hook_type: hookType,
+        shot_pattern: shotPattern,
+        is_experiment: isExperiment,
+        custom_font: customFont,
+        custom_caption_style: customCaptionStyle,
+        custom_caption_position: customCaptionPosition,
+        used_success_dna: includeSuccess ? selectedSuccessVids.map(v => ({ id: v.id || v.video_id, title: v.title || v.source_video_title })) : [],
+        used_failure_dna: includeFailure ? failureDnaList.slice(-10).map(v => ({ id: v.id || v.video_id, title: v.title || v.source_video_title })) : [],
+        used_revenue_dna: includeRevenue ? revenueDnaList.slice(-10).map(v => ({ id: v.id || v.video_id, title: v.title || v.source_video_title })) : [],
+        used_agent_lessons: (agentLessons || []).slice(-5).map(l => ({ agent: l.agent, lesson: l.lesson })),
+        is_mock: false,
+        source: "autopilot",
+        product_name: isProductDriven ? forcedParams.productName : productTitle,
+        product_url: isProductDriven ? forcedParams.productUrl : '',
+        coupang_link: isProductDriven ? forcedParams.coupangLink : affiliateLink,
+        target_audience: isProductDriven ? forcedParams.targetAudience : '',
+        video_style: isProductDriven ? forcedParams.videoStyle : usedStyle,
+        ad_score: isProductDriven ? (scriptData.ad_score || 0) : 0,
+        quality_score: Math.round(finalScoreAvg),
+        product_relevance_score: relevanceScore,
+        product_fact_score: factScore,
+        upload_mode: isProductDriven ? 'product-driven' : 'archetype',
+        pinned_comment_status: isProductDriven ? 'pending' : 'not_attempted',
+        compliance: isProductDriven ? checkProductCompliance(forcedParams.productName, scriptData) : { passed: true, cutChecks: [] }
+      };
+
+      saveToHistory(resultDetails);
+      updateStatus('completed', '드라이 런 완료!', 100, resultDetails);
+      console.log('[Autopilot] Dry run completed successfully!');
+      return;
     }
 
     updateStatus('video_rendering', '4단계: AI 성우 나레이션 및 BGM 비디오 렌더링 중...', 75);
@@ -1087,174 +996,73 @@ async function fetchGeminiWithRetry(url, options, maxRetries = 3) {
   return fetch(url, options);
 }
 
-// Perform Pre-Upload AI Auditing acting as the Shorts Research Director
-async function runPreUploadAnalysis(apiKey, productTitle, scriptData) {
-  const researcherPrompt = `당신은 쇼츠 연구소 책임자(Researcher)입니다.
-당신의 목표는 영상을 만드는 것이 아니라, 제작된 영상의 구성 요소들을 철저히 데이터와 패턴 관점에서 냉철하게 평가하는 것입니다.
-칭찬하지 마십시오. 문제점을 찾으십시오.
-주관적 의견보다 데이터와 패턴을 우선합니다.
-
-새로 제작된 영상의 상세 정보가 아래에 제공됩니다. 이 영상을 5가지 영역으로 평가하여 0~100점의 점수를 부여하고, 쇼츠 책임자로서의 6가지 핵심 질문에 성실히 답변하십시오.
-
-[평가 대상 영상 정보]
-- 상품명: ${productTitle}
-- 영상 제목: ${scriptData.title}
-- 컷별 구성:
-${scriptData.cuts.map((c, idx) => `컷 ${idx + 1}:
-  - 자막/나레이션: ${c.subtitle}
-  - 화면 연출: ${c.description}
-  - 이미지 프롬프트: ${c.prompt}
-  - 연출 키워드: ${c.keywords}
-`).join('\n')}
-
-평가 기준 및 점수 가이드:
-1. 후킹 강도: 첫 1초, 3초, 5초 시점에 시청자가 멈출 이유가 있는지, 궁금증이 발생하는지, 감정 자극이 있는지 평가
-2. 대본 분석: 내용의 이해도, 몰입도, 감정 변화, 반전 요소, 정보의 가치가 충분한지 평가
-3. 장면 분석: 대본과 장면 연출의 일치도, 시각적 품질 묘사, 장면 다양성, 시선 집중도가 높은지 평가
-4. 자막 분석: 모바일 최적화 가독성, 강조 표현의 적절성, 시선 유도 효과 평가
-5. 사운드 분석: BGM 스타일 및 톤의 적합성, 나레이션과 자막 매칭의 자연스러움 평가
-
-* 채점 기준 가이드 (현업 숏폼 수준 상대 채점):
-- 85~95점: 숏폼 트렌드에 적합하며 상품 후킹과 흐름이 유기적인 우수한 수준 (완성도가 잡힌 영상의 경우 85점 이상 부여)
-- 75~84점: 즉시 활용 가능한 준수한 품질 (기본기가 탄탄한 깔끔한 연출안은 80점 내외 부여)
-- 65~74점: 일부 보완점이 필요하나 업로드는 가능한 수준
-- 64점 이하: 치명적인 연출 단절이나 후킹 부재로 전면 수정이 필요한 수준
-
-출력은 반드시 다른 부연 설명이나 마크다운 태그 없이 아래 JSON 규격이어야 합니다:
-{
-  "scores": {
-    "hookStrength": 80,
-    "scriptContent": 85,
-    "sceneVisuals": 75,
-    "subtitleAesthetics": 70,
-    "soundDesign": 80
-  },
-  "evaluations": {
-    "hookStrength": "후킹 평가 내용 (1~2문장)",
-    "scriptContent": "대본 평가 내용 (1~2문장)",
-    "sceneVisuals": "장면 평가 내용 (1~2문장)",
-    "subtitleAesthetics": "자막 평가 내용 (1~2문장)",
-    "soundDesign": "사운드 평가 내용 (1~2문장)"
-  },
-  "answers": {
-    "q1_hook_stop": "왜 이 영상은 시청자가 멈출 것 같은가? (구체적인 이유 분석)",
-    "q2_dropoff": "왜 이 영상에서 이탈이 발생할 것인가? (취약한 컷 및 요소 지적)",
-    "q3_diff_from_viral": "인기 쇼츠와 비교했을 때 가장 큰 차이 3가지 (줄글 또는 리스트 형태로 서술)",
-    "q4_must_fix": "다음 영상에서 반드시 수정해야 하는 요소 (1순위 지적)",
-    "q5_expected_views": 1200,
-    "q6_multiplier_10x": "조회수를 10배 올리려면 무엇을 바꿔야 하는가?"
-  }
-}
-[JSON 작성 중요 제한 지침]
-1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
-2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\n)을 절대 넣지 마십시오.
+// Merged Product Understanding + Script Generation Agent
+export async function generateScriptWithProductUnderstanding(apiKey, productTitle, combinedGuidelines, isProductDriven, targetAudience, usedStyle, archetype, trendDNA = null) {
+  let trendGuide = '';
+  if (trendDNA) {
+    trendGuide = `
+[YouTube Trend Analysis & Gap Opportunities]
+실제 유튜브 상위 노출 영상들로부터 도출된 트렌드 DNA 데이터입니다:
+- 제목 패턴: ${JSON.stringify(trendDNA.dna?.titlePatterns)}
+- 오프닝 훅 스타일: ${JSON.stringify(trendDNA.dna?.hookPatterns)}
+- 시장 과포화 표현 (아래 표현들은 대본 및 제목에 절대로 사용하지 마십시오):
+  ${(trendDNA.saturation?.overusedPhrases || []).map(p => `- "${p.phrase}"`).join('\n')}
+- 추천 틈새 장르/유형: ${trendDNA.gapOpportunity?.recommendedType}
+- 추천 이유: ${trendDNA.gapOpportunity?.reason}
 `;
-
-  let text = undefined;
-  try {
-    const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: researcherPrompt }] }],
-          generationConfig: { 
-            temperature: 0.25,
-            maxOutputTokens: 8192,
-            responseMimeType: "application/json"
-          }
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      throw new Error(`Gemini Pre-Upload Audit API failed: status ${response.status} ${response.statusText}. Response: ${errorText}`);
-    }
-
-    const resJson = await response.json();
-    text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('Empty text from Gemini Pre-Upload Audit API');
-
-    const cleaned = cleanJson(text);
-    const parsed = JSON.parse(cleaned);
-    return parsed;
-  } catch (err) {
-    console.error("Failed to run pre-upload analysis:", err);
-    console.log('--- RAW GEMINI RESPONSE ---');
-    console.log(text);
-    console.log('---------------------------');
-    // Return fallback structure
-    return {
-      scores: {
-        hookStrength: 50,
-        scriptContent: 50,
-        sceneVisuals: 75,
-        subtitleAesthetics: 50,
-        soundDesign: 50
-      },
-      evaluations: {
-        hookStrength: "분석 오류로 기본 평가 대체",
-        scriptContent: "분석 오류로 기본 평가 대체",
-        sceneVisuals: "분석 오류로 기본 평가 대체",
-        subtitleAesthetics: "분석 오류로 기본 평가 대체",
-        soundDesign: "분석 오류로 기본 평가 대체"
-      },
-      answers: {
-        q1_hook_stop: "데이터 수집 중",
-        q2_dropoff: "데이터 수집 중",
-        q3_diff_from_viral: "데이터 수집 중",
-        q4_must_fix: "데이터 수집 중",
-        q5_expected_views: 500,
-        q6_multiplier_10x: "데이터 수집 중"
-      }
-    };
   }
-}
 
-// Generate script using Gemini with Self-Improvement Guidelines
-async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGuidelines = '', isProductDriven = false, targetAudience = '', videoStyle = '', productInfo = null, archetype = '') {
-  let systemPrompt = '';
-  
-  if (isProductDriven) {
-    const infoStr = productInfo ? JSON.stringify(productInfo, null, 2) : `{"category": "일반", "brand": "일반", "features": ["${productTitle}"]}`;
-    systemPrompt = `당신은 맹칠컴퍼니의 대표 카피라이터이자 작가 에이전트(Writer Agent)입니다.
+  const systemPrompt = `당신은 맹칠컴퍼니의 대표 카피라이터이자 상품 분석가 에이전트(Writer & Product Analyst Agent)입니다.
+당신의 임무는 두 가지 단계(상품 분석 및 대본 창작)를 동시에 수행하여 하나의 통합 JSON 결과를 출력하는 것입니다.
+
+[1단계: 상품 분석 (Product Understanding)]
 상품명: "${productTitle}"
-상품 분석 프로필:
-${infoStr}
+타겟 고객 정보(입력됨): "${targetAudience || '일반 대중'}"
+위 상품 정보를 심층 분석하여 아래의 9가지 분석 항목을 명확하고 구체적인 한국어 단문 또는 핵심 리스트로 추출하십시오:
+1. 카테고리 (Category) - 상품의 핵심 분류
+2. 브랜드 (Brand) - 상품의 브랜드명
+3. 주요 기능 (Features) - 핵심 동작 방식 및 주요 기능 리스트
+4. 핵심 장점 (Benefits) - 사용자가 얻는 궁극적인 이점과 해결책
+5. 타겟 고객 (Target Audience) - 이 상품이 가장 필요한 핵심 연령대와 특징
+6. 사용 상황 (Usage Context) - 이 상품을 실제로 사용하게 되는 일상 속 구체적인 상황
+7. 구매 욕구 (Purchase Desire) - 사용자가 이 상품을 사고 싶게 만드는 심리적/실용적 욕구
+8. 해결하는 문제 (Problem Solved) - 이 상품이 해결해 주는 치명적인 일상의 고통이나 불편함
+9. 경쟁 제품 대비 특징 (Competition) - 타사 제품이나 기존 방식에 비해 차별화되는 점
 
-이번 영상은 아래의 이야기 전개 타입(Narrative Archetype)을 완벽히 준수해야 합니다:
-**Narrative Archetype: ${archetype || 'I. 스토리형'}**
-
-[각 이야기 전개 타입별 작성 지침]
-- **A. 실험형**: 상품의 기능이나 한계를 기발한 실험 방식으로 테스트하고 결과를 검증하는 방식으로 1~3컷을 전개하십시오.
-- **B. 다큐형**: 관찰 카메라처럼 건조하고 사실적인 톤으로 일상의 현상과 원인을 분석하며 정보를 1~3컷으로 전달하십시오.
-- **C. 인터뷰형**: 실제 사용자 혹은 가상의 전문가가 일상에서 겪던 고민을 문답식이나 인터뷰 증언조로 1~3컷 전개하십시오.
-- **D. 미스터리형**: 믿기 힘든 신비로운 의문이나 미스터리한 실화 썰로 호기심을 유발하며 1~3컷을 끌고 가십시오.
-- **E. 실패담형**: 본인의 눈물겨운 실패담, 낭패를 본 경험, 시행착오 스토리를 적나라하게 고백하며 1~3컷에 공감을 유도하십시오.
-- **F. 반전형**: 당연하다고 생각했던 일상 상식을 완전히 깨부수는 대조나 반전을 1~3컷에 강력하게 배치하십시오.
-- **G. 비교형**: 기존의 비효율적인 방식(또는 구형 방식)의 치명적 단점을 1~3컷에 상세히 폭로하고 시각적으로 대조하십시오.
-- **H. 후기형**: 실제 제품을 수개월간 오랜 기간 사용해본 시청자가 친근하고 솔직한 독백투로 장단점을 푸는 방식으로 1~3컷을 진행하십시오.
-- **I. 스토리형**: 주인공이 구체적인 아침/저녁 일상 속에서 겪는 갈등이나 아슬아슬한 위기 상황 드라마로 1~3컷을 구성하십시오.
-- **J. 챌린지형**: "일주일 동안 도전해봤다" 처럼 도전이나 미션을 시작하고 난관에 봉착하는 과정을 1~3컷에 역동적으로 배치하십시오.
-- **K. 광고형**: 제품의 장점과 혜택을 직접적으로 세련되게 보여주는 트렌디한 커머셜 스타일 연출로 1~3컷을 연출하십시오.
+[2단계: 쇼츠 대본 창작 (Script Generation)]
+위의 상품 분석 내용과 다음 이야기 전개 타입(Narrative Archetype)을 완벽히 준수하여 4컷 구성 대본을 기획하십시오:
+- Narrative Archetype: ${archetype || 'I. 스토리형'}
 
 [영상 구조 지침 (Strict Structure)]
-- **1컷**: 문제 제시 (Problem presentation) - 타겟 고객이 일상에서 겪는 치명적인 불편이나 문제점을 흥미진진하게 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 직접 언급하거나 보여주지 마십시오)**
-- **2컷**: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품이나 브랜드를 언급하거나 노출하지 마십시오)**
-- **3컷**: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 직접 언급하지 마십시오)**
-- **4컷**: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 상세한 정보는 고정댓글 링크에서 바로 확인하라는 행동 유도(Call To Action)를 전합니다.
+- 1컷: 문제 제시 (Problem presentation) - 타겟 고객이 일상에서 겪는 치명적인 불편이나 문제점을 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 직접 언급하거나 보여주지 마십시오)**
+- 2컷: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품이나 브랜드를 언급하거나 노출하지 마십시오)**
+- 3컷: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 직접 언급하지 마십시오)**
+- 4컷: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 상세한 정보는 고정댓글 링크에서 바로 확인하라는 행동 유도(Call To Action)를 전합니다.
 
-[내용 작성 중요 제약 조건 (Product Fact & Caption Rules)]
-1. **스펙 나열 금지**: 자막이나 설명글에 배터리 용량, 무게, 소재 등의 딱딱한 기계적 스펙을 줄줄이 나열하지 마십시오. 철저히 사용자의 '문제 -> 공감 -> 상황 -> 암시 -> 공개 -> 행동유도' 흐름의 인간적인 스토리 카피로 녹여내십시오.
-2. **허위 정보 작성 금지**: 위의 상품 분석 프로필(Features, Benefits 등)에 없는 완전히 새로운 기술이나 존재하지 않는 기능(예: 칫솔인데 하늘을 난다거나, 1초 만에 치아가 다 낫는다는 등)을 허구로 창조하거나 과장하여 약속하지 마십시오.
-3. **영상의 분위기**: 전체 자막 및 화면 톤은 "${videoStyle || 'Cinematic'}" 감성을 완벽히 따르십시오.
+[내용 작성 중요 제약 조건]
+1. 스펙 나열 금지: 자막이나 설명글에 배터리 용량, 무게, 소재 등의 딱딱한 기계적 스펙을 나열하지 마십시오.
+2. 허위 정보 작성 금지: 상품에 존재하지 않는 허구 기능이나 과장 표현(예: 1초 만에 플라그 100% 제거)을 절대 쓰지 마십시오.
+3. 영상의 분위기: 전체 자막 및 화면 톤은 "${usedStyle || 'Cinematic'}" 감성을 완벽히 따르십시오.
 
-출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
+[마케팅 가이드 및 트렌드 DNA]
+${combinedGuidelines}
+${trendGuide}
+
+출력은 반드시 다른 설명이나 마크다운 태그 없이 아래 JSON 규격이어야 합니다:
 {
+  "product_analysis": {
+    "category": "상품 카테고리",
+    "brand": "브랜드명",
+    "features": ["기능 1", "기능 2", "기능 3"],
+    "benefits": ["장점 1", "장점 2"],
+    "target_audience": "상세한 타겟 고객 묘사",
+    "usage_context": "구체적인 사용 상황 설명",
+    "purchase_desire": "사용자의 구매 욕구 키워드",
+    "problem_solved": "해결하는 고통이나 문제점",
+    "competitor_differentiation": "경쟁력 차별점"
+  },
   "title": "쇼츠 영상 제목 (한글 20자 이내)",
-  "youtube_description": "유튜브 업로드용 설명 본문 (영상의 가치를 요약하고, 관련 해시태그 3~5개 포함. 스펙 나열은 지양하고 감정적 이점을 살려 작성)",
+  "youtube_description": "유튜브 업로드용 설명 본문 (해시태그 3~5개 포함)",
   "ad_score": 30,
   "hook_candidates": [
     "1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
@@ -1262,43 +1070,10 @@ ${infoStr}
   ],
   "cuts": [
     {
-      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지 딱 1개 포함 (예: '방구석에서 돈 버는 비밀 👀')",
+      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막 (15자 내외의 한국어 단문 + 끝에 시각적 이모지 딱 1개 포함)",
       "description": "화면 연출 및 비주얼 설명",
-      "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 사진사 수준 영어 프롬프트. 규격: 'Professional [style] photography, [detailed subject description], [composition & framing], [camera lens & settings], [lighting conditions], [color palette & mood], vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions, no watermarks, clean composition, no distorted anatomy, no weird fingers' (1~3컷은 절대 상품 글자나 제품 패키지가 직접 보이지 않는 상황 및 인물 묘사를 해야 하며, 4컷은 실제 상품 또는 상품을 사용하는 사람을 멋지게 묘사할 것)",
-      "searchKeyword": "스톡용 영어 키워드 (2~3단어)",
-      "cameraMovement": "zoom in 또는 zoom out 또는 panning",
-      "duration": 5,
-      "keywords": "강조 키워드"
-    }
-  ]
-}
-
-[JSON 작성 중요 제한 지침]
-1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(\")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
-2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\n)을 절대 넣지 마십시오.
-3. ad_score(광고 냄새 점수): 이 대본이 얼마나 대놓고 광고처럼 느껴지는지 0~100 사이로 평가한 정수값. 1~3컷에서 상품을 언급하거나 자랑을 하면 높게(70점 이상), 문제 제기와 공감이 자연스럽게 흘러가고 4컷에서만 제품이 등장하면 낮게(40점 이하) 매기십시오. 반드시 50점 이하가 되도록 자연스러운 스토리텔링을 하십시오.
-`;
-  } else {
-    systemPrompt = `당신은 맹칠컴퍼니의 콘텐츠 기획자 에이전트(Writer)입니다.
-수익화 상품인 "${productTitle}"을 유튜브 쇼츠(9:16) 영상을 통해 매력적으로 홍보할 수 있는 4컷 구성 대본을 기획해야 합니다.
-출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
-{
-  "title": "쇼츠 영상 제목 (한글 20자 이내)",
-  "youtube_description": "유튜브 업로드용 설명 본문 (영상의 가치를 요약하고, 관련 해시태그 3~5개 포함)",
-  "ad_score": 30,
-  "hook_candidates": [
-    "도입부 1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
-    "후보 2 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
-    "후보 3 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
-    "후보 4 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
-    "후보 5 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)"
-  ],
-  "cuts": [
-    {
-      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 반드시 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지(예: 💰, 🔥, 🚨, 👀 등)를 딱 1개 붙여 모바일 숏폼 자막 가독성과 전달력을 극대화할 것 (예: '방구석에서 돈 버는 비밀 👀')",
-      "description": "화면 연출 및 비주얼 설명",
-      "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 사진사 수준 영어 프롬프트. 규격: 'Professional [style] photography, [detailed subject description], [composition & framing], [camera lens & settings], [lighting conditions], [color palette & mood], vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions, no watermarks, clean composition, no distorted anatomy, no weird fingers' (인물이나 클로즈업 샷 위주로 자막과 직결되는 핵심 비주얼을 정밀 묘사하고 절대 글자가 렌더링되지 않게 할 것)",
-      "searchKeyword": "Pexels 등 스톡 사이트에서 고품질 사진을 찾기 위한 명확하고 정교한 영어 검색어 (2~3단어의 명사/형용사 조합, 예: 'laptop desk', 'smiling man', 'healthy food', 'woman writing'). 절대 텍스트나 복잡한 문장을 쓰지 말고 스톡에서 매칭 확률이 높은 핵심 단어만 사용하십시오.",
+      "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 영어 프롬프트 (vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions)",
+      "searchKeyword": "스톡 이미지 검색용 영어 키워드 (2~3단어)",
       "cameraMovement": "zoom in 또는 zoom out 또는 panning",
       "duration": 5,
       "keywords": "강조 키워드"
@@ -1310,9 +1085,8 @@ ${infoStr}
 [JSON 작성 중요 제한 지침]
 1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(\")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
 2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
-
-${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovementGuidelines}` : ''}`;
-  }
+3. ad_score(광고 냄새 점수): 1~3컷에서 상품을 홍보하면 높게(70점 이상), 4컷에서만 제품이 등장하면 낮게(40점 이하) 매기십시오. 50점 이하가 되도록 하십시오.
+`;
 
   const response = await fetchGeminiWithRetry(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
@@ -1320,9 +1094,9 @@ ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovemen
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `${systemPrompt}\n\n상품명: ${productTitle}` }] }],
+        contents: [{ parts: [{ text: systemPrompt }] }],
         generationConfig: { 
-          temperature: 0.85, 
+          temperature: 0.8,
           maxOutputTokens: 8192,
           responseMimeType: "application/json"
         }
@@ -1332,86 +1106,77 @@ ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovemen
 
   if (!response.ok) {
     const errorText = await response.text().catch(() => '');
-    throw new Error(`Gemini API failed: status ${response.status} ${response.statusText}. Response: ${errorText}`);
+    throw new Error(`Gemini generateScriptWithProductUnderstanding API failed: status ${response.status}. Response: ${errorText}`);
   }
 
   const rawText = await response.text();
-  let resJson;
-  try {
-    resJson = JSON.parse(rawText);
-  } catch (err) {
-    throw new Error(`Failed to parse response JSON: ${err.message}. Raw: ${rawText}`);
-  }
-  const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Empty text from Gemini');
-  
-  let scriptData;
-  try {
-    const cleaned = cleanJson(text);
-    scriptData = JSON.parse(cleaned);
-  } catch (err) {
-    console.error('Failed to parse script JSON from Gemini:', err);
-    console.log('--- RAW GEMINI RESPONSE ---');
-    console.log(text);
-    console.log('--- CLEANED JSON STRING ---');
-    try {
-      console.log(cleanJson(text));
-    } catch (cleanErr) {
-      console.log('Failed to clean text:', cleanErr.message);
-    }
-    console.log('---------------------------');
-    throw err;
-  }
-  if (!scriptData || !Array.isArray(scriptData.cuts) || scriptData.cuts.length !== 4) {
+  const parsed = JSON.parse(rawText);
+  const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('Empty response from generateScriptWithProductUnderstanding');
+  const cleaned = cleanJson(text);
+  const result = JSON.parse(cleaned);
+  if (!result || !Array.isArray(result.cuts) || result.cuts.length !== 4) {
     throw new Error('Gemini response did not contain exactly 4 cuts in the cuts array');
   }
-  return scriptData;
+  return result;
 }
 
-async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImagePath = null, cutIndex) {
-  const currentBase64 = fs.readFileSync(imagePath).toString("base64");
-  const currentPart = {
-    inlineData: {
-      data: currentBase64,
-      mimeType: "image/jpeg"
-    }
-  };
-
+// Merged Batch Vision Critic Agent (1 multimodal call for all 4 cuts)
+export async function runBatchVisionCritic(apiKey, imagePaths, scriptData) {
   const parts = [];
   let instructions = `당신은 쇼츠 영상의 시각적 퀄리티를 심사하는 비주얼 감사관 에이전트(Vision Critic)입니다.
-제공된 이미지(9:16 비율)를 주의 깊게 분석하여 상용 광고 수준(Commercial-grade)의 완성도를 갖추었는지 평가하십시오.
+제공된 4개의 이미지(9:16 비율, 순서대로 Cut 1, Cut 2, Cut 3, Cut 4)를 분석하여 상용 광고 수준(Commercial-grade)의 완성도를 갖추었는지 평가하십시오.
 칭찬하지 마십시오. 문제점과 뭉개진 부분, 왜곡된 부분을 찾아내십시오.
 
 [검사 항목]
-1. 프롬프트 일치도 (Prompt Alignment): 이미지 생성 프롬프트에 명시된 핵심 피사체, 각도, 색상이 이미지에 정확히 묘사되었는지 여부
-2. 객체 정확도 (Object Accuracy): 인물의 손가락 개수 왜곡, 부자연스러운 신체 구조, 글자 렌더링 오류, 찌그러진 사물 등이 있는지 여부
-3. 분위기 일치도 (Mood Alignment): 프롬프트에서 요구한 조명, 연출, 분위기와 일치하는지 여부
-4. 스타일 일치도 (Style/Aesthetic Quality): 상용 광고 수준(Commercial-grade)의 우수한 품질과 미학적 완성도를 갖췄는지 여부
-`;
+1. 프롬프트 일치도 (Prompt Alignment): 각 이미지의 생성 프롬프트에 명시된 내용이 이미지에 정확히 묘사되었는지 여부
+2. 객체 정확도 (Object Accuracy): 손가락 왜곡, 신체 왜곡, 글자 렌더링 오류, 찌그러진 사물이 있는지 여부
+3. 분위기 및 일관성 (Consistency): 4장의 이미지 간 주인공 외모, 옷 스타일, 화풍(Illustration, Photo 등)이 일관되게 연결되는지 여부
 
-  if (prevImagePath && fs.existsSync(prevImagePath)) {
-    const prevBase64 = fs.readFileSync(prevImagePath).toString("base64");
-    parts.push({
-      inlineData: {
-        data: prevBase64,
-        mimeType: "image/jpeg"
-      }
-    });
-    instructions += `\n5. 영상 연속성 (Continuity/Consistency): 제공된 두 개의 이미지 중 첫 번째 이미지는 이전 컷(이전 장면)이고, 두 번째 이미지는 현재 장면입니다. 두 이미지 사이의 주인공 외모, 옷 스타일, 전반적인 화풍(Illustration, Photo 등)이 일관되게 연결되는지 여부`;
-  }
+[각 컷별 생성 프롬프트]
+${scriptData.cuts.map((c, idx) => `- Cut ${idx + 1}: "${c.prompt}"`).join('\n')}
 
-  instructions += `\n\n[제공 정보]
-- 현재 컷 번호: ${cutIndex}
-- 이미지 생성 프롬프트: "${promptText}"
-
-출력은 다른 부연설명이나 마크다운 태그 없이 반드시 아래 규격의 JSON이어야 합니다:
+출력은 다른 설명 없이 반드시 아래 규격의 JSON이어야 합니다:
 {
-  "score": 85,
-  "feedback": "전반적으로 우수하나 인물의 오른쪽 손가락 끝부분이 약간 뭉개져 보입니다. 조명과 프롬프트 일치도는 매우 훌륭합니다."
+  "critiques": [
+    {
+      "cutIndex": 1,
+      "score": 85,
+      "feedback": "전체적으로 우수하나 손가락 끝부분이 약간 뭉개져 보입니다."
+    },
+    {
+      "cutIndex": 2,
+      "score": 80,
+      "feedback": "프롬프트 분위기가 잘 살았습니다."
+    },
+    {
+      "cutIndex": 3,
+      "score": 90,
+      "feedback": "매우 고품질의 완성도입니다."
+    },
+    {
+      "cutIndex": 4,
+      "score": 75,
+      "feedback": "제품 공개가 임팩트 있게 묘사되었습니다."
+    }
+  ]
 }`;
 
-  parts.unshift({ text: instructions });
-  parts.push(currentPart);
+  parts.push({ text: instructions });
+
+  // Load each image
+  imagePaths.forEach((imgPath) => {
+    const absolutePath = path.isAbsolute(imgPath) ? imgPath : path.join(process.cwd(), 'public', imgPath.replace(/^\/shorts\//, 'shorts/'));
+    if (fs.existsSync(absolutePath)) {
+      const base64 = fs.readFileSync(absolutePath).toString("base64");
+      parts.push({
+        inlineData: {
+          data: base64,
+          mimeType: "image/jpeg"
+        }
+      });
+    }
+  });
 
   try {
     const response = await fetchGeminiWithRetry(
@@ -1423,7 +1188,7 @@ async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImag
           contents: [{ parts }],
           generationConfig: { 
             temperature: 0.15,
-            maxOutputTokens: 8192,
+            maxOutputTokens: 4096,
             responseMimeType: "application/json"
           }
         })
@@ -1437,17 +1202,102 @@ async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImag
     const resJson = await response.json();
     const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Empty multimodal response from Gemini');
-    
-    const cleaned = text.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
-    const cleanedJson = cleanJson(cleaned);
-    return JSON.parse(cleanedJson);
+    const cleaned = cleanJson(text);
+    return JSON.parse(cleaned);
   } catch (e) {
-    console.error(`[Vision Critic] Multimodal evaluation failed for Cut ${cutIndex}:`, e);
+    console.error(`[Vision Critic] Batch evaluation failed:`, e);
+    // Fallback pass response
     return {
-      score: 75,
-      feedback: `검사 에러로 대체됨: ${e.message}`
+      critiques: [1, 2, 3, 4].map(idx => ({ cutIndex: idx, score: 75, feedback: `검사 에러로 대체됨: ${e.message}` }))
     };
   }
+}
+
+// Merged Quality Board + Fact Checker + Relevance Checker Agent
+export async function runMergedQualityBoardAndFactCheck(apiKey, productTitle, productInfo, scriptData) {
+  const systemPrompt = `당신은 맹칠컴퍼니의 팩트체커이자 쇼츠 연구소 책임자(Quality Board & Fact Checker)입니다.
+제작된 쇼츠 대본에 대해 상품 적합성(Product Relevance), 허위 스펙 여부(Fact Check), 그리고 제작 퀄리티(Quality Score)를 종합적으로 분석하십시오.
+
+[상품 정보 프로필]
+${JSON.stringify(productInfo, null, 2)}
+
+[제작된 쇼츠 대본 정보]
+- 제목: "${scriptData.title}"
+- 설명: "${scriptData.youtube_description || ''}"
+${scriptData.cuts.map((c, idx) => `- 컷 ${idx + 1}: 자막: "${c.subtitle}", 연출: "${c.description}"`).join('\n')}
+
+[평가 기준]
+1. 상품 적합성 점수 (Product Relevance Score, 0~100):
+   - 상품 카테고리, 사용 상황, 컨셉, 이미지 묘사 일치도 평가. (85점 이상 합격)
+2. 팩트체크 점수 (Product Fact Score, 0~100):
+   - 허위 스펙이 포함되었는지, 존재하지 않는 과장된 기능 묘사가 있는지 평가. 건당 15점 감점. (90점 이상 합격)
+3. 5가지 영역 품질 평가 (Quality Scores, 각 0~100):
+   - hookStrength (후크 강도)
+   - scriptContent (대본 구성)
+   - sceneVisuals (비주얼 연출)
+   - subtitleAesthetics (자막 스타일)
+   - soundDesign (오디오 디자인)
+
+출력은 반드시 다른 설명 없이 아래 JSON 규격이어야 합니다:
+{
+  "scores": {
+    "hookStrength": 80,
+    "scriptContent": 85,
+    "sceneVisuals": 75,
+    "subtitleAesthetics": 80,
+    "soundDesign": 80
+  },
+  "relevance_score": 95,
+  "relevance_feedback": "카테고리와 사용 상황이 모두 상품 설명에 정확히 부합합니다.",
+  "fact_score": 90,
+  "fact_feedback": "허위 스펙은 없으나 연출된 내용에 과장이 일부 포함되어 감점했습니다.",
+  "evaluations": {
+    "hookStrength": "후킹 평가 내용 (1~2문장)",
+    "scriptContent": "대본 평가 내용 (1~2문장)",
+    "sceneVisuals": "장면 평가 내용 (1~2문장)",
+    "subtitleAesthetics": "자막 평가 내용 (1~2문장)",
+    "soundDesign": "사운드 평가 내용 (1~2문장)"
+  },
+  "details": {
+    "category_match": true,
+    "context_match": true,
+    "description_match": true,
+    "has_false_specs": false,
+    "has_exaggerated_claims": true,
+    "has_non_existent_features": false
+  }
+}
+[JSON 작성 중요 제한 지침]
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(\")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+`;
+
+  const response = await fetchGeminiWithRetry(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: systemPrompt }] }],
+        generationConfig: { 
+          temperature: 0.15,
+          maxOutputTokens: 4096,
+          responseMimeType: "application/json"
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Gemini runMergedQualityBoardAndFactCheck API failed: status ${response.status}`);
+  }
+
+  const rawText = await response.text();
+  const parsed = JSON.parse(rawText);
+  const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('Empty response from runMergedQualityBoardAndFactCheck');
+  const cleaned = cleanJson(text);
+  return JSON.parse(cleaned);
 }
 
 // Fallback script if Gemini is missing/fails

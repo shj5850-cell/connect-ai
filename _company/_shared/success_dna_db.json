@@ -12,12 +12,12 @@
       "subtitle_score": 71,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 17,
-      "avgViews": 500.2,
+      "uses": 20,
+      "avgViews": 425.2,
       "avgCtr": 6.9,
       "avgConversionRate": 11.93,
-      "avgRoi": 600.1,
-      "dna_influence_score": 56.8
+      "avgRoi": 510.1,
+      "dna_influence_score": 55.3
     },
     {
       "id": "1779519183276",
@@ -31,12 +31,12 @@
       "subtitle_score": 87,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 17,
-      "avgViews": 500.2,
+      "uses": 20,
+      "avgViews": 425.2,
       "avgCtr": 6.9,
       "avgConversionRate": 11.93,
-      "avgRoi": 600.1,
-      "dna_influence_score": 56.8
+      "avgRoi": 510.1,
+      "dna_influence_score": 55.3
     },
     {
       "id": "1780037583276",
@@ -50,12 +50,12 @@
       "subtitle_score": 78,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 9,
-      "avgViews": 887,
+      "uses": 12,
+      "avgViews": 665.3,
       "avgCtr": 6.75,
       "avgConversionRate": 11.87,
-      "avgRoi": 1044.6,
-      "dna_influence_score": 64
+      "avgRoi": 783.4,
+      "dna_influence_score": 59.4
     }
   ]
 }

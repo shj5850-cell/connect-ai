@@ -11,12 +11,12 @@
       "subtitle_score": 75,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 3,
-      "avgViews": 173.7,
+      "uses": 4,
+      "avgViews": 130.3,
       "avgCtr": 9.21,
       "avgConversionRate": 12.5,
-      "avgRoi": 266.7,
-      "dna_influence_score": 54.6
+      "avgRoi": 200,
+      "dna_influence_score": 53.4
     },
     {
       "id": "1779346383276",
@@ -29,12 +29,12 @@
       "subtitle_score": 65,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 3,
-      "avgViews": 173.7,
+      "uses": 4,
+      "avgViews": 130.3,
       "avgCtr": 9.21,
       "avgConversionRate": 12.5,
-      "avgRoi": 266.7,
-      "dna_influence_score": 54.6
+      "avgRoi": 200,
+      "dna_influence_score": 53.4
     },
     {
       "id": "1780821586255",
@@ -47,7 +47,7 @@
       "subtitle_score": 50,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": false,
-      "uses": 1,
+      "uses": 2,
       "avgViews": 0,
       "avgCtr": 0,
       "avgConversionRate": 0,
@@ -65,12 +65,12 @@
       "subtitle_score": 80,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 3,
-      "avgViews": 173.7,
+      "uses": 4,
+      "avgViews": 130.3,
       "avgCtr": 9.21,
       "avgConversionRate": 12.5,
-      "avgRoi": 266.7,
-      "dna_influence_score": 54.6
+      "avgRoi": 200,
+      "dna_influence_score": 53.4
     },
     {
       "id": "1779605583276",
@@ -83,12 +83,12 @@
       "subtitle_score": 86,
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 3,
-      "avgViews": 173.7,
+      "uses": 4,
+      "avgViews": 130.3,
       "avgCtr": 9.21,
       "avgConversionRate": 12.5,
-      "avgRoi": 266.7,
-      "dna_influence_score": 54.6
+      "avgRoi": 200,
+      "dna_influence_score": 53.4
     }
   ]
 }
