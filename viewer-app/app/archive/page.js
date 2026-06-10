@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   ArrowLeft, Edit3, Film, Play, Download, ExternalLink, 
-  CheckCircle, Loader2, Sparkles, AlertCircle, ShoppingBag, X, RefreshCw
+  CheckCircle, Loader2, Sparkles, AlertCircle, ShoppingBag, X, RefreshCw, Trash2
 } from 'lucide-react';
 
 export default function ArchivePage() {
@@ -22,12 +22,41 @@ export default function ArchivePage() {
       const res = await fetch('/api/archive');
       if (res.ok) {
         const data = await res.json();
-        setHistory(data);
+        // Filter out hidden items
+        setHistory(data.filter(item => !item.isHidden));
       }
     } catch (e) {
       console.error('Failed to fetch video archive history:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Delete video file & Hide item from list
+  const handleDeleteAndHide = async (id) => {
+    if (!confirm('이 영상의 비디오 파일을 삭제하고 보관함에서 숨기겠습니까? (대본 텍스트 데이터는 AI 성공/실패 학습을 위해 안전하게 보존됩니다.)')) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/archive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_and_hide',
+          id: id
+        })
+      });
+
+      if (res.ok) {
+        setHistory(prev => prev.filter(item => item.id !== id));
+        alert('비디오 파일이 삭제되었으며, 보관함에서 숨겨졌습니다.');
+      } else {
+        const errData = await res.json();
+        alert(errData.error || '삭제 처리에 실패했습니다.');
+      }
+    } catch (e) {
+      alert('오류가 발생했습니다: ' + e.message);
     }
   };
 
@@ -318,22 +347,29 @@ export default function ArchivePage() {
 
 
                   {/* Action row */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
                     <button 
                       onClick={() => handleOpenEdit(item)}
                       className="btn-secondary btn" 
-                      style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', padding: '0.6rem' }}
+                      style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem' }}
                     >
-                      <Edit3 size={14} /> <span>영상 편집 & 재생성</span>
+                      <Edit3 size={13} /> <span>편집 & 재생성</span>
                     </button>
                     <a 
                       href={item.videoUrl} 
                       download={`shorts_${item.id}.mp4`}
                       className="btn" 
-                      style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', padding: '0.6rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+                      style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
                     >
-                      <Download size={14} /> <span>다운로드</span>
+                      <Download size={13} /> <span>다운로드</span>
                     </a>
+                    <button
+                      onClick={() => handleDeleteAndHide(item.id)}
+                      className="btn"
+                      style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}
+                    >
+                      <Trash2 size={13} /> <span>삭제/숨김</span>
+                    </button>
                   </div>
 
                 </div>

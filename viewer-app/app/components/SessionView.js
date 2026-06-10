@@ -15,6 +15,17 @@ export default function SessionView({ files, mindmapData, directionData }) {
   const [loadingIdeas, setLoadingIdeas] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  // Read URL query parameter on mount to set active tab
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab && ['direction', 'mindmap', 'documents'].includes(tab)) {
+        setActiveTab(tab);
+      }
+    }
+  }, []);
+
   // Fetch business ideas & feedback templates dynamically
   useEffect(() => {
     let active = true;

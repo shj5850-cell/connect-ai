@@ -3,25 +3,25 @@
     {
       "agent": "business",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 💼 현빈 (비즈니스 전략가 · Head of Business) 개인 메모리\n\n_현빈 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 월별 목표 설정 및 예산 확인 → 산출물 sessions/2026-05-30T07-46/business.md\n- [2026-05-30] 최근 의사결정 로그에서 필요한 정보 및 개인 목표에 대한 요약서를 작성합니다. → 산출물 sessions/2026-05-30T07-52/business.md\n- [2026-05-30] 현재..."
     },
     {
       "agent": "ceo",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 🧭 CEO (Chief Executive Agent) 개인 메모리\n\n_CEO 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 이번달 목표 진행하자 → 보고서 sessions/2026-05-30T07-46/_report.md\n- [2026-05-30] [자율 사이클 — 2026-05-30] 1인 기업 24시간 운영 중. 회사 목표·각 에이전트의 개인 목표(_agents/{id}/goal.md)·최근 의사결정·메모리를 검토해서 지금 가장 가치 있는 단일 작..."
     },
     {
       "agent": "designer",
       "task": "memory.md",
-      "date": "2026-06-07",
+      "date": "2026-06-08",
       "content": "# 🎨 Designer (Lead Designer) 개인 메모리\n\n_Designer 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최신 디자인 비주얼 확인 → 산출물 sessions/2026-05-31T03-46/designer.md\n- [2026-06-01] 마케팅 디자인 브리프를 작성하고 썸네일·브랜드 비주얼을 생성합니다. → 산출물 sessions/2026-06-01T03-07/designer.md\n- [2026-06-01] 추적된 데이터를 바탕으로..."
     },
     {
       "agent": "developer",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 💻 코다리 (시니어 풀스택 엔지니어) 개인 메모리\n\n_코다리 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] AI 아이템을 기반으로 코드 작성 및 테스트 → 산출물 sessions/2026-05-30T09-22/developer.md\n- [2026-06-01] 선택된 작업에 대한 코드 작성과 테스트를 진행합니다. → 산출물 sessions/2026-06-01T03-38/developer.md\n- [2026-06-01] 적절한 코드 및 화면 디자인 작업을..."
     },
     {
@@ -51,7 +51,7 @@
     {
       "agent": "secretary",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 📱 영숙 (비서 · Personal Assistant) 개인 메모리\n\n_영숙 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] 최근 의사결정 로그와 메모를 검토합니다. → 산출물 sessions/2026-05-30T08-07/secretary.md\n- [2026-05-30] AI 자동화로 수익을 창출하는 AI 아이템을 찾아볼까? → 산출물 sessions/2026-05-30T08-52/secretary.md\n- [2026-05-30] 최근 의사결정 로그 ..."
     },
     {
@@ -63,13 +63,13 @@
     {
       "agent": "writer",
       "task": "memory.md",
-      "date": "2026-06-07",
+      "date": "2026-06-08",
       "content": "# ✍️ Writer (Copywriter) 개인 메모리\n\n_Writer 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-30] AI 아이템 찾기 → 산출물 sessions/2026-05-30T08-37/writer.md\n- [2026-05-30] AI 아이템 찾기 시작 → 산출물 sessions/2026-05-30T08-52/writer.md\n- [2026-05-30] AI 아이템 찾기 시작 → 산출물 sessions/2026-05-30T10-07/writer.m..."
     },
     {
       "agent": "youtube",
       "task": "memory.md",
-      "date": "2026-06-08",
+      "date": "2026-06-10",
       "content": "# 📺 레오 (Head of YouTube) 개인 메모리\n\n_레오 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최근 영상 분석 → 산출물 sessions/2026-05-31T04-24/youtube.md\n- [2026-06-01] 최근 영상을 조사해 콘텐츠에 대한 반응을 파악하고, 트렌드와 시장 동향을 확인합니다. → 산출물 sessions/2026-06-01T03-07/youtube.md\n- [2026-06-01] 선택된 작업에 대한 영상 기획 및 트..."
     }
   ],
@@ -593,6 +593,56 @@
       "agent": "CEO",
       "decision": "적절한 에이전트 분배: '현빈에게 새로운 작업에 대해 설명하고 도움을 드리세요.'",
       "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "각 에이전트의 개인 목표에 따른 적절한 작업 분배",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "코다리에게 새로운 기능 구현에 대한 의견 드릴까?",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "디자이너에게 현재 작업의 인터페이스를 정확히 설명하고 구현 방안을 안내하세요.",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "다음 작업 실행: 회사 메인 페이지 최적화",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "임원에게 이 작업 주체를 알리기",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "에이전트 레오에게 '특정 고객의 첫 번째 서비스를 제공'할당",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "결정: Instagram에 대한 전략을 세우고, 영숙에게 실행",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "레오에게 오류 해결을 가진 다음 분석 요청",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "다음 단일 작업 실행을 진행",
+      "date": "2026-06-08"
+    },
+    {
+      "agent": "CEO",
+      "decision": "작업 우선순위에 영숙에게 배분",
+      "date": "2026-06-10"
     }
   ],
   "agent_lessons": [
@@ -671,20 +721,6 @@
   ],
   "agent_outputs": [
     {
-      "name": "walkthrough.md",
-      "type": "documentation",
-      "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\3fc08e00-35ed-4112-ac56-affe58e2b620\\walkthrough.md",
-      "size": 2210,
-      "updated_at": "2026-06-08T02:40:09.334Z"
-    },
-    {
-      "name": "task.md",
-      "type": "task_tracker",
-      "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\3fc08e00-35ed-4112-ac56-affe58e2b620\\task.md",
-      "size": 1527,
-      "updated_at": "2026-06-08T03:29:54.109Z"
-    },
-    {
       "name": "quality_board_veto.log",
       "type": "agent_log",
       "path": "C:\\Users\\user\\Desktop\\명철\\개발\\_company\\agent_logs\\quality_board_veto.log",
@@ -708,22 +744,22 @@
   ],
   "agent_growth_metrics": {
     "views_before_average": 1143,
-    "views_after_average": 24053,
+    "views_after_average": 22624,
     "ctr_before_average": 8.8,
-    "ctr_after_average": 10.5,
+    "ctr_after_average": 10.2,
     "retention_before_average": 36,
-    "retention_after_average": 61,
+    "retention_after_average": 62,
     "roi_before_average": 1672.9,
-    "roi_after_average": 40979.1,
-    "diversity_score_average": 72.1,
-    "novelty_score_average": 70,
-    "experiment_success_rate": 5.3,
-    "success_dna_reflection_rate": 100
+    "roi_after_average": 38205.9,
+    "diversity_score_average": 69.2,
+    "novelty_score_average": 80,
+    "experiment_success_rate": 9.5,
+    "success_dna_reflection_rate": 97.6
   },
   "agent_skill_scores": {
     "ceo": {
       "score": 100,
-      "completed_tasks": 112,
+      "completed_tasks": 122,
       "lessons_learned": 0,
       "success_patterns_found": 3,
       "failure_patterns_avoided": 1,

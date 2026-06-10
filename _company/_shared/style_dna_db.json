@@ -173,6 +173,15 @@
       "roi": 70859.8,
       "added_at": "2026-06-07T06:53:03.290Z",
       "is_mock": true
+    },
+    {
+      "style": "Horror",
+      "video_id": "1780892679094",
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "views": 6897,
+      "roi": 7701,
+      "added_at": "2026-06-08T04:57:56.957Z",
+      "is_mock": false
     }
   ]
 }

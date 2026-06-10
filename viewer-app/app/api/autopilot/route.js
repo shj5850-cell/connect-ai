@@ -141,6 +141,7 @@ async function runAutopilotProcess(forcedParams = {}) {
     let targetAudience = '';
     let videoStyle = '';
     let isExperiment = false;
+    let recentHistory = [];
 
     const { selectWeightedCategory, selectBestHookCandidate, EXPERIMENT_MAP, tokenize, calculateJaccard } = require('../../lib/CreativeDiversityEngine');
 
@@ -204,7 +205,7 @@ async function runAutopilotProcess(forcedParams = {}) {
       }
 
       // Get recent records for weighting and experiment splits
-      let recentHistory = [];
+      recentHistory = [];
       if (fs.existsSync(HISTORY_PATH)) {
         try {
           recentHistory = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8'));
@@ -1038,17 +1039,50 @@ function getSelfImprovementGuidelines() {
   }
 }
 
-async function fetchGeminiWithRetry(url, options, maxRetries = 5) {
+async function fetchGeminiWithRetry(url, options, maxRetries = 3) {
   let attempt = 0;
+  const backoffs = [5000, 15000, 45000];
   while (attempt < maxRetries) {
-    const response = await fetch(url, options);
-    if (response.status === 429) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeoutId);
+      
+      if (response.status === 429) {
+        try {
+          const bodyText = await response.clone().text();
+          const lowerBody = bodyText.toLowerCase();
+          if (lowerBody.includes("quota exceeded") || lowerBody.includes("resource_exhausted") || lowerBody.includes("exceeded your current quota")) {
+            console.warn("[Gemini API] Daily quota limit exceeded (RESOURCE_EXHAUSTED). Skipping retries to fail fast.");
+            return response;
+          }
+        } catch (err) {
+          // Ignore
+        }
+        const waitTime = backoffs[attempt] || 45000;
+        attempt++;
+        console.warn(`[Gemini API] Got 429 Rate Limit (Attempt ${attempt}/${maxRetries}). Sleeping ${waitTime/1000} seconds before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      return response;
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.warn(`[Gemini API] Fetch aborted due to 20s timeout.`);
+      } else {
+        console.error(`[Gemini API] Fetch error:`, err.message);
+      }
       attempt++;
-      console.warn(`[Gemini API] Got 429 Rate Limit (Attempt ${attempt}/${maxRetries}). Sleeping 45 seconds before retry...`);
-      await new Promise(resolve => setTimeout(resolve, 45000));
-      continue;
+      if (attempt < maxRetries) {
+        const waitTime = backoffs[attempt - 1] || 5000;
+        console.warn(`[Gemini API] Got error. Retrying in ${waitTime/1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      throw err;
     }
-    return response;
   }
   return fetch(url, options);
 }
@@ -1127,7 +1161,59 @@ ${scriptData.cuts.map((c, idx) => `컷 ${idx + 1}:
           contents: [{ parts: [{ text: researcherPrompt }] }],
           generationConfig: { 
             temperature: 0.25,
-            maxO// Generate script using Gemini with Self-Improvement Guidelines
+            maxOutputTokens: 8192,
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      throw new Error(`Gemini Pre-Upload Audit API failed: status ${response.status} ${response.statusText}. Response: ${errorText}`);
+    }
+
+    const resJson = await response.json();
+    text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Empty text from Gemini Pre-Upload Audit API');
+
+    const cleaned = cleanJson(text);
+    const parsed = JSON.parse(cleaned);
+    return parsed;
+  } catch (err) {
+    console.error("Failed to run pre-upload analysis:", err);
+    console.log('--- RAW GEMINI RESPONSE ---');
+    console.log(text);
+    console.log('---------------------------');
+    // Return fallback structure
+    return {
+      scores: {
+        hookStrength: 50,
+        scriptContent: 50,
+        sceneVisuals: 75,
+        subtitleAesthetics: 50,
+        soundDesign: 50
+      },
+      evaluations: {
+        hookStrength: "분석 오류로 기본 평가 대체",
+        scriptContent: "분석 오류로 기본 평가 대체",
+        sceneVisuals: "분석 오류로 기본 평가 대체",
+        subtitleAesthetics: "분석 오류로 기본 평가 대체",
+        soundDesign: "분석 오류로 기본 평가 대체"
+      },
+      answers: {
+        q1_hook_stop: "데이터 수집 중",
+        q2_dropoff: "데이터 수집 중",
+        q3_diff_from_viral: "데이터 수집 중",
+        q4_must_fix: "데이터 수집 중",
+        q5_expected_views: 500,
+        q6_multiplier_10x: "데이터 수집 중"
+      }
+    };
+  }
+}
+
+// Generate script using Gemini with Self-Improvement Guidelines
 async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGuidelines = '', isProductDriven = false, targetAudience = '', videoStyle = '', productInfo = null, archetype = '') {
   let systemPrompt = '';
   
@@ -1188,123 +1274,8 @@ ${infoStr}
 }
 
 [JSON 작성 중요 제한 지침]
-1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
-2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
-3. ad_score(광고 냄새 점수): 이 대본이 얼마나 대놓고 광고처럼 느껴지는지 0~100 사이로 평가한 정수값. 1~3컷에서 상품을 언급하거나 자랑을 하면 높게(70점 이상), 문제 제기와 공감이 자연스럽게 흘러가고 4컷에서만 제품이 등장하면 낮게(40점 이하) 매기십시오.
-`;
-  } else {�. 문제점과 뭉개진 부분, 왜곡된 부분을 찾아내십시오.
-
-[검사 항목]
-1. 프롬프트 일치도 (Prompt Alignment): 이미지 생성 프롬프트에 명시된 핵심 피사체, 각도, 색상이 이미지에 정확히 묘사되었는지 여부
-2. 객체 정확도 (Object Accuracy): 인물의 손가락 개수 왜곡, 부자연스러운 신체 구조, 글자 렌더링 오류, 찌그러진 사물 등이 있는지 여부
-3. 분위기 일치도 (Mood Alignment): 프롬프트에서 요구한 조명, 연출, 분위기와 일치하는지 여부
-4. 스타일 일치도 (Style/Aesthetic Quality): 상용 광고 수준(Commercial-grade)의 우수한 품질과 미학적 완성도를 갖췄는지 여부
-`;
-
-  if (prevImagePath && fs.existsSync(prevImagePath)) {
-    const prevBase64 = fs.readFileSync(prevImagePath).toString("base64");
-    parts.push({
-      inlineData: {
-        data: prevBase64,
-        mimeType: "image/jpeg"
-      }
-    });
-    instructions += `\n5. 영상 연속성 (Continuity/Consistency): 제공된 두 개의 이미지 중 첫 번째 이미지는 이전 컷(이전 장면)이고, 두 번째 이미지는 현재 장면입니다. 두 이미지 사이의 주인공 외모, 옷 스타일, 전반적인 화풍(Illustration, Photo 등)이 일관되게 연결되는지 여부`;
-  }
-
-  instructions += `\n\n[제공 정보]
-- 현재 컷 번호: ${cutIndex}
-- 이미지 생성 프롬프트: "${promptText}"
-
-출력은 다른 부연설명이나 마크다운 태그 없이 반드시 아래 규격의 JSON이어야 합니다:
-{
-  "score": 85,
-  "feedback": "전반적으로 우수하나 인물의 오른쪽 손가락 끝부분이 약간 뭉개져 보입니다. 조명과 프롬프트 일치도는 매우 훌륭합니다."
-}`;
-
-  parts.unshift({ text: instructions });
-  parts.push(currentPart);
-
-  try {
-    const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: { 
-            temperature: 0.15,
-            maxOutputTokens: 8192,
-            responseMimeType: "application/json"
-          }
-        })
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`Gemini Multimodal API call failed: ${response.statusText}`);
-    }
-
-    const resJson = await response.json();
-    const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) throw new Error('Empty multimodal response from Gemini');
-    
-    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned);
-  } catch (e) {
-    console.error(`[Vision Critic] Multimodal evaluation failed for Cut ${cutIndex}:`, e);
-    return {
-      score: 75,
-      feedback: `검사 에러로 대체됨: ${e.message}`
-    };
-  }
-}
-
-
-// Generate script using Gemini with Self-Improvement Guidelines
-async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGuidelines = '', isProductDriven = false, targetAudience = '', videoStyle = '') {
-  let systemPrompt = '';
-  
-  if (isProductDriven) {
-    systemPrompt = `당신은 맹칠컴퍼니의 콘텐츠 기획자 에이전트(Writer)입니다.
-수익화 상품인 "${productTitle}"을 홍보하기 위한 4컷 구성 대본을 기획해야 합니다.
-이번에 제작할 영상은 대놓고 광고하는 느낌을 피하고, 시청자가 흥미진진하게 끝까지 시청하게 만드는 것이 목표입니다.
-
-[영상 기획 지침 (Strict Structure)]
-- **1컷**: 문제 제시 (Problem presentation) - 타겟 고객인 "${targetAudience || '일반 대중'}"이 일상에서 겪는 치명적인 불편이나 문제점을 흥미진진하게 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 언급하거나 묘사하지 마십시오. 예: '정관장' 이나 '홍삼정' 이라는 브랜드/상품명 직접 노출 금지)**
-- **2컷**: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품을 언급하거나 묘사하지 마십시오)**
-- **3컷**: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 노출하지 마십시오)**
-- **4컷**: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 상세한 정보는 고정댓글 링크에서 바로 확인하라는 행동 유도(Call To Action)를 전합니다.
-
-[영상 스타일]
-- 영상의 전반적인 감성과 자막 스타일은 "${videoStyle || 'Cinematic'}"을 따르며, Flux prompt에도 이 스타일의 시각적 요소(예: '${videoStyle || 'Cinematic'} style', 'in ${videoStyle || 'Cinematic'} format' 등)를 적극 반영하십시오.
-
-출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
-{
-  "title": "쇼츠 영상 제목 (한글 20자 이내)",
-  "youtube_description": "유튜브 업로드용 설명 본문 (영상의 가치를 요약하고, 관련 해시태그 3~5개 포함)",
-  "ad_score": 30,
-  "hook_candidates": [
-    "1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
-    "후보 2", "후보 3", "후보 4", "후보 5"
-  ],
-  "cuts": [
-    {
-      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지 딱 1개 포함 (예: '방구석에서 돈 버는 비밀 👀')",
-      "description": "화면 연출 및 비주얼 설명",
-      "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 사진사 수준 영어 프롬프트. 규격: 'Professional [style] photography, [detailed subject description], [composition & framing], [camera lens & settings], [lighting conditions], [color palette & mood], vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions, no watermarks, clean composition, no distorted anatomy, no weird fingers' (1~3컷은 절대 상품 글자나 제품 패키지가 직접 보이지 않는 상황 및 인물 묘사를 해야 하며, 4컷은 실제 상품 또는 상품을 사용하는 사람을 멋지게 묘사할 것)",
-      "searchKeyword": "스톡용 영어 키워드 (2~3단어)",
-      "cameraMovement": "zoom in 또는 zoom out 또는 panning",
-      "duration": 5,
-      "keywords": "강조 키워드"
-    }
-  ]
-}
-
-[JSON 작성 제한 지침]
-1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
-2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(\")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
+2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\n)을 절대 넣지 마십시오.
 3. ad_score(광고 냄새 점수): 이 대본이 얼마나 대놓고 광고처럼 느껴지는지 0~100 사이로 평가한 정수값. 1~3컷에서 상품을 언급하거나 자랑을 하면 높게(70점 이상), 문제 제기와 공감이 자연스럽게 흘러가고 4컷에서만 제품이 등장하면 낮게(40점 이하) 매기십시오. 반드시 50점 이하가 되도록 자연스러운 스토리텔링을 하십시오.
 `;
   } else {
@@ -1313,6 +1284,8 @@ async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGui
 출력은 반드시 다른 텍스트 없이 아래 JSON 규격이어야 합니다:
 {
   "title": "쇼츠 영상 제목 (한글 20자 이내)",
+  "youtube_description": "유튜브 업로드용 설명 본문 (영상의 가치를 요약하고, 관련 해시태그 3~5개 포함)",
+  "ad_score": 30,
   "hook_candidates": [
     "도입부 1컷에 적용할 수 있는 강력한 한글 3초 후킹 문구 후보 1 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
     "후보 2 (15자 내외의 단문 + 끝에 시각적 이모지 1개 포함)",
@@ -1325,7 +1298,7 @@ async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGui
       "subtitle": "해당 컷에 적용할 짧고 강렬한 자막/나레이션 문장. 반드시 15자 내외의 한국어 단문으로 작성하고 끝부분에 맥락에 적합한 시각적 이모지(예: 💰, 🔥, 🚨, 👀 등)를 딱 1개 붙여 모바일 숏폼 자막 가독성과 전달력을 극대화할 것 (예: '방구석에서 돈 버는 비밀 👀')",
       "description": "화면 연출 및 비주얼 설명",
       "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 사진사 수준 영어 프롬프트. 규격: 'Professional [style] photography, [detailed subject description], [composition & framing], [camera lens & settings], [lighting conditions], [color palette & mood], vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions, no watermarks, clean composition, no distorted anatomy, no weird fingers' (인물이나 클로즈업 샷 위주로 자막과 직결되는 핵심 비주얼을 정밀 묘사하고 절대 글자가 렌더링되지 않게 할 것)",
-      "searchKeyword": "Pexels 등 스톡 사이트에서 고품질 사진을 찾기 위한 명확하고 정교한 영어 검색어 (2~3단어의 단조로운 명사/형용사 조합, 예: 'laptop desk', 'smiling man', 'healthy food', 'woman writing'). 절대 텍스트나 복잡한 문장을 쓰지 말고 스톡에서 매칭 확률이 높은 핵심 단어만 사용하십시오.",
+      "searchKeyword": "Pexels 등 스톡 사이트에서 고품질 사진을 찾기 위한 명확하고 정교한 영어 검색어 (2~3단어의 명사/형용사 조합, 예: 'laptop desk', 'smiling man', 'healthy food', 'woman writing'). 절대 텍스트나 복잡한 문장을 쓰지 말고 스톡에서 매칭 확률이 높은 핵심 단어만 사용하십시오.",
       "cameraMovement": "zoom in 또는 zoom out 또는 panning",
       "duration": 5,
       "keywords": "강조 키워드"
@@ -1335,7 +1308,7 @@ async function generateScriptWithGemini(apiKey, productTitle, selfImprovementGui
 주의사항: cuts 배열의 크기는 반드시 정확히 4개여야 하며, hook_candidates의 크기는 반드시 정확히 5개여야 합니다.
 
 [JSON 작성 중요 제한 지침]
-1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
+1. 출력 JSON의 모든 문자열 값 안에서 큰따옴표(\")를 절대 사용하지 마십시오. 필요하면 작은따옴표(') 혹은 한글 따옴표(‘, ’)를 사용하십시오.
 2. 모든 문자열 값은 단일 행으로 작성하고 줄바꿈(\\n)을 절대 넣지 마십시오.
 
 ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovementGuidelines}` : ''}`;
@@ -1393,6 +1366,88 @@ ${selfImprovementGuidelines ? `\n[자기 개선 규칙 적용]\n${selfImprovemen
     throw new Error('Gemini response did not contain exactly 4 cuts in the cuts array');
   }
   return scriptData;
+}
+
+async function runVisionCriticMultimodal(apiKey, imagePath, promptText, prevImagePath = null, cutIndex) {
+  const currentBase64 = fs.readFileSync(imagePath).toString("base64");
+  const currentPart = {
+    inlineData: {
+      data: currentBase64,
+      mimeType: "image/jpeg"
+    }
+  };
+
+  const parts = [];
+  let instructions = `당신은 쇼츠 영상의 시각적 퀄리티를 심사하는 비주얼 감사관 에이전트(Vision Critic)입니다.
+제공된 이미지(9:16 비율)를 주의 깊게 분석하여 상용 광고 수준(Commercial-grade)의 완성도를 갖추었는지 평가하십시오.
+칭찬하지 마십시오. 문제점과 뭉개진 부분, 왜곡된 부분을 찾아내십시오.
+
+[검사 항목]
+1. 프롬프트 일치도 (Prompt Alignment): 이미지 생성 프롬프트에 명시된 핵심 피사체, 각도, 색상이 이미지에 정확히 묘사되었는지 여부
+2. 객체 정확도 (Object Accuracy): 인물의 손가락 개수 왜곡, 부자연스러운 신체 구조, 글자 렌더링 오류, 찌그러진 사물 등이 있는지 여부
+3. 분위기 일치도 (Mood Alignment): 프롬프트에서 요구한 조명, 연출, 분위기와 일치하는지 여부
+4. 스타일 일치도 (Style/Aesthetic Quality): 상용 광고 수준(Commercial-grade)의 우수한 품질과 미학적 완성도를 갖췄는지 여부
+`;
+
+  if (prevImagePath && fs.existsSync(prevImagePath)) {
+    const prevBase64 = fs.readFileSync(prevImagePath).toString("base64");
+    parts.push({
+      inlineData: {
+        data: prevBase64,
+        mimeType: "image/jpeg"
+      }
+    });
+    instructions += `\n5. 영상 연속성 (Continuity/Consistency): 제공된 두 개의 이미지 중 첫 번째 이미지는 이전 컷(이전 장면)이고, 두 번째 이미지는 현재 장면입니다. 두 이미지 사이의 주인공 외모, 옷 스타일, 전반적인 화풍(Illustration, Photo 등)이 일관되게 연결되는지 여부`;
+  }
+
+  instructions += `\n\n[제공 정보]
+- 현재 컷 번호: ${cutIndex}
+- 이미지 생성 프롬프트: "${promptText}"
+
+출력은 다른 부연설명이나 마크다운 태그 없이 반드시 아래 규격의 JSON이어야 합니다:
+{
+  "score": 85,
+  "feedback": "전반적으로 우수하나 인물의 오른쪽 손가락 끝부분이 약간 뭉개져 보입니다. 조명과 프롬프트 일치도는 매우 훌륭합니다."
+}`;
+
+  parts.unshift({ text: instructions });
+  parts.push(currentPart);
+
+  try {
+    const response = await fetchGeminiWithRetry(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: { 
+            temperature: 0.15,
+            maxOutputTokens: 8192,
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Gemini Multimodal API call failed: ${response.statusText}`);
+    }
+
+    const resJson = await response.json();
+    const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('Empty multimodal response from Gemini');
+    
+    const cleaned = text.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+    const cleanedJson = cleanJson(cleaned);
+    return JSON.parse(cleanedJson);
+  } catch (e) {
+    console.error(`[Vision Critic] Multimodal evaluation failed for Cut ${cutIndex}:`, e);
+    return {
+      score: 75,
+      feedback: `검사 에러로 대체됨: ${e.message}`
+    };
+  }
 }
 
 // Fallback script if Gemini is missing/fails

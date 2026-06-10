@@ -183,6 +183,52 @@ export async function POST(req) {
       return NextResponse.json({ success: true, item: archiveItem });
     }
 
+    // Action 3: Delete video file & Hide item from list (Archive cleanup)
+    if (action === 'delete_and_hide') {
+      const { id } = body;
+      if (!id) {
+        return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
+      }
+
+      if (!fs.existsSync(HISTORY_PATH)) {
+        return NextResponse.json({ error: 'History database not found' }, { status: 404 });
+      }
+
+      const history = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf-8'));
+      const itemIndex = history.findIndex(item => item.id === id);
+      if (itemIndex === -1) {
+        return NextResponse.json({ error: `Archive item with ID ${id} not found` }, { status: 404 });
+      }
+
+      const archiveItem = history[itemIndex];
+
+      // Remove the physical video file if it exists
+      if (archiveItem.videoUrl) {
+        try {
+          const cleanUrl = archiveItem.videoUrl.split('?')[0]; // Strip cache buster query string
+          const relativePath = cleanUrl.startsWith('/') ? cleanUrl.substring(1) : cleanUrl;
+          const absolutePath = path.join(process.cwd(), 'public', relativePath);
+          
+          if (fs.existsSync(absolutePath)) {
+            fs.unlinkSync(absolutePath);
+            console.log(`[Archive Cleanup] Successfully deleted video file: ${absolutePath}`);
+          }
+        } catch (err) {
+          console.error(`[Archive Cleanup] Failed to delete video file for ID ${id}:`, err);
+        }
+      }
+
+      // Update item properties to mark it deleted & hidden
+      archiveItem.videoUrl = null;
+      archiveItem.isHidden = true;
+      archiveItem.videoDeletedAt = new Date().toISOString();
+
+      history[itemIndex] = archiveItem;
+      fs.writeFileSync(HISTORY_PATH, JSON.stringify(history, null, 2), 'utf-8');
+
+      return NextResponse.json({ success: true, id });
+    }
+
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 
   } catch (e) {

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { searchYoutubeMarket, extractTrendDNA, evaluateScriptNovelty } from '../../lib/trendEngine';
 
 function parseSentences(text) {
   if (!text) return [];
@@ -35,7 +36,9 @@ export async function POST(request) {
       localImageFileName,
       pexelsApiKey,
       pixabayApiKey,
-      templateStyle
+      templateStyle,
+      bypassTrendEngine,
+      approvedShortsPlan
     } = await request.json();
 
     let directImagePath = '';
@@ -137,8 +140,24 @@ export async function POST(request) {
 
     let productAnalysis = null;
     let shortsPlan = null;
+    let trendEngineActive = false;
+    let trendEngineStatus = 'API_KEY_MISSING';
+    let trendDNA = null;
+    let noveltyResult = null;
 
-    if (sentencesText && sentencesText.trim()) {
+    const youtubeApiKey = process.env.YOUTUBE_API_KEY;
+    if (youtubeApiKey && youtubeApiKey.trim() !== '') {
+      trendEngineActive = true;
+      trendEngineStatus = 'ACTIVE';
+    }
+
+    if (bypassTrendEngine && approvedShortsPlan) {
+      console.log(`[Trend Engine] Bypassing Trend Engine checks via Manual Approval bypass.`);
+      shortsPlan = approvedShortsPlan;
+      productAnalysis = approvedShortsPlan.productAnalysis ? { productAnalysis: approvedShortsPlan.productAnalysis } : null;
+      if (approvedShortsPlan.trendEngineStatus) trendEngineStatus = approvedShortsPlan.trendEngineStatus;
+      if (approvedShortsPlan.trendAnalysis) noveltyResult = approvedShortsPlan.trendAnalysis;
+    } else if (sentencesText && sentencesText.trim()) {
       console.log(`[Phase 1 & 2 - User Sentences Mode] Processing custom user script...`);
       let sentences = parseSentences(sentencesText);
       if (sentences.length === 0) {
@@ -347,6 +366,21 @@ ${sentences.map((s, idx) => `${idx + 1}. ${s}`).join('\n')}
         };
       }
     } else {
+      // Trend Engine YouTube Search & DNA Extraction (Runs only when trendEngineActive is true and not bypassed)
+      if (trendEngineActive && !bypassTrendEngine) {
+        console.log(`[Trend Engine] Running YouTube market research for "${keyword}"...`);
+        const searchRes = await searchYoutubeMarket(keyword);
+        if (searchRes.success && searchRes.data && searchRes.data.length > 0) {
+          console.log(`[Trend Engine] Extracted ${searchRes.data.length} unique search items. Running Gemini DNA extraction...`);
+          trendDNA = await extractTrendDNA(keyword, searchRes.data, false);
+        } else if (!searchRes.success) {
+          trendEngineStatus = searchRes.reason;
+          console.warn(`[Trend Engine] Market research failed: ${searchRes.reason}`);
+        } else {
+          console.warn(`[Trend Engine] No search items returned for keyword: "${keyword}"`);
+        }
+      }
+
       // 1단계: 상품 분석 AI (Product Analysis AI)
       console.log(`[Phase 1] Starting Product Analysis AI for keyword: "${keyword}"...`);
       const productAnalysisSystemPrompt = `당신은 세계 최고 수준의 상품 마케팅 분석가이자 카피라이터 AI입니다.
@@ -389,10 +423,56 @@ ${sentences.map((s, idx) => `${idx + 1}. ${s}`).join('\n')}
         };
       }
 
-      // 2단계: 장면 기획 AI (Scene Planning AI)
-      console.log(`[Phase 2] Starting Scene Planning AI...`);
-      const scenePlanningSystemPrompt = `당신은 세계 최고의 유튜브 쇼츠 편집 감독이자 시나리오 작가입니다.
+      // 2단계: 장면 기획 AI (Scene Planning AI) - 3회 반려 루프 적용
+      console.log(`[Phase 2] Starting Scene Planning AI with Rejection Loop...`);
+      let generationAttempts = 0;
+      const maxAttempts = 3;
+      let passSimilarityCheck = false;
+      let rejectedAttempts = [];
+
+      while (generationAttempts < maxAttempts && !passSimilarityCheck) {
+        generationAttempts++;
+        console.log(`[Phase 2] Generation attempt ${generationAttempts} of ${maxAttempts}...`);
+
+        let trendInstructions = '';
+        if (trendDNA) {
+          trendInstructions = `
+[YouTube Trend Analysis & Gap Opportunities]
+실제 유튜브 상위 노출 영상들로부터 정교하게 도출된 트렌드 DNA 분석 데이터입니다:
+- 제목 패턴: ${JSON.stringify(trendDNA.dna?.titlePatterns)}
+- 오프닝 훅 스타일: ${JSON.stringify(trendDNA.dna?.hookPatterns)}
+- 시장 과포화 표현 (대본 및 제목에 아래 표현들을 절대로 포함하지 마십시오):
+  ${(trendDNA.saturation?.overusedPhrases || []).map(p => `- "${p.phrase}" (포화율: ${(p.rate * 100).toFixed(0)}%)`).join('\n')}
+- 추천 틈새 장르/유형: ${trendDNA.gapOpportunity?.recommendedType}
+- 추천 이유: ${trendDNA.gapOpportunity?.reason}
+
+지시사항:
+1. 유튜브 검색에서 확인된 상위 노출 영상들의 매력적인 제목 패턴(예: 궁금증 유발, 숫자 활용)과 훅 스타일(예: 오프닝 3초 충격/반전 구조)의 흥행 공식을 철저하게 공부하고 벤치마킹하여 따라 만드십시오.
+2. 다만, 이미 흔해서 진부해진 "시장 과포화 표현"들은 철저히 필터링하고 제외하여 단어를 신선하게 바꿉니다.
+3. 기존 성공 전략의 장점(공부한 패턴)을 흡수하되, 추천하는 틈새 장르/유형인 "${trendDNA.gapOpportunity?.recommendedType}"에 맞춰 새롭게 재해석하여 독창적이고 차별화된 결과물로 고도화하십시오.
+`;
+        }
+
+        let feedbackFromRejected = '';
+        if (rejectedAttempts.length > 0) {
+          feedbackFromRejected = `
+[이전 실패 시안 정보]
+이전 시도에서 기존 유튜브 영상들과의 유사성 검사(시장 중복)로 인해 탈락한 대본들입니다. 아래 대본들과 유사한 오프닝 훅, 대본 구조, 흐름을 반복해서는 안 됩니다:
+${rejectedAttempts.map((rej, idx) => `
+- 탈락 시안 #${idx + 1}:
+  * 제목: ${rej.title}
+  * 오프닝 훅: ${rej.hook}
+  * 대본: ${rej.script}
+  * 반려 사유: Hook 유사도 ${rej.hookSimilarity}%, 신규성 점수 ${rej.noveltyScore}/100. ${rej.advice}
+`).join('\n')}
+`;
+        }
+
+        const scenePlanningSystemPrompt = `당신은 세계 최고의 유튜브 쇼츠 편집 감독이자 시나리오 작가입니다.
 제공된 상품 정보와 마케팅 분석 결과를 바탕으로, 시청자의 이탈을 방지하고 끝까지 보게 만드는 스토리 기반의 쇼츠 연출안과 대본을 작성해야 합니다.
+${trendInstructions}
+${feedbackFromRejected}
+
 반드시 아래 JSON 스키마 형식으로만 응답해야 합니다. 다른 텍스트는 포함하지 마십시오.
 
 출력 JSON 스키마:
@@ -434,7 +514,7 @@ ${sentences.map((s, idx) => `${idx + 1}. ${s}`).join('\n')}
 2. 1개 장면이 2초 이상 지속되면 시청자가 지루해하므로, 장면의 narration 길이는 최대 3~4단어로 매우 짧아야 합니다.
 3. 자막(caption)은 12자 이내로 눈길을 사로잡는 문구로 작성하세요.`;
 
-      const scenePlanningUserPrompt = `[상품 키워드]
+        const scenePlanningUserPrompt = `[상품 키워드]
 키워드: ${keyword}
 
 [마케팅 분석 결과]
@@ -445,52 +525,78 @@ USP: ${productAnalysis.productAnalysis.usp}
 
 이 분석 결과를 기반으로 스토리라인이 살아있고, 총 15개에서 30개 사이의 장면으로 촘촘히 쪼개진 속도감 있는 쇼츠 시나리오를 구성해 주세요.`;
 
-      try {
-        shortsPlan = await callGemini(scenePlanningSystemPrompt, scenePlanningUserPrompt);
-        console.log('[Phase 2] Scene Planning AI completed successfully. Total scenes generated:', shortsPlan.scenes?.length);
-      } catch (e) {
-        console.error('[Phase 2] Scene Planning AI Failed. Using default mock values:', e);
-        shortsPlan = {
-          analysis: {
-            hookPattern: "3초 이내에 시청자의 상식을 깨뜨리는 경고성 오프닝 훅 사용",
-            avgDuration: "35초 내외",
-            transitionSpeed: "1.5초~2초 간격의 빠른 화면 전환",
-            captionStyle: "노란색/흰색 대비의 캡컷 바이럴 스타일 폰트",
-            voiceTone: "신뢰감",
-            bgmType: "비트감이 강하고 묵직한 베이스의 배경음악",
-            retentionTriggers: "핵심 정보를 끝까지 미루며 궁금증 유발",
-            commentTriggers: "마지막에 '댓글로 의견을 남겨달라'는 질문 투척",
-            likeShareTriggers: "정보 저장(북마크)을 유도하여 공유 촉진",
-            algorithmStrategy: "빠른 정보 전달 후 바로 반복 시청이 되도록 매끄러운 아웃트로 설계"
-          },
-          strategy: `입력받은 키워드 '${keyword}'에 대한 시청자들의 보편적 실수를 짚어내고 3가지 즉각 해결책 제시`,
-          titles: [
-            `🚨 ${keyword} 할 때 99%가 하는 치명적 실수`,
-            `💡 당신이 몰랐던 ${keyword} 초간단 비법`,
-            `⚠️ ${keyword} 제대로 모르면 평생 손해봅니다`,
-            `🤫 아무도 알려주지 않는 ${keyword} 꿀팁`,
-            `🔥 ${keyword} 효율 200% 올리는 핵심 정리`,
-            `🧐 아직도 ${keyword}을 어렵게 하시나요?`,
-            `✨ 삶의 질이 달라지는 ${keyword} 노하우`,
-            `💻 직장인 필수 ${keyword} 완전 가이드`,
-            `💬 진짜 유용한 ${keyword} 사용 팁`,
-            `⚡ 초고속으로 배우는 ${keyword}의 비밀`
-          ],
-          script: `스마트폰 용량 부족해서 답답하셨죠? 사진 지우지 말고 카카오톡 설정에서 캐시 데이터만 삭제해 보세요. 이것만 해도 기가바이트 단위로 용량이 늘어납니다!`,
-          bgmRecommendation: "120BPM의 속도감 있는 로파이 비트 또는 긴박한 신스 브레이크 비트",
-          uploadDescription: `조회수 폭발하는 ${keyword}에 관한 핵심 꿀팁 가이드입니다!`,
-          hashtags: ["쇼츠", "자동화", "추천템", keyword.replace(/\s+/g, "")],
-          expectedReaction: "'헐 이거 나만 몰랐나?', '바로 해봐야지' 등의 반응 예상",
-          retentionPoints: "첫 오프닝의 경고 문구로 3초 이탈 방지 및 해결책 부분의 빠른 화면 전환",
-          scenes: Array.from({ length: 15 }, (_, i) => ({
-            sceneNumber: i + 1,
-            imageKeyword: ["tech", "office", "laptop", "mobile", "clean", "workspace", "success", "speed", "modern", "keyboard", "screen", "desk", "idea", "creative", "connection"][i] || "abstract",
-            visualSource: `장면 ${i + 1} 상세 연출 샷`,
-            editingInstruction: "Zoom In, 1.5초 전환",
-            caption: `핵심 체크 ${i + 1}`,
-            narration: `나레이션 구절 ${i + 1} 입니다`
-          }))
-        };
+        try {
+          shortsPlan = await callGemini(scenePlanningSystemPrompt, scenePlanningUserPrompt);
+          console.log(`[Phase 2] Scene planning successfully generated ${shortsPlan.scenes?.length} scenes.`);
+        } catch (e) {
+          console.error(`[Phase 2] Scene Planning AI draft generation failed:`, e);
+          if (generationAttempts >= maxAttempts) {
+            throw e;
+          }
+          continue;
+        }
+
+        // Novelty check if Trend Engine is active
+        if (trendEngineActive && trendDNA) {
+          console.log(`[Trend Engine] Evaluating similarity and novelty scores...`);
+          noveltyResult = await evaluateScriptNovelty(shortsPlan, trendDNA);
+          
+          if (noveltyResult) {
+            console.log(`[Trend Engine] Scores calculated -> Hook Similarity: ${noveltyResult.hookSimilarity}%, Novelty Score: ${noveltyResult.noveltyScore}`);
+            
+            // Check rejection rule: Hook Similarity > 70% OR Novelty Score < 50
+            if (noveltyResult.hookSimilarity > 70 || noveltyResult.noveltyScore < 50) {
+              console.warn(`[Trend Engine] Attempt ${generationAttempts} REJECTED.`);
+              
+              const scriptSnippet = shortsPlan.script || (shortsPlan.scenes ? shortsPlan.scenes.map(s => s.narration).join(' ') : '');
+              const title = shortsPlan.titles && shortsPlan.titles.length > 0 ? shortsPlan.titles[0] : (shortsPlan.title || '');
+              const hook = shortsPlan.scenes && shortsPlan.scenes.length > 0 ? shortsPlan.scenes[0].caption : '';
+
+              rejectedAttempts.push({
+                title,
+                hook,
+                script: scriptSnippet,
+                hookSimilarity: noveltyResult.hookSimilarity,
+                noveltyScore: noveltyResult.noveltyScore,
+                advice: noveltyResult.realityCheck?.advice || '시장 유사성 임계값 도달'
+              });
+            } else {
+              console.log(`[Trend Engine] Attempt ${generationAttempts} APPROVED.`);
+              passSimilarityCheck = true;
+            }
+          } else {
+            console.warn(`[Trend Engine] Evaluation failed to return results. Defaulting to approve.`);
+            passSimilarityCheck = true; // Proceed if evaluator fails
+          }
+        } else {
+          passSimilarityCheck = true; // Skip validation check
+        }
+      }
+
+      // If all attempts failed the similarity/novelty threshold, enter manual approval state (do NOT render video)
+      if (trendEngineActive && trendDNA && !passSimilarityCheck) {
+        console.warn(`[Trend Engine] Rejection loop failed after ${maxAttempts} attempts. Holding for manual review.`);
+        
+        // Merge last evaluation details to the plan
+        shortsPlan.productAnalysis = productAnalysis.productAnalysis;
+        shortsPlan.trendAnalysis = noveltyResult;
+        shortsPlan.trendEngineStatus = 'MARKET_REDUNDANCY_WARNING';
+
+        return NextResponse.json({
+          success: true,
+          status: 'manual_approval_pending',
+          reason: 'MARKET_REDUNDANCY_WARNING',
+          message: '유튜브 시장 중복 위험이 존재합니다. 대본의 신규성이 부족하여 수동 승인 보류 상태로 대기합니다.',
+          trendAnalysis: noveltyResult,
+          shortsPlan: shortsPlan,
+          keyword: keyword,
+          voice: voice,
+          bgmType: bgmType,
+          templateStyle: templateStyle,
+          affiliateLink: affiliateLink,
+          pexelsApiKey: pexelsApiKey,
+          pixabayApiKey: pixabayApiKey
+        });
       }
 
       // 11. 장면 수 부족 시 AI가 추가 장면 생성 (Programmatic Fallback Check)
@@ -554,6 +660,10 @@ USP: ${productAnalysis.productAnalysis.usp}
       }
 
       shortsPlan.productAnalysis = productAnalysis.productAnalysis;
+      if (noveltyResult) {
+        shortsPlan.trendAnalysis = noveltyResult;
+      }
+      shortsPlan.trendEngineStatus = trendEngineStatus;
     }
 
     // Append affiliate link to script if provided
@@ -674,7 +784,9 @@ USP: ${productAnalysis.productAnalysis.usp}
                   expectedReaction: shortsPlan.expectedReaction,
                   retentionPoints: shortsPlan.retentionPoints,
                   scenes: shortsPlan.scenes,
-                  productAnalysis: shortsPlan.productAnalysis
+                  productAnalysis: shortsPlan.productAnalysis,
+                  trendAnalysis: shortsPlan.trendAnalysis || noveltyResult,
+                  trendEngineStatus: shortsPlan.trendEngineStatus || trendEngineStatus
                 })
               );
             }
@@ -708,7 +820,9 @@ USP: ${productAnalysis.productAnalysis.usp}
               expectedReaction: shortsPlan.expectedReaction,
               retentionPoints: shortsPlan.retentionPoints,
               scenes: shortsPlan.scenes,
-              productAnalysis: shortsPlan.productAnalysis
+              productAnalysis: shortsPlan.productAnalysis,
+              trendAnalysis: shortsPlan.trendAnalysis || noveltyResult,
+              trendEngineStatus: shortsPlan.trendEngineStatus || trendEngineStatus
             })
           );
         }

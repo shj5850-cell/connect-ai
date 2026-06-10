@@ -10,14 +10,14 @@
       "hook_score": 87,
       "visual_score": 69,
       "subtitle_score": 71,
-      "added_at": "2026-06-08T03:09:59.014Z",
+      "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 14,
-      "avgViews": 114.8,
-      "avgCtr": 9.46,
-      "avgConversionRate": 11.84,
-      "avgRoi": 178.6,
-      "dna_influence_score": 52.7
+      "uses": 17,
+      "avgViews": 500.2,
+      "avgCtr": 6.9,
+      "avgConversionRate": 11.93,
+      "avgRoi": 600.1,
+      "dna_influence_score": 56.8
     },
     {
       "id": "1779519183276",
@@ -29,14 +29,14 @@
       "hook_score": 72,
       "visual_score": 91,
       "subtitle_score": 87,
-      "added_at": "2026-06-08T03:09:59.014Z",
+      "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 14,
-      "avgViews": 114.8,
-      "avgCtr": 9.46,
-      "avgConversionRate": 11.84,
-      "avgRoi": 178.6,
-      "dna_influence_score": 52.7
+      "uses": 17,
+      "avgViews": 500.2,
+      "avgCtr": 6.9,
+      "avgConversionRate": 11.93,
+      "avgRoi": 600.1,
+      "dna_influence_score": 56.8
     },
     {
       "id": "1780037583276",
@@ -48,14 +48,14 @@
       "hook_score": 87,
       "visual_score": 78,
       "subtitle_score": 78,
-      "added_at": "2026-06-08T03:09:59.014Z",
+      "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
-      "uses": 6,
-      "avgViews": 181,
-      "avgCtr": 9.58,
-      "avgConversionRate": 11.54,
-      "avgRoi": 283.4,
-      "dna_influence_score": 53.9
+      "uses": 9,
+      "avgViews": 887,
+      "avgCtr": 6.75,
+      "avgConversionRate": 11.87,
+      "avgRoi": 1044.6,
+      "dna_influence_score": 64
     }
   ]
 }

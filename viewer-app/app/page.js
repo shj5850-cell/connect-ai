@@ -16,6 +16,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import AutoRefresh from './components/AutoRefresh';
 import DynamicIdentity from './components/DynamicIdentity';
+import AgentConsole from './components/AgentConsole';
 
 function getAgentIcon(agentName) {
   switch (agentName.toLowerCase()) {
@@ -82,7 +83,13 @@ export default function Home() {
             에이전트 작업물 및 세션 실시간 대시보드
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <Link href="/youtube/trends" style={{ textDecoration: 'none' }}>
+            <div className="glass-panel card-hover" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', border: '1px solid rgba(239, 68, 68, 0.2)', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', transition: 'all 0.2s' }}>
+              <Video size={18} color="#ef4444" style={{ filter: 'drop-shadow(0 0 5px rgba(239,68,68,0.4))' }} />
+              <span style={{ fontWeight: 600, color: '#fff', fontSize: '0.9rem' }}>유튜브 트렌드 DNA</span>
+            </div>
+          </Link>
           <div className="glass-panel" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={18} color="var(--accent-secondary)" />
             <span style={{ fontWeight: 500 }}>{sessions.length} Sessions</span>
@@ -126,6 +133,8 @@ export default function Home() {
       </section>
 
       <DynamicIdentity />
+
+      <AgentConsole />
 
       {/* 실시간 관제 센터 대시보드 (Live Control Center) */}
       <section style={{ marginBottom: '3rem' }}>
@@ -289,22 +298,29 @@ export default function Home() {
         ) : (
           <div className="grid">
             {sessions.map(session => (
-              <Link href={`/sessions/${session}`} key={session}>
-                <div className="glass-panel card" style={{ cursor: 'pointer', height: '100%' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div className="card-title">{session}</div>
-                    <ChevronRight size={20} color="var(--text-secondary)" />
-                  </div>
-                  <div className="card-desc">
-                    해당 세션에서 생성된 모든 에이전트의 작업물(.md)을 확인합니다.
-                  </div>
-                  <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
-                    <span className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
-                      결과물 보기
-                    </span>
-                  </div>
+              <div key={session} className="glass-panel card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div className="card-title">{session}</div>
                 </div>
-              </Link>
+                <div className="card-desc" style={{ flex: 1, marginBottom: '1rem' }}>
+                  해당 세션에서 생성된 모든 에이전트의 작업물(.md)을 확인합니다.
+                </div>
+                <div style={{ 
+                  marginTop: 'auto', 
+                  paddingTop: '1rem', 
+                  borderTop: '1px solid var(--border-color)',
+                  display: 'flex',
+                  gap: '0.5rem',
+                  flexWrap: 'wrap'
+                }}>
+                  <Link href={`/sessions/${session}`} className="btn" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+                    요약 & 로드맵
+                  </Link>
+                  <Link href={`/sessions/${session}?tab=documents`} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    .md 문서 직접보기
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         )}

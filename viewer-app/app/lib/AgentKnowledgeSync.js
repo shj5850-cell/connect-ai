@@ -556,7 +556,7 @@ function startWatcher() {
   // Watch shared folder
   if (fs.existsSync(SHARED_DIR)) {
     fs.watch(SHARED_DIR, (eventType, filename) => {
-      if (filename && (filename.endsWith('.json') || filename.endsWith('.md'))) {
+      if (filename && filename !== 'agent_intelligence_db.json' && (filename.endsWith('.json') || filename.endsWith('.md'))) {
         console.log(`[AgentSync] Change detected in shared folder: ${filename}. Triggering ingestion.`);
         runIngestion();
       }

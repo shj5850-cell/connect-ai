@@ -615,6 +615,34 @@
       "style_dna": "Luxury",
       "is_experiment": true,
       "is_mock": false
+    },
+    {
+      "video_id": "1780892679094",
+      "title": "M3 맥북으로 AI 수익화 시작하는 법",
+      "product_name": "스페셜티 드립백 커피 테이스터 세트",
+      "quality_score": 73,
+      "hook_score": 80,
+      "visual_score": 75,
+      "subtitle_score": 70,
+      "sound_score": 80,
+      "views": 6897,
+      "ctr": 6.3,
+      "retention": 65,
+      "likes": 3.8,
+      "comments": 45,
+      "subscribers_gained": 13,
+      "production_cost": 1000,
+      "ad_revenue": 10,
+      "affiliate_clicks": 435,
+      "affiliate_conversions": 52,
+      "affiliate_revenue": 78000,
+      "total_revenue": 78010,
+      "net_profit": 77010,
+      "roi": 7701,
+      "money_score": 88.9,
+      "style_dna": "Horror",
+      "is_experiment": true,
+      "is_mock": false
     }
   ]
 }

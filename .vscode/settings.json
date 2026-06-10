@@ -1,3 +1,4 @@
 {
-  "connectAiLab.pythonPath": "C:\\Users\\user\\AppData\\Local\\Python\\bin\\python.exe"
+  "connectAiLab.pythonPath": "C:\\Users\\user\\AppData\\Local\\Python\\bin\\python.exe",
+  "connectAiLab.defaultModel": "qwen2.5-coder:3b"
 }
