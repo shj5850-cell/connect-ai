@@ -1,5 +1,1839 @@
 [
   {
+    "id": "1781165469955",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "에스프레소 머신",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-11T08:13:00.430Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "가정용 에스프레소 머신",
+        "brand": "맹칠컴퍼니",
+        "features": [
+          "고압력 추출 시스템",
+          "정밀 온도 제어",
+          "원터치 조작"
+        ],
+        "benefits": [
+          "카페 수준의 홈카페 구현",
+          "시간과 비용 절감"
+        ],
+        "target_audience": "매일 아메리카노를 마셔야 직성이 풀리는 홈카페 입문자 및 애호가",
+        "usage_context": "출근 전 바쁜 아침이나 여유로운 주말 오후 홈카페에서",
+        "purchase_desire": "매일 카페에 지불하는 비용의 부담을 줄이고 싶은 욕구",
+        "problem_solved": "매번 카페까지 나가야 하는 번거로움과 커피값 지출의 고통",
+        "competitor_differentiation": "복잡한 세팅 없이 버튼 하나로 균일한 맛을 구현하는 직관성"
+      },
+      "title": "카페 커피, 끊어야 하는 이유",
+      "youtube_description": "매일 사 마시는 아메리카노 값, 이제 아껴보세요. 집에서 즐기는 완벽한 한 잔의 비밀을 공개합니다. #홈카페 #에스프레소머신 #커피라이프 #절약꿀팁 #커피스타그램",
+      "ad_score": 30,
+      "hook_candidates": [
+        "매일 사 마시는 커피가 독이 된다고? ☕",
+        "카페 사장님이 절대 안 알려주는 비밀 🤫",
+        "당신의 아메리카노, 낭비일 수 있습니다 💸",
+        "커피값 아껴서 여행 가는 법 ✈️",
+        "진짜 맛있는 커피의 기준이 바뀝니다 ☕"
+      ],
+      "cuts": [
+        {
+          "subtitle": "진짜 맛있는 커피의 기준이 바뀝니다 ☕",
+          "description": "카페에서 비싼 가격의 아메리카노를 결제하며 한숨을 쉬는 사람의 실루엣",
+          "prompt": "Cinematic close-up of a person looking frustrated at a cafe receipt, dimly lit, aesthetic moody atmosphere, vertical 9:16 framing, 8k",
+          "searchKeyword": "frustrated coffee customer",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "커피값, 낭비",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_1.jpg",
+          "vision_score": 40,
+          "vision_feedback": "프롬프트와 완전히 다른 이미지입니다. 카페 영수증을 보는 인물이 아닌, 모니터와 기계 장치를 잡고 있는 손이 묘사되었으며, 손가락의 관절과 형태가 심각하게 왜곡되어 있습니다."
+        },
+        {
+          "subtitle": "매달 나가는 비용, 상상 이상이죠 💸",
+          "description": "지갑 속 영수증이 쌓여가는 것을 보며 답답해하는 모습",
+          "prompt": "Cinematic shot of messy receipts and coins on a wooden table, soft focus background, warm lighting, vertical 9:16 framing, 8k",
+          "searchKeyword": "too many receipts",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "비용 절감, 카페",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_2.jpg",
+          "vision_score": 30,
+          "vision_feedback": "프롬프트의 '영수증과 동전'은 전혀 나타나지 않았습니다. 대신 색소폰을 연주하는 인물이 등장하여 프롬프트 일치도가 매우 낮으며, 악기 구조와 손가락의 묘사가 부자연스럽습니다."
+        },
+        {
+          "subtitle": "이제 집에서 더 완벽하게 즐기세요 ✨",
+          "description": "따뜻한 햇살이 비치는 깔끔한 주방 공간을 몽환적으로 비춤",
+          "prompt": "Cinematic view of a sunlit modern kitchen counter, blurred background, peaceful morning mood, vertical 9:16 framing, 8k",
+          "searchKeyword": "cozy kitchen",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "홈카페, 해결책",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_3.jpg",
+          "vision_score": 50,
+          "vision_feedback": "현대적인 주방 카운터라는 프롬프트와 달리, 산장 같은 목재 인테리어와 정체불명의 식재료가 배치되어 있습니다. 화풍이 다른 컷들과 일관되지 않으며, 창밖 배경의 묘사가 뭉개져 있습니다."
+        },
+        {
+          "subtitle": "맹칠 에스프레소 머신으로 끝내세요 ☕",
+          "description": "고급스러운 에스프레소 머신이 커피를 추출하는 정갈한 클로즈업 샷과 고정댓글 링크 안내",
+          "prompt": "Cinematic macro shot of professional espresso machine extracting rich coffee crema, steam rising, elegant lighting, vertical 9:16 framing, 8k",
+          "searchKeyword": "professional espresso machine",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "에스프레소 머신, 홈카페 완성",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_4.jpg",
+          "vision_score": 60,
+          "vision_feedback": "에스프레소 머신은 묘사되었으나, 프롬프트에 명시된 '커피 추출(crema)'과 '상승하는 증기'가 전혀 보이지 않습니다. 기계의 금속 질감은 표현되었으나 전체적인 구성이 단조롭습니다."
+        }
+      ]
+    },
+    "topic": "에스프레소 머신",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 45,
+        "subtitleAesthetics": 80,
+        "soundDesign": 80
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "타겟 고객의 페인 포인트인 비용 문제를 정확히 짚어내어 상품의 필요성을 효과적으로 연결했습니다.",
+      "fact_score": 90,
+      "fact_feedback": "허위 스펙은 없으나 완벽한 한 잔이라는 표현이 다소 주관적일 수 있어 감점 요인이 있습니다.",
+      "evaluations": {
+        "hookStrength": "카페 비용에 대한 공감대를 형성하여 시청자의 이목을 끄는 데 성공했습니다.",
+        "scriptContent": "문제 제기에서 해결책 제시까지의 흐름이 논리적이며 상품의 핵심 가치를 잘 전달합니다.",
+        "sceneVisuals": "감성적인 연출을 통해 홈카페에 대한 로망을 자극하는 영상미가 돋보입니다.",
+        "subtitleAesthetics": "가독성이 좋고 핵심 메시지를 강조하는 자막 배치가 적절합니다.",
+        "soundDesign": "커피 추출 소리 등 현장감을 살릴 수 있는 오디오 요소의 활용이 기대됩니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 50,
+    "similarity_score": 50,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "반전형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "에스프레소 머신",
+    "target_audience": "홈카페 아메리카노 애호가",
+    "video_style": "Cinematic",
+    "ad_score": 30,
+    "quality_score": 76,
+    "product_relevance_score": 95,
+    "product_fact_score": 90,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": true,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1781165040864",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "소고기",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-11T08:05:16.818Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "식재료(축산물)",
+        "brand": "맹칠 정육점",
+        "features": [
+          "엄격한 마블링 선별",
+          "저온 숙성 공법",
+          "진공 스킨 포장"
+        ],
+        "benefits": [
+          "집에서도 레스토랑급 퀄리티 구현",
+          "요리 실패 확률 제로"
+        ],
+        "target_audience": "미식 경험을 즐기는 2040 남녀 및 요리 입문자",
+        "usage_context": "특별한 날 집에서 스테이크를 굽거나 캠핑장에서 요리할 때",
+        "purchase_desire": "실패 없는 미식 경험에 대한 욕구",
+        "problem_solved": "질기고 맛없는 고기를 구워내는 조리 실패의 고통",
+        "competitor_differentiation": "유통 단계를 최소화한 숙성 기술과 균일한 품질 관리"
+      },
+      "title": "스테이크, 제발 이렇게 굽지 마세요",
+      "youtube_description": "집에서 굽는 스테이크, 항상 질기고 맛이 없으셨나요? 미식가들도 인정한 실패 없는 숙성법을 공개합니다. 자세한 내용은 고정댓글 링크에서 확인하세요! #스테이크굽기 #소고기 #홈쿡 #미식 #스테이크",
+      "ad_score": 35,
+      "hook_candidates": [
+        "당신의 스테이크가 질긴 이유 🥩",
+        "왜 집에서 구우면 이런 맛이 안 날까? 🤔",
+        "절대 함부로 굽지 마세요 🚫",
+        "스테이크, 당신이 몰랐던 진실 🧐",
+        "고기 요리, 아직도 어렵게 하세요? 🔪"
+      ],
+      "cuts": [
+        {
+          "subtitle": "절대 함부로 굽지 마세요 🚫",
+          "description": "후라이팬 위에서 타버리고 질겨진 스테이크 단면을 클로즈업하여 보여줌",
+          "prompt": "Cinematic close-up of a burnt and tough steak on a frying pan, dark moody lighting, high contrast, 8k, vertical 9:16",
+          "searchKeyword": "burnt steak pan",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "질긴 고기",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165040864_r2_cut_1.jpg",
+          "vision_score": 60,
+          "vision_feedback": "프롬프트의 'frying pan'이 묘사되지 않고 그릴망만 노출되었습니다. 고기의 질감은 준수하나 전체적인 구도가 단조롭고 상용 광고로서의 연출력이 부족합니다."
+        },
+        {
+          "subtitle": "비싼 돈 주고 왜 망치기만 할까 😭",
+          "description": "실패한 요리 앞에서 좌절하거나 한숨 쉬는 사람의 실루엣을 감성적인 톤으로 표현",
+          "prompt": "Person looking frustrated at a poorly cooked piece of meat in a dim kitchen, cinematic atmosphere, 8k, vertical 9:16",
+          "searchKeyword": "frustrated home cook",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "요리 실패",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165040864_r2_cut_2.jpg",
+          "vision_score": 40,
+          "vision_feedback": "프롬프트의 'meat'와 'kitchen' 맥락이 전혀 반영되지 않았습니다. 인물의 손가락 왜곡이 심각하며, 노트북과 정체불명의 컬러 차트가 등장하여 프롬프트와 완전히 동떨어진 결과물입니다."
+        },
+        {
+          "subtitle": "이제 아주 간단하게 해결할 방법이 있다면? ✨",
+          "description": "어두운 주방에서 밝은 빛이 들어오며 무언가 해결책이 있음을 암시하는 미스터리한 분위기",
+          "prompt": "A warm light illuminating a kitchen counter, mysterious and promising atmosphere, cinematic lighting, 8k, vertical 9:16",
+          "searchKeyword": "mysterious kitchen light",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "해결책 암시",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165040864_r2_cut_3.jpg",
+          "vision_score": 20,
+          "vision_feedback": "프롬프트의 'kitchen counter'와 'warm light'는 전혀 보이지 않으며, 뜬금없는 한자 '刻'이 렌더링되었습니다. 일관성 및 프롬프트 일치도 측면에서 심각한 오류가 있습니다."
+        },
+        {
+          "subtitle": "실패 없는 맹칠 정육점 소고기! 지금 확인하세요 👇",
+          "description": "최상급 마블링이 살아있는 신선한 소고기 패키지를 세련되게 보여주며 고정댓글 유도",
+          "prompt": "Premium high-quality raw beef steak with beautiful marbling, elegant packaging, cinematic studio lighting, 8k, vertical 9:16",
+          "searchKeyword": "premium raw beef",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "맹칠 정육점",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165040864_r2_cut_4.jpg",
+          "vision_score": 30,
+          "vision_feedback": "프롬프트의 'raw beef steak'와 'packaging'은 누락되었습니다. 대신 노란색 점퍼를 입은 남성이 등장하여 앞선 컷들과의 인물 및 주제 일관성이 완전히 파괴되었습니다."
+        }
+      ]
+    },
+    "topic": "소고기",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 38,
+        "subtitleAesthetics": 85,
+        "soundDesign": 80
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "타겟 고객의 페인 포인트인 조리 실패 문제를 정확히 짚어내어 상품의 가치를 효과적으로 전달했습니다.",
+      "fact_score": 90,
+      "fact_feedback": "허위 스펙은 없으나 요리 실패 확률 제로라는 표현이 다소 과장된 마케팅적 수사로 판단되어 감점했습니다.",
+      "evaluations": {
+        "hookStrength": "부정적인 상황을 먼저 제시하여 시청자의 공감을 유도하고 궁금증을 자아내는 후킹이 우수합니다.",
+        "scriptContent": "문제 제기부터 해결책 제시까지의 흐름이 논리적이며 브랜드의 강점을 자연스럽게 녹여냈습니다.",
+        "sceneVisuals": "실패한 요리와 성공적인 패키지를 대비시키는 연출이 시각적으로 명확한 대비를 제공합니다.",
+        "subtitleAesthetics": "핵심 메시지를 강조하는 자막 배치가 가독성을 높이며 시청자의 시선을 집중시킵니다.",
+        "soundDesign": "미스터리한 분위기에서 밝은 분위기로의 전환을 암시하는 사운드 구성이 필요합니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 51,
+    "similarity_score": 49,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "스토리형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "소고기",
+    "target_audience": "고기 미식가 및 요리 초보자",
+    "video_style": "Cinematic",
+    "ad_score": 35,
+    "quality_score": 76,
+    "product_relevance_score": 95,
+    "product_fact_score": 90,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": true,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1781086621705",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "에스프레소 머신",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-10T10:17:27.158Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "커피 가전",
+        "brand": "맹칠컴퍼니 에스프레소 머신",
+        "features": [
+          "고압력 에스프레소 추출",
+          "정밀 온도 제어 시스템",
+          "스팀 노즐 탑재"
+        ],
+        "benefits": [
+          "집에서 즐기는 카페 퀄리티",
+          "시간과 비용 절감"
+        ],
+        "target_audience": "홈카페를 즐기는 2040 직장인 및 커피 애호가",
+        "usage_context": "출근 전 바쁜 아침 혹은 나른한 오후 휴식 시간",
+        "purchase_desire": "일상의 품격 향상 및 경제적 만족감",
+        "problem_solved": "매일 나가는 카페 커피값 부담과 낮은 품질의 인스턴트 커피 문제",
+        "competitor_differentiation": "콤팩트한 사이즈 대비 강력한 추출 압력과 직관적인 인터페이스"
+      },
+      "title": "집에서 카페 커피 마시는 법",
+      "youtube_description": "매일 사 먹는 아메리카노 값, 이제 아껴보세요. 집에서도 카페처럼 완벽한 한 잔을 즐기는 비밀! #홈카페 #에스프레소머신 #커피라이프 #아메리카노 #커피추천",
+      "ad_score": 30,
+      "hook_candidates": [
+        "매일 나가는 커피값이 아깝다면 ☕",
+        "카페 커피, 집에서 해결하는 법 🏠",
+        "커피 애호가가 꼭 봐야 할 영상 ☕",
+        "이제 카페는 줄 서지 마세요 ⏱️",
+        "내 방안의 작은 카페 만들기 ☕"
+      ],
+      "cuts": [
+        {
+          "subtitle": "카페 커피, 집에서 해결하는 법 🏠",
+          "description": "텅 빈 지갑과 카페 영수증을 쳐다보며 한숨 쉬는 사람의 옆모습을 감각적인 조명으로 연출",
+          "prompt": "Cinematic close-up of a person looking at a pile of receipts with a worried expression, soft ambient lighting, high contrast, vertical 9:16 aspect ratio, 8k",
+          "searchKeyword": "worried person receipts",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "지출, 고민",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086621705_r1_cut_1.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 인물, 영수증, 걱정스러운 표정 등 어떠한 요소도 포함되지 않은 추상적인 그래픽 이미지가 생성되었습니다. 프롬프트 일치도가 전혀 없습니다."
+        },
+        {
+          "subtitle": "맛없는 인스턴트 커피에 지쳤죠? ☕",
+          "description": "흐릿한 인스턴트 커피를 멍하니 바라보는 답답한 분위기",
+          "prompt": "Cinematic shot of a boring cup of instant coffee on a desk, moody atmosphere, soft bokeh, vertical 9:16 aspect ratio, 8k",
+          "searchKeyword": "instant coffee sad",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "불만족, 답답함",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086621705_r1_cut_2.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 책상, 커피잔, 무드 있는 분위기가 전혀 묘사되지 않았습니다. 1번 컷과 동일한 추상적 배경 이미지가 출력되어 객체 정확도가 0점입니다."
+        },
+        {
+          "subtitle": "이제 집에서 바리스타가 될 시간 ✨",
+          "description": "빛이 내리쬐는 주방 위로 완벽한 커피 한 잔이 만들어질 것 같은 기대를 주는 공간 묘사",
+          "prompt": "Cinematic shot of a clean, modern kitchen counter with soft morning sunlight, waiting for a coffee machine, high aesthetic, vertical 9:16 aspect ratio, 8k",
+          "searchKeyword": "modern kitchen sunlight",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "기대감, 변화",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086621705_r1_cut_3.jpg",
+          "vision_score": 0,
+          "vision_feedback": "주방 카운터나 커피 머신에 대한 묘사가 전혀 없습니다. 프롬프트와 완전히 동떨어진 결과물이며, 이전 컷들과 시각적으로 동일하여 일관성 평가가 무의미합니다."
+        },
+        {
+          "subtitle": "에스프레소 머신으로 끝내세요! ☕",
+          "description": "고급스러운 디자인의 에스프레소 머신이 완벽하게 에스프레소를 추출하는 미학적인 모습",
+          "prompt": "Cinematic shot of a premium espresso machine extracting coffee, golden brown crema, professional lighting, elegant kitchen background, vertical 9:16 aspect ratio, 8k",
+          "searchKeyword": "espresso machine extraction",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "에스프레소머신, 해결책",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086621705_r1_cut_4.jpg",
+          "vision_score": 0,
+          "vision_feedback": "에스프레소 머신이나 커피 추출 과정이 전혀 나타나지 않았습니다. 상용 광고 수준의 완성도는커녕 프롬프트 수행 자체가 이루어지지 않은 심각한 오류입니다."
+        }
+      ]
+    },
+    "topic": "에스프레소 머신",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 70,
+        "subtitleAesthetics": 80,
+        "soundDesign": 75
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "타겟 고객의 페인 포인트와 상품의 핵심 가치가 매우 조화롭게 연결되어 있습니다.",
+      "fact_score": 90,
+      "fact_feedback": "허위 스펙은 없으나 바리스타가 된다는 표현이 다소 과장된 측면이 있어 감점했습니다.",
+      "evaluations": {
+        "hookStrength": "지갑과 영수증을 활용한 시각적 후킹이 타겟층의 공감을 효과적으로 이끌어냅니다.",
+        "scriptContent": "문제 제기에서 해결책 제시까지의 흐름이 논리적이며 상품의 장점을 잘 녹여냈습니다.",
+        "sceneVisuals": "감각적인 조명과 미학적인 추출 장면 연출이 브랜드 이미지 제고에 효과적입니다.",
+        "subtitleAesthetics": "핵심 키워드를 강조하는 이모지 활용이 좋으나 가독성을 높일 추가적인 디자인 요소가 필요합니다.",
+        "soundDesign": "커피 추출 소리나 카페 분위기를 연상시키는 ASMR 요소가 추가되면 몰입감이 극대화될 것입니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 52,
+    "similarity_score": 48,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "스토리형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [
+      {
+        "id": "1780210383276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1779951183276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779605583276",
+        "title": "전자책 관련 수익화 영상 기획"
+      }
+    ],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "에스프레소 머신",
+    "target_audience": "홈카페 아메리카노 애호가",
+    "video_style": "Cinematic",
+    "ad_score": 30,
+    "quality_score": 80,
+    "product_relevance_score": 95,
+    "product_fact_score": 90,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": true,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1781086596971",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "전동드릴",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-10T10:16:59.024Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "전동공구",
+        "brand": "맹칠컴퍼니",
+        "features": [
+          "무선 충전 방식",
+          "다양한 비트 교체",
+          "강력한 회전 토크"
+        ],
+        "benefits": [
+          "손목 피로 없는 작업",
+          "빠르고 정교한 조립"
+        ],
+        "target_audience": "가구 조립과 인테리어에 관심이 많은 2030 DIY 입문자",
+        "usage_context": "인터넷으로 주문한 가구를 직접 조립하거나 벽면에 액자를 설치하는 순간",
+        "purchase_desire": "전문가처럼 쉽고 깔끔하게 내 공간을 꾸미고 싶은 욕구",
+        "problem_solved": "수동 드라이버 사용 시 발생하는 손목 통증과 조립 과정의 극심한 스트레스",
+        "competitor_differentiation": "입문자도 즉시 사용 가능한 직관적인 인터페이스와 가벼운 무게감"
+      },
+      "title": "가구 조립, 아직도 손으로 하세요?",
+      "youtube_description": "드디어 찾았다! 가구 조립의 신세계, 이제 힘들이지 말고 완벽하게 꾸며보세요. #DIY #인테리어 #전동드릴 #홈스타일링 #꿀템",
+      "ad_score": 30,
+      "hook_candidates": [
+        "가구 조립하다 손목 나갈 뻔한 99%의 이유 ⚠️",
+        "아직도 수동 드라이버 쓰시나요? 🛠️",
+        "집 꾸미기 입문자가 겪는 의외의 복병 🏠",
+        "조립 가구 10분 만에 끝내는 비밀 ⏱️",
+        "내 손목을 지키는 가장 쉬운 방법 ✨"
+      ],
+      "cuts": [
+        {
+          "subtitle": "가구 조립하다 손목 나갈 뻔한 99%의 이유 ⚠️",
+          "description": "어두운 방 안에서 수동 드라이버를 꽉 쥐고 땀 흘리며 나사를 돌리려 애쓰는 사람의 클로즈업 샷",
+          "prompt": "Cinematic close up of a person struggling to screw a bolt manually into a wooden board, dimly lit room, aesthetic, high quality, 8k, vertical 9:16",
+          "searchKeyword": "manual screwdriver struggle",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "손목 통증",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086596971_r0_cut_1.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 인물, 도구, 목재 보드 등 어떠한 요소도 묘사되지 않았으며, 추상적인 배경 이미지로 대체되어 프롬프트 일치도가 전혀 없습니다."
+        },
+        {
+          "subtitle": "끝나지 않는 조립에 답답함만 가득 😩",
+          "description": "조립 설명서를 멍하니 바라보며 지쳐서 바닥에 주저앉은 모습, 주변에 널브러진 나사와 가구 부품들",
+          "prompt": "Cinematic shot of a frustrated person sitting on the floor surrounded by furniture parts and instructions, tired expression, cinematic lighting, aesthetic, 8k, vertical 9:16",
+          "searchKeyword": "frustrated DIY person",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "가구 조립",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086596971_r0_cut_2.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 요구된 인물, 가구 부품, 설명서 등 구체적인 객체가 전혀 나타나지 않았으며, 1번 컷과 동일한 추상적 배경이 출력되어 내용이 완전히 누락되었습니다."
+        },
+        {
+          "subtitle": "이제 힘들이지 않고 해결할 방법이 있다면? ✨",
+          "description": "어두운 화면 속에서 은은한 조명을 받으며 해결의 실마리가 보이는 듯한 따뜻한 분위기의 몽환적 배경",
+          "prompt": "Cinematic soft lighting transition, blurred background with a hint of a solution, elegant atmosphere, aesthetic, 8k, vertical 9:16",
+          "searchKeyword": "light solution",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "해결 실마리",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086596971_r0_cut_3.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트의 의도인 '해결의 힌트'나 '우아한 분위기'를 유추할 수 있는 구체적인 사물이 없으며, 앞선 컷들과 동일한 추상적 그래픽으로 일관성만 유지될 뿐 내용 전달력이 없습니다."
+        },
+        {
+          "subtitle": "맹칠 전동드릴로 10분 만에 끝내세요 🚀",
+          "description": "깔끔하게 디자인된 전동드릴이 조명 아래 고급스럽게 노출되며, 나사가 순식간에 조여지는 장면",
+          "prompt": "Cinematic product reveal of a sleek modern electric drill, professional studio lighting, high end aesthetic, 8k, vertical 9:16",
+          "searchKeyword": "electric drill reveal",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "전동드릴",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086596971_r0_cut_4.jpg",
+          "vision_score": 0,
+          "vision_feedback": "전동 드릴이라는 제품이 전혀 묘사되지 않았습니다. 상용 광고로서의 제품 공개 기능이 완전히 결여된 추상적 배경 이미지입니다."
+        }
+      ]
+    },
+    "topic": "전동드릴",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 70,
+        "subtitleAesthetics": 80,
+        "soundDesign": 80
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "타겟 고객의 페인 포인트와 사용 상황을 정확히 관통하여 상품 적합성이 매우 높습니다.",
+      "fact_score": 90,
+      "fact_feedback": "허위 스펙은 없으나 10분 조립이라는 표현이 숙련도에 따라 과장으로 보일 수 있어 일부 감점했습니다.",
+      "evaluations": {
+        "hookStrength": "손목 통증이라는 공감대를 자극하여 시청자의 이탈을 효과적으로 방지했습니다.",
+        "scriptContent": "문제 제기부터 해결책 제시까지의 흐름이 논리적이며 타겟층의 구매 욕구를 잘 자극합니다.",
+        "sceneVisuals": "수동 작업의 고통과 전동드릴의 편리함을 대비시킨 연출이 시각적으로 명확합니다.",
+        "subtitleAesthetics": "핵심 메시지를 강조하는 자막 배치가 가독성을 높여줍니다.",
+        "soundDesign": "긴박한 상황과 해결의 순간을 구분하는 사운드 연출이 필요해 보입니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 51,
+    "similarity_score": 49,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "숫자형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "전동드릴",
+    "target_audience": "DIY 홈 인테리어 입문자",
+    "video_style": "Cinematic",
+    "ad_score": 30,
+    "quality_score": 81,
+    "product_relevance_score": 95,
+    "product_fact_score": 90,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": true,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1781086572238",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "강아지 사료",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-10T10:16:33.859Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "반려견 사료",
+        "brand": "맹칠 프리미엄",
+        "features": [
+          "고단백 영양 설계",
+          "소화 흡수율 최적화",
+          "기호성 극대화 원료"
+        ],
+        "benefits": [
+          "반려견의 활력 증진",
+          "건강한 배변 활동 및 소화 개선"
+        ],
+        "target_audience": "반려견의 건강한 식단과 활력을 고민하는 3040 펫 부모",
+        "usage_context": "매일 아침 반려견의 사료를 챙겨줄 때",
+        "purchase_desire": "내 아이에게 가장 좋은 것만 주고 싶은 부모의 마음",
+        "problem_solved": "편식하는 반려견과 소화 불량으로 인한 고민",
+        "competitor_differentiation": "인공 첨가물을 배제하고 자연 유래 성분으로만 구성된 프리미엄 레시피"
+      },
+      "title": "강아지 입맛 고민 해결법",
+      "youtube_description": "우리 강아지가 밥을 안 먹어서 고민이라면? 고민 해결의 실마리를 확인해보세요! #반려견사료 #강아지식단 #펫케어 #강아지건강",
+      "ad_score": 30,
+      "hook_candidates": [
+        "매일 밥그릇과 전쟁 중인가요? 🐕",
+        "반려견 사료 유목민이라면 필독! 🔍",
+        "강아지 입맛 100% 잡는 비법 🦴",
+        "우리 아이 건강 식단이 궁금하다면? 🐶",
+        "사료 고민 이제 끝내고 싶다면? 💡"
+      ],
+      "cuts": [
+        {
+          "subtitle": "반려견 사료 유목민이라면 필독! 🔍",
+          "description": "한숨을 쉬며 밥그릇을 외면하는 반려견과 걱정스러운 표정의 주인이 거실에 앉아 있는 모습",
+          "prompt": "Cinematic shot, a worried owner sitting in a dimly lit living room, a dog turning its head away from a food bowl, emotional atmosphere, 8k, highly aesthetic, vertical 9:16",
+          "searchKeyword": "dog refusing food",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "반려견 식사 고민",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086572238_r0_cut_1.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 '주인공', '강아지', '거실' 등 어떠한 시각적 요소도 포함되지 않은 추상적인 배경 이미지가 생성되었습니다. 프롬프트 일치도가 전혀 없습니다."
+        },
+        {
+          "subtitle": "사라진 반려견의 활력 😥",
+          "description": "반려견의 무기력한 뒷모습을 바라보며 깊은 고민에 빠진 주인의 클로즈업 샷",
+          "prompt": "Close-up of a person looking sad and concerned, soft cinematic lighting, warm tones, emotional connection, 8k, vertical 9:16",
+          "searchKeyword": "concerned pet parent",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "반려견 활력 저하",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086572238_r0_cut_2.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 요구된 '사람'과 '감정적 연결'이 전혀 묘사되지 않았습니다. 1번 컷과 동일한 추상적 그래픽이 출력되어 일관성 및 프롬프트 준수 실패입니다."
+        },
+        {
+          "subtitle": "이제 고민을 멈출 시간 💡",
+          "description": "어두운 방 안에서 따스한 한 줄기 빛이 내리쬐며 해결책을 암시하는 분위기",
+          "prompt": "Cinematic lighting, a ray of light shining into a room, mysterious and hopeful atmosphere, high quality, 8k, vertical 9:16",
+          "searchKeyword": "light beam hope",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "해결의 실마리",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086572238_r0_cut_3.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트의 '방'이나 '빛의 줄기'와 같은 구체적인 묘사가 결여되었습니다. 이전 컷들과 동일한 이미지가 반복되어 영상 구성으로서의 가치가 없습니다."
+        },
+        {
+          "subtitle": "맹칠 프리미엄 사료 공개! 🎁",
+          "description": "고급스러운 패키지의 맹칠 프리미엄 사료가 조명 아래 놓여 있는 모습, 하단에 고정댓글 링크 문구",
+          "prompt": "Professional product photography, premium dog food bag, stylish background, soft cinematic bokeh, 8k, vertical 9:16",
+          "searchKeyword": "premium dog food",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "맹칠 프리미엄 사료",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086572238_r0_cut_4.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트의 핵심인 '반려견 사료 제품'이 전혀 보이지 않습니다. 상용 광고로서의 기능을 전혀 수행하지 못하며, 모든 컷이 동일한 추상화로 생성된 심각한 오류가 있습니다."
+        }
+      ]
+    },
+    "topic": "강아지 사료",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 70,
+        "subtitleAesthetics": 80,
+        "soundDesign": 85
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "반려견 사료 유목민이라는 타겟 페르소나를 정확히 공략하였으며, 상품의 핵심 가치인 기호성과 활력 증진을 자연스럽게 연결했습니다.",
+      "fact_score": 90,
+      "fact_feedback": "제시된 기능적 스펙 내에서 내용을 구성하였으나, 극적인 연출을 위해 과장된 분위기 묘사가 포함되어 소폭 감점하였습니다.",
+      "evaluations": {
+        "hookStrength": "반려견 사료 유목민이라는 키워드를 사용하여 타겟층의 즉각적인 공감을 유도하는 후킹이 우수합니다.",
+        "scriptContent": "문제 제기부터 해결책 제시까지의 흐름이 논리적이며, 맹칠 프리미엄의 브랜드 가치를 효과적으로 전달합니다.",
+        "sceneVisuals": "고급스러운 패키지 연출과 감성적인 분위기 전환이 브랜드 이미지와 잘 어우러집니다.",
+        "subtitleAesthetics": "가독성이 좋은 자막 배치를 통해 시청자의 시선을 집중시키기에 적합합니다.",
+        "soundDesign": "영상 분위기에 맞는 차분하고 신뢰감 있는 사운드 연출이 기대되는 구성입니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 64,
+    "similarity_score": 36,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "숫자형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "강아지 사료",
+    "target_audience": "반려견을 키우는 펫 부모",
+    "video_style": "Cinematic",
+    "ad_score": 30,
+    "quality_score": 82,
+    "product_relevance_score": 95,
+    "product_fact_score": 90,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": false,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": false,
+          "message": "상품명/브랜드 노출 감지됨 (반려견 사료 유목민이라면 필독! 🔍)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1781086545970",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "칫솔",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-10T10:16:08.705Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "구강관리용품",
+        "brand": "맹칠덴탈",
+        "features": [
+          "미세모 설계",
+          "인체공학적 핸들",
+          "위생적인 항균 소재"
+        ],
+        "benefits": [
+          "잇몸 자극 없는 개운함",
+          "완벽한 치태 제거"
+        ],
+        "target_audience": "잇몸 건강에 예민하고 정교한 양치를 선호하는 3040 성인",
+        "usage_context": "매일 아침 출근 전과 저녁 퇴근 후 꼼꼼하게 양치하는 시간",
+        "purchase_desire": "건강한 잇몸 유지 및 치과 비용 절감",
+        "problem_solved": "양치 후에도 남은 찝찝함과 잇몸 통증",
+        "competitor_differentiation": "잇몸 자극은 최소화하고 세정력은 극대화한 독자적인 미세모 기술"
+      },
+      "title": "당신이 양치하는 방식이 틀렸습니다",
+      "youtube_description": "매일 닦아도 찝찝하다면? 치과 가기 전 꼭 확인해야 할 칫솔 선택의 비밀. 지금 바로 영상에서 확인하세요! #구강건강 #올바른양치 #칫솔추천",
+      "ad_score": 35,
+      "hook_candidates": [
+        "사실 당신의 잇몸은 비명을 지르고 있습니다 🦷",
+        "양치질만 잘해도 치과 비용이 0원입니다 💰",
+        "30년간 몰랐던 칫솔의 충격적인 진실 😱",
+        "매일 닦는데 왜 입안이 텁텁할까요? 🧐",
+        "입속 세균을 방치하는 치명적인 습관 🛑"
+      ],
+      "cuts": [
+        {
+          "subtitle": "양치질만 잘해도 치과 비용이 0원입니다 💰",
+          "description": "어두운 욕실 거울 앞에서 피곤한 표정으로 입안을 살피는 성인의 클로즈업 샷",
+          "prompt": "Cinematic close-up of a tired adult looking into a dark bathroom mirror, dimly lit, moody atmosphere, high contrast, 8k resolution, vertical 9:16",
+          "searchKeyword": "tired person bathroom",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "잇몸, 고통",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086545970_r0_cut_1.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 'tired adult', 'bathroom mirror', 'moody atmosphere' 등 어떠한 요소도 포함되지 않았으며, 추상적인 그래픽 배경만 출력되어 프롬프트 일치도가 전혀 없습니다."
+        },
+        {
+          "subtitle": "매일 닦아도 느껴지는 이 찝찝함은 뭐죠? 😩",
+          "description": "양치를 마쳤지만 여전히 불만족스러운 표정으로 입가를 닦는 사람의 모습",
+          "prompt": "Cinematic shot of a person feeling unsatisfied after brushing, dramatic lighting, professional cinematography, 8k, vertical 9:16",
+          "searchKeyword": "unsatisfied brushing",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "불만족, 찝찝함",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086545970_r0_cut_2.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 'person', 'brushing' 등의 핵심 객체가 누락되었습니다. 상용 광고로서의 서사적 연결성이 완전히 결여되어 있습니다."
+        },
+        {
+          "subtitle": "이제, 당신의 구강 건강을 바꿀 열쇠가 보입니다 🔑",
+          "description": "빛이 새어 들어오는 욕실 선반 위로 몽환적인 조명이 비치는 감각적인 연출",
+          "prompt": "Cinematic light beam hitting a shelf in a clean modern bathroom, soft bokeh, mysterious and elegant atmosphere, 8k, vertical 9:16",
+          "searchKeyword": "mysterious bathroom light",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "해결, 변화",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086545970_r0_cut_3.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 'shelf', 'bathroom' 등의 공간적 배경이 전혀 묘사되지 않았습니다. 요청한 시각적 정보와 일치하지 않는 추상적 이미지입니다."
+        },
+        {
+          "subtitle": "완벽한 개운함, 맹칠 칫솔을 확인하세요 🪥",
+          "description": "고급스러운 질감의 맹칠 칫솔이 조명 아래 드러나며 제품의 디테일이 강조되는 샷",
+          "prompt": "Cinematic product reveal of a sleek premium toothbrush, dramatic studio lighting, macro shot, blurred background, 8k, vertical 9:16",
+          "searchKeyword": "premium toothbrush product",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "맹칠칫솔, 개운함",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086545970_r0_cut_4.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 'premium toothbrush' 제품이 전혀 보이지 않습니다. 제품 광고 영상으로서의 목적을 전혀 달성하지 못한 이미지입니다."
+        }
+      ]
+    },
+    "topic": "칫솔",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 70,
+        "subtitleAesthetics": 80,
+        "soundDesign": 80
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "타겟층인 3040 성인의 고민과 사용 맥락을 정확히 관통하여 상품 적합성이 매우 높습니다.",
+      "fact_score": 85,
+      "fact_feedback": "치과 비용 0원이라는 표현은 의학적 오해를 불러일으킬 수 있는 과장된 마케팅 문구로 판단되어 감점하였습니다.",
+      "evaluations": {
+        "hookStrength": "양치질과 치과 비용을 연결하여 시청자의 즉각적인 공포와 관심을 유도하는 후킹이 효과적입니다.",
+        "scriptContent": "문제 제기부터 해결책 제시까지의 흐름이 논리적이며 맹칠 칫솔의 필요성을 잘 강조했습니다.",
+        "sceneVisuals": "어두운 욕실에서 밝은 제품으로 전환되는 시각적 대비가 제품의 가치를 돋보이게 합니다.",
+        "subtitleAesthetics": "핵심 키워드에 이모지를 활용하여 가독성을 높였으나 폰트의 강조 효과에 대한 구체적 지침이 보완되면 좋겠습니다.",
+        "soundDesign": "몽환적인 조명 연출에 맞는 차분하고 고급스러운 배경음악 선정이 필요합니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 50,
+    "similarity_score": 50,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "반전형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "칫솔",
+    "target_audience": "구강 건강에 민감한 성인",
+    "video_style": "Cinematic",
+    "ad_score": 35,
+    "quality_score": 81,
+    "product_relevance_score": 95,
+    "product_fact_score": 85,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": true,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "1781086492447",
+    "videoUrl": "/shorts/dry_run_mock.mp4",
+    "videoPath": "",
+    "youtubeVideoId": "DRY_RUN",
+    "isMockUpload": true,
+    "uploadMessage": "Dry run completed successfully.",
+    "productTitle": "소고기",
+    "affiliateLink": "{COUPANG_LINK}",
+    "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
+    "created_at": "2026-06-10T10:15:42.933Z",
+    "scriptData": {
+      "product_analysis": {
+        "category": "신선식품/축산물",
+        "brand": "맹칠 정육점",
+        "features": [
+          "엄격한 등급 선별",
+          "전문가 맞춤형 커팅",
+          "진공 스킨 포장"
+        ],
+        "benefits": [
+          "실패 없는 완벽한 요리 결과",
+          "미식가 수준의 풍미 경험"
+        ],
+        "target_audience": "집에서 고급 레스토랑 수준의 요리를 즐기고 싶은 2040 미식가 및 요리 입문자",
+        "usage_context": "특별한 기념일 디너 혹은 주말 저녁 지친 하루를 보상하는 홈파티",
+        "purchase_desire": "실패 없는 요리 성공에 대한 갈망 및 미식 경험 향상",
+        "problem_solved": "마트에서 산 고기가 질기거나 잡내가 나는 요리 실패의 공포",
+        "competitor_differentiation": "유통 단계를 최소화한 초신선 배송과 요리 초보자도 최상의 맛을 내는 부위별 맞춤 제안"
+      },
+      "title": "집에서 스테이크 실패하는 이유",
+      "youtube_description": "왜 내가 구우면 질길까? 그 비밀은 고기에 있었습니다. 완벽한 한 끼의 시작, 지금 바로 고정댓글에서 확인하세요! #소고기 #홈파티 #스테이크맛집 #요리꿀팁 #미식가",
+      "ad_score": 35,
+      "hook_candidates": [
+        "당신이 고기를 구울 때마다 실패하는 결정적 이유 🥩",
+        "레스토랑 고기 맛의 비밀, 생각보다 가까이에 있습니다 🍷",
+        "질긴 고기 때문에 오늘도 요리를 망치셨나요? 🧐",
+        "진짜 미식가들은 마트에서 절대 고기를 사지 않습니다 🔍",
+        "완벽한 스테이크를 만드는 유일한 방법은 따로 있습니다 ✨"
+      ],
+      "cuts": [
+        {
+          "subtitle": "질긴 고기 때문에 오늘도 요리를 망치셨나요? 🧐",
+          "description": "어두운 주방에서 질긴 고기를 썰다가 한숨을 쉬며 인상을 찌푸리는 요리 초보자의 클로즈업 샷",
+          "prompt": "Cinematic close-up of a person struggling to cut a tough piece of meat in a dimly lit kitchen, frustrated expression, dramatic shadow, hyper-realistic, 8k, vertical 9:16 framing",
+          "searchKeyword": "frustrated cooking",
+          "cameraMovement": "zoom in",
+          "duration": 1,
+          "keywords": "실패, 고민",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086492447_r3_cut_1.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 인물, 주방, 고기 등 어떠한 요소도 포함되지 않은 추상적인 배경 이미지가 생성되었습니다. 프롬프트 일치도가 완전히 결여되었습니다."
+        },
+        {
+          "subtitle": "매번 질기고 퍽퍽해서 먹기 힘들었죠? 😔",
+          "description": "완성된 요리가 기대에 미치지 못해 실망스러운 표정으로 포크를 내려놓는 모습",
+          "prompt": "Cinematic shot of a person looking disappointed at a poorly cooked meal on a dinner plate, soft warm lighting, interior home setting, high quality, 8k, vertical 9:16 framing",
+          "searchKeyword": "disappointed dining",
+          "cameraMovement": "panning",
+          "duration": 2,
+          "keywords": "실망, 공감",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086492447_r3_cut_2.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트에 명시된 인물, 식사, 접시 등 구체적인 객체가 전혀 묘사되지 않았습니다. 1번 컷과 동일한 추상적 배경으로, 프롬프트와 무관합니다."
+        },
+        {
+          "subtitle": "사실, 아주 간단한 차이만 알면 됩니다 💡",
+          "description": "어두운 공간에서 따뜻한 한 줄기 빛이 테이블 위로 떨어지며 무언가 해결책이 있음을 암시하는 미스터리한 분위기",
+          "prompt": "Cinematic low key lighting, a single beam of light hitting an empty wooden table, mysterious and elegant atmosphere, professional photography, 8k, vertical 9:16 framing",
+          "searchKeyword": "mysterious light",
+          "cameraMovement": "zoom out",
+          "duration": 2,
+          "keywords": "해결, 암시",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086492447_r3_cut_3.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트의 '나무 테이블'이나 '조명'에 대한 묘사가 전혀 없습니다. 일관성 없는 추상적 그래픽으로, 상용 광고 수준의 완성도에 미치지 못합니다."
+        },
+        {
+          "subtitle": "최상급 맹칠 소고기로 완벽한 한 끼를 완성하세요 🍖",
+          "description": "고품질의 마블링이 살아있는 소고기가 아름답게 플레이팅 된 모습이 화려한 조명 아래 공개됨",
+          "prompt": "Cinematic extreme close-up of perfectly marbled raw beef steak, professional food photography, luxurious setting, vibrant colors, bokeh background, 8k, vertical 9:16 framing",
+          "searchKeyword": "premium steak",
+          "cameraMovement": "zoom in",
+          "duration": 3,
+          "keywords": "맹칠소고기, 미식",
+          "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781086492447_r3_cut_4.jpg",
+          "vision_score": 0,
+          "vision_feedback": "프롬프트의 '스테이크'나 '음식 사진'의 요소가 전혀 없습니다. 4개의 컷 모두 동일한 추상적 배경으로 생성되어 영상으로서의 서사적 연결성이 전혀 없습니다."
+        }
+      ]
+    },
+    "topic": "소고기",
+    "category": "상품 홍보",
+    "preUploadAnalysis": {
+      "scores": {
+        "hookStrength": 85,
+        "scriptContent": 90,
+        "sceneVisuals": 70,
+        "subtitleAesthetics": 80,
+        "soundDesign": 80
+      },
+      "relevance_score": 95,
+      "relevance_feedback": "타겟 고객의 페인 포인트인 요리 실패 경험을 정확히 공략하여 상품의 필요성을 효과적으로 전달했습니다.",
+      "fact_score": 90,
+      "fact_feedback": "허위 스펙은 없으나, 고기 품질만으로 모든 요리 실패를 해결할 수 있다는 뉘앙스가 다소 과장되어 감점했습니다.",
+      "evaluations": {
+        "hookStrength": "질문형 후크를 사용하여 타겟 고객의 공감을 즉각적으로 이끌어내는 구성이 우수합니다.",
+        "scriptContent": "문제 제기에서 해결책 제시로 이어지는 흐름이 자연스럽고 브랜드 메시지가 명확합니다.",
+        "sceneVisuals": "어두운 분위기에서 밝은 분위기로의 전환을 통해 상품의 가치를 시각적으로 잘 대비시켰습니다.",
+        "subtitleAesthetics": "가독성이 좋은 자막 배치가 예상되나, 강조를 위한 폰트나 색상 변화에 대한 구체적인 가이드가 추가되면 더 좋습니다.",
+        "soundDesign": "미스터리한 분위기에서 화려한 분위기로의 사운드 전환이 시청자의 몰입감을 높일 것으로 기대됩니다."
+      },
+      "details": {
+        "category_match": true,
+        "context_match": true,
+        "description_match": true,
+        "has_false_specs": false,
+        "has_exaggerated_claims": true,
+        "has_non_existent_features": false
+      },
+      "similarityPenaltyApplied": false
+    },
+    "postUploadAnalysis": null,
+    "views": 0,
+    "likeRate": 0,
+    "commentCount": 0,
+    "avgRetention": 0,
+    "successFactors": "",
+    "failureFactors": "",
+    "selfImprovementApplied": true,
+    "diversity_score": 68,
+    "similarity_score": 32,
+    "style_dna": "Product Reveal",
+    "used_style": "Cinematic",
+    "hook_type": "반전형",
+    "shot_pattern": "A형 (빌드업)",
+    "is_experiment": false,
+    "custom_font": "Pretendard-Bold",
+    "custom_caption_style": "minimal",
+    "custom_caption_position": "bottom",
+    "used_success_dna": [
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779519183276",
+        "title": "커피 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780037583276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      }
+    ],
+    "used_failure_dna": [
+      {
+        "id": "1780210383276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1779951183276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779605583276",
+        "title": "전자책 관련 수익화 영상 기획"
+      }
+    ],
+    "used_revenue_dna": [
+      {
+        "id": "1779346383276",
+        "title": "반려견 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779259983276",
+        "title": "청소업 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779173583276",
+        "title": "투자 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779087183276",
+        "title": "자기계발 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1779000783276",
+        "title": "미스터리 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778914383276",
+        "title": "백룸 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1778827983276",
+        "title": "생활꿀팁 관련 수익화 영상 기획"
+      },
+      {
+        "id": "1780821586255",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780885410358",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      },
+      {
+        "id": "1780892679094",
+        "title": "M3 맥북으로 AI 수익화 시작하는 법"
+      }
+    ],
+    "used_agent_lessons": [
+      {
+        "agent": "Vision Critic",
+        "lesson": "실패 원인 식별: \"전자책 관련 수익화 영상 기획\" - 설명 위주 전개로 인한 도입부 이탈 우려"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "hook_specialist",
+        "lesson": "hook_specialist 작업 시 개인정보 및 API 키 노출 주의 필요"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 관련 성공 요인 분석 결과 획득"
+      },
+      {
+        "agent": "vision_critic",
+        "lesson": "vision_critic 작업 시 개인정보 및 API 키 노출 주의 필요"
+      }
+    ],
+    "is_mock": false,
+    "source": "autopilot",
+    "product_name": "소고기",
+    "target_audience": "고기 미식가 및 요리 초보자",
+    "video_style": "Cinematic",
+    "ad_score": 35,
+    "quality_score": 81,
+    "product_relevance_score": 95,
+    "product_fact_score": 90,
+    "upload_mode": "product-driven",
+    "pinned_comment_status": "pending",
+    "compliance": {
+      "passed": true,
+      "cutChecks": [
+        {
+          "cutIndex": 1,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 2,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 3,
+          "passed": true,
+          "message": "상품명 노출 없음 (통과)"
+        },
+        {
+          "cutIndex": 4,
+          "passed": true,
+          "message": "상품명 공개 확인 (통과)"
+        }
+      ]
+    }
+  },
+  {
     "id": "1781083528649",
     "videoUrl": "/shorts/cinema_shorts_auto_1781083528649.mp4",
     "videoPath": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_shorts_auto_1781083528649.mp4",

@@ -24,7 +24,7 @@ function updateStatus(step, message, progress, details = {}) {
     fs.writeFileSync(
       STATUS_PATH,
       JSON.stringify({
-        status: progress === 100 ? 'completed' : 'running',
+        status: step === 'error' ? 'error' : (progress === 100 ? 'completed' : 'running'),
         step,
         message,
         progress,
@@ -265,6 +265,8 @@ async function runAutopilotProcess(forcedParams = {}) {
       }
     }
 
+    const apiKey = process.env.GEMINI_API_KEY;
+
     console.log(`[Autopilot] Target product: ${productTitle}`);
     updateStatus('product_matching', '1단계: 유튜브 시장 조사 및 트렌드 DNA 추출 중...', 15);
 
@@ -335,7 +337,6 @@ async function runAutopilotProcess(forcedParams = {}) {
     }
 
     let revenueDnaList = [];
-    const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
     if (fs.existsSync(revenueDnaDbPath)) {
       try {
         const db = JSON.parse(fs.readFileSync(revenueDnaDbPath, 'utf-8'));
@@ -953,7 +954,7 @@ async function fetchGeminiWithRetry(url, options, maxRetries = 3) {
   const backoffs = [5000, 15000, 45000];
   while (attempt < maxRetries) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
     try {
       const response = await fetch(url, { ...options, signal: controller.signal });
       clearTimeout(timeoutId);
@@ -1089,7 +1090,7 @@ ${trendGuide}
 `;
 
   const response = await fetchGeminiWithRetry(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1180,7 +1181,7 @@ ${scriptData.cuts.map((c, idx) => `- Cut ${idx + 1}: "${c.prompt}"`).join('\n')}
 
   try {
     const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1273,7 +1274,7 @@ ${scriptData.cuts.map((c, idx) => `- 컷 ${idx + 1}: 자막: "${c.subtitle}", �
 `;
 
   const response = await fetchGeminiWithRetry(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1846,7 +1847,7 @@ async function runProductUnderstandingAgent(apiKey, productName, targetAudience 
 
   try {
     const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1930,7 +1931,7 @@ ${JSON.stringify(productInfo, null, 2)}
 
   try {
     const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2158,7 +2159,7 @@ ${candidates.map((c, i) => `후보 ${i + 1}:
 
   try {
     const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2256,7 +2257,7 @@ ${JSON.stringify(productInfo, null, 2)}
 
   try {
     const response = await fetchGeminiWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

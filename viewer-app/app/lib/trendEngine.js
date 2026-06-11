@@ -19,7 +19,7 @@ async function callGemini(systemPrompt, userPrompt, retryCount = 1) {
   const enhancedUserPrompt = `${userPrompt}\n\n[Request Salt: ${salt}]`;
   const enhancedSystemPrompt = `${systemPrompt}\n\n[Instruction: Every request is independent. Ignore all previous inputs. Request Salt: ${salt}]`;
 
-  let geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  let geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
   let requestBody = {
     contents: [{ parts: [{ text: `${enhancedSystemPrompt}\n\n${enhancedUserPrompt}` }] }],
     generationConfig: {
