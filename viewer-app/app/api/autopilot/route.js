@@ -38,24 +38,7 @@ function updateStatus(step, message, progress, details = {}) {
   }
 }
 
-function cleanJson(str) {
-  if (!str) return '{}';
-  
-  // Extract block between first { and last } or first [ and last ]
-  const firstBrace = str.indexOf('{');
-  const lastBrace = str.lastIndexOf('}');
-  
-  if (firstBrace === -1 || lastBrace === -1 || lastBrace < firstBrace) {
-    const firstBracket = str.indexOf('[');
-    const lastBracket = str.lastIndexOf(']');
-    if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
-      str = str.substring(firstBracket, lastBracket + 1);
-    }
-  } else {
-    str = str.substring(firstBrace, lastBrace + 1);
-  }
-
-  // Character-by-character scan to escape raw newlines inside double quotes
+function cleanCandidateString(str) {
   let result = '';
   let inString = false;
   let escapeNext = false;
@@ -85,13 +68,84 @@ function cleanJson(str) {
   }
   
   let cleaned = result.trim();
-  // Remove single line comments (making sure not to match http:// or https://)
   cleaned = cleaned.replace(/(^|[^\:])\/\/.*$/gm, '$1');
-  // Remove multi-line comments
   cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
-  // Remove trailing commas in objects and arrays
   cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
   return cleaned;
+}
+
+function cleanJson(input) {
+  if (!input || typeof input !== 'string') {
+    throw new Error('cleanJson expected a string');
+  }
+
+  let text = input
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
+
+  const starts = [];
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{' || text[i] === '[') starts.push(i);
+  }
+
+  for (const start of starts) {
+    const open = text[start];
+    const close = open === '{' ? '}' : ']';
+    const stack = [];
+    let inString = false;
+    let escaped = false;
+
+    for (let i = start; i < text.length; i++) {
+      const ch = text[i];
+
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (ch === '\\') {
+        escaped = true;
+        continue;
+      }
+
+      if (ch === '"') {
+        inString = !inString;
+        continue;
+      }
+
+      if (inString) continue;
+
+      if (ch === '{' || ch === '[') {
+        stack.push(ch);
+      }
+
+      if (ch === '}' || ch === ']') {
+        const last = stack[stack.length - 1];
+        if (
+          (last === '{' && ch === '}') ||
+          (last === '[' && ch === ']')
+        ) {
+          stack.pop();
+        } else {
+          break;
+        }
+
+        if (stack.length === 0) {
+          const candidate = text.slice(start, i + 1);
+          const cleanedCandidate = cleanCandidateString(candidate);
+          try {
+            JSON.parse(cleanedCandidate);
+            return cleanedCandidate;
+          } catch (err) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  throw new Error('No valid JSON object or array found in model response');
 }
 
 export async function GET() {

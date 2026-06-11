@@ -5592,108 +5592,471 @@ function readGraphRagBrainContext(agentId: string, budgetChars: number = 2400): 
   return used > 0 ? block : '';
 }
 
-function readAgentSharedContext(agentId: string, opts?: { lean?: boolean }): string {
-  /* v2.89.42 — lean 모드 = 두뇌 "삭제"가 아니라 "축소". 실데이터 prefetch가 성공해서
-     큰 컨텍스트가 들어왔을 때 두뇌 콘텐츠 자르기보다 줄이는 쪽으로 결정.
-     사용자가 쌓아둔 결정·메모리·brain 노트는 분석에 쓸 수 있어야 함 (제2의 두뇌 컨셉의
-     핵심). 단 너무 길면 추론 느려지고 환각 위험 — 그래서 적정 크기로 축소.
-       normal: decisions 3000자 / memory 4000자 / brain RAG 2400자 (총 ~9400자)
-       lean:   decisions 1200자 / memory 1500자 / brain RAG  900자 (총 ~3600자)
-     → 약 60% 감소. 두뇌는 살아있되 부담 줄임. */
+async function getWorkspaceContext(): Promise<string> {
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (!root) { return ''; }
+
+    // --- 1. File tree ---
+    const lines: string[] = [];
+    let count = 0;
+    const maxFiles = getConfig().maxTreeFiles;
+
+    const walk = async (dir: string, prefix: string) => {
+        if (count >= maxFiles) { return; }
+        let entries: fs.Dirent[];
+        try {
+            entries = await fs.promises.readdir(dir, { withFileTypes: true });
+        } catch { return; }
+
+        entries.sort((a, b) => {
+            if (a.isDirectory() && !b.isDirectory()) { return -1; }
+            if (!a.isDirectory() && b.isDirectory()) { return 1; }
+            return a.name.localeCompare(b.name);
+        });
+
+        for (const entry of entries) {
+            if (count >= maxFiles) { break; }
+            if (EXCLUDED_DIRS.has(entry.name)) { continue; }
+            if (entry.name.startsWith('.') && entry.isDirectory()) { continue; }
+
+            if (entry.isDirectory()) {
+                lines.push(`${prefix}📁 ${entry.name}/`);
+                count++;
+                await walk(path.join(dir, entry.name), prefix + '  ');
+            } else {
+                lines.push(`${prefix}📄 ${entry.name}`);
+                count++;
+            }
+        }
+    };
+    await walk(root, '');
+
+    let result = '';
+    if (lines.length > 0) {
+        result += `\n\n[WORKSPACE INFO]\n📂 경로: ${root}\n\n[프로젝트 파일 구조]\n${lines.join('\n')}`;
+    }
+
+    // --- 2. Auto-read key project files ---
+    const keyFiles = [
+        'package.json', 'tsconfig.json', 'vite.config.ts', 'vite.config.js',
+        'next.config.js', 'next.config.ts', 'README.md',
+        'index.html', 'app.js', 'app.ts', 'main.ts', 'main.js',
+        'src/index.ts', 'src/index.js', 'src/App.tsx', 'src/App.jsx',
+        'src/main.ts', 'src/main.js'
+    ];
+    let totalRead = 0;
+    const MAX_AUTO_READ = 6000; // chars total
+
+    for (const kf of keyFiles) {
+        if (totalRead >= MAX_AUTO_READ) { break; }
+        const abs = path.join(root, kf);
+        try {
+            if (fs.existsSync(abs)) {
+                const content = await fs.promises.readFile(abs, 'utf-8');
+                if (content.length < 5000) {
+                    result += `\n\n[파일 내용: ${kf}]\n\`\`\`\n${content}\n\`\`\``;
+                    totalRead += content.length;
+                }
+            }
+        } catch { /* skip */ }
+    }
+
+    return result;
+}
+
+function getAgentContextGroup(agentId: string): 'developer' | 'planner' | 'analyzer' | 'ceo' | 'secretary' | 'default' {
+    const id = (agentId || '').toLowerCase().trim();
+    if (/developer|dev|engineer|coder|builder/.test(id)) {
+        return 'developer';
+    }
+    if (/youtube|instagram|designer|writer|editor|prompt_engineer|video_director|hook_specialist|content/.test(id)) {
+        return 'planner';
+    }
+    if (/business|researcher|vision_critic|quality_board|content_strategist|analyst|critic/.test(id)) {
+        return 'analyzer';
+    }
+    if (/ceo|founder|chief/.test(id)) {
+        return 'ceo';
+    }
+    if (/secretary|assistant|scheduler|operations/.test(id)) {
+        return 'secretary';
+    }
+    return 'default';
+}
+
+async function searchSharedOrWorkspace(filename: string): Promise<string | null> {
+    const dir = getCompanyDir();
+    const sharedPath = path.join(dir, '_shared', filename);
+    if (fs.existsSync(sharedPath)) {
+        return sharedPath;
+    }
+    const wsRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    if (wsRoot) {
+        const wsPath = path.join(wsRoot, filename);
+        if (fs.existsSync(wsPath)) {
+            return wsPath;
+        }
+    }
+    return null;
+}
+
+async function loadRecentErrors(): Promise<string> {
+    const p = await searchSharedOrWorkspace('recent_errors.md');
+    if (p) {
+        try {
+            return _safeReadText(p);
+        } catch (e: any) {
+            console.debug(`[Connect AI] Failed to read recent_errors.md: ${e?.message || e}`);
+        }
+    } else {
+        console.debug('[Connect AI] Optional context file missing: recent_errors.md');
+    }
+    return '최근 컴파일/빌드 에러가 없습니다.';
+}
+
+async function loadFailureDnaDb(): Promise<string> {
+    const p = await searchSharedOrWorkspace('failure_dna_db.json');
+    if (p) {
+        try {
+            const raw = _safeReadText(p);
+            JSON.parse(raw);
+            return raw;
+        } catch (e: any) {
+            console.debug(`[Connect AI] Failed to parse failure_dna_db.json: ${e?.message || e}`);
+        }
+    } else {
+        console.debug('[Connect AI] Optional context file missing: failure_dna_db.json');
+    }
+    return '누적 실패 DNA 데이터가 없습니다.';
+}
+
+async function loadProductMd(): Promise<string> {
+    const p = await searchSharedOrWorkspace('product.md');
+    if (p) {
+        try {
+            return _safeReadText(p);
+        } catch (e: any) {
+            console.debug(`[Connect AI] Failed to read product.md: ${e?.message || e}`);
+        }
+    } else {
+        console.debug('[Connect AI] Optional context file missing: product.md');
+    }
+    const dir = getCompanyDir();
+    const identity = _safeReadText(path.join(dir, '_shared', 'identity.md'));
+    if (identity.trim()) {
+        const firstLines = identity.split('\n').filter(l => l.trim().length > 0).slice(0, 5).join('\n');
+        return `[Product Summary (Identity Fallback)]\n${firstLines}`;
+    }
+    return '서비스 정의 정보가 없습니다.';
+}
+
+async function loadAnalyzerMetrics(): Promise<string> {
+    const dir = getCompanyDir();
+    let metrics = '';
+    try {
+        const m = getCompanyMetrics();
+        metrics += `foundedAt: ${m.foundedAt || ''}\ntasksCompleted: ${m.tasksCompleted || 0}\n`;
+    } catch {}
+    try {
+        const monPath = path.join(dir, '_shared', 'monetization_db.json');
+        if (fs.existsSync(monPath)) {
+            const mon = JSON.parse(_safeReadText(monPath) || '{}');
+            metrics += `\n[수익 지표 요약]\n총 수익: ${mon.total_revenue || 0}\n이번 달 예상: ${mon.monthly_forecast || 0}\n`;
+        }
+    } catch {}
+    try {
+        const ytPath = path.join(dir, '_shared', 'video_performance_db.json');
+        if (fs.existsSync(ytPath)) {
+            const yt = JSON.parse(_safeReadText(ytPath) || '{}');
+            const list = Array.isArray(yt.videos) ? yt.videos.slice(0, 3) : [];
+            metrics += `\n[최근 비디오 성과 요약]\n${list.map((v: any) => `- ${v.title}: 조회수 ${v.views}, 유지율 ${v.retention}%`).join('\n')}\n`;
+        }
+    } catch {}
+    try {
+        const revRepPath = path.join(dir, '_shared', 'daily_revenue_report.md');
+        if (fs.existsSync(revRepPath)) {
+            metrics += `\n[일일 매출 보고서 요약]\n${_safeReadText(revRepPath).slice(0, 1000)}`;
+        }
+    } catch {}
+    return metrics;
+}
+
+async function loadMarketNotes(): Promise<string> {
+    const dir = getCompanyDir();
+    let notes = '';
+    try {
+        const trendPath = path.join(dir, '_shared', 'trend_dna_db.json');
+        if (fs.existsSync(trendPath)) {
+            const trends = JSON.parse(_safeReadText(trendPath) || '{}');
+            const list = Array.isArray(trends.trends) ? trends.trends.slice(0, 5) : [];
+            notes += `\n[트렌드 DNA 요약]\n${list.map((t: any) => `- ${t.keyword || t.title}: 관심도 ${t.score || t.interest}`).join('\n')}\n`;
+        }
+    } catch {}
+    try {
+        const successPath = path.join(dir, '_shared', 'success_dna_db.json');
+        if (fs.existsSync(successPath)) {
+            notes += `\n[성공 DNA 요약]\n${_safeReadText(successPath).slice(0, 1000)}`;
+        }
+    } catch {}
+    return notes;
+}
+
+async function loadCeoSnapshot(): Promise<string> {
+    const dir = getCompanyDir();
+    let snapshot = '### [회사 현황 요약 (CEO Snapshot)]\n';
+    try {
+        const companyGoals = _safeReadText(path.join(dir, '_shared', 'goals.md'));
+        if (companyGoals.trim()) {
+            const goalsSummary = companyGoals.split('\n').filter(l => l.trim().startsWith('-')).slice(0, 3).join('\n');
+            snapshot += `\n📌 **핵심 목표**:\n${goalsSummary || companyGoals.slice(0, 300)}\n`;
+        }
+    } catch {}
+    try {
+        const decisions = _safeReadText(path.join(dir, '_shared', 'decisions.md'));
+        if (decisions.trim()) {
+            const matches = decisions.match(/^\s*-\s*.+$/gm);
+            const last3 = matches ? matches.slice(-3).join('\n') : decisions.slice(-400);
+            snapshot += `\n🎯 **최근 주요 결정**:\n${last3}\n`;
+        }
+    } catch {}
+    try {
+        const m = getCompanyMetrics();
+        snapshot += `\n📊 **핵심 지표 요약**: 경과일(founded) ${m.foundedAt || ''}, 완료한 작업 ${m.tasksCompleted || 0}건\n`;
+    } catch {}
+    try {
+        const trackerMd = trackerToMarkdown({ onlyOpen: true, max: 5 });
+        if (trackerMd) snapshot += `\n📅 **추적 작업 상태 (최근 5건)**:\n${trackerMd}\n`;
+    } catch {}
+    try {
+        const allTasks = readTracker().tasks;
+        const blockers = allTasks.filter(t => 
+            t.status !== 'done' && 
+            t.status !== 'cancelled' && 
+            (
+                (t.title && /block|블록|지연|대기|오류|실패|인증/i.test(t.title)) || 
+                (t.description && /block|블록|지연|대기|오류|실패|인증/i.test(t.description))
+            )
+        );
+        if (blockers.length > 0) {
+            snapshot += `\n🛑 **현재 블로커 (지연 요인)**:\n` + blockers.slice(0, 3).map(b => `- [${b.priority || 'normal'}] ${b.title}`).join('\n') + '\n';
+        } else {
+            snapshot += `\n🛑 **현재 블로커 (지연 요인)**:\n- 진행 중인 작업 중 특별한 블로커가 보고되지 않았습니다.\n`;
+        }
+    } catch {}
+    return snapshot;
+}
+
+function applyContextBudgetGuard(
+    sysPrompt: string, 
+    userMsg: string, 
+    agentId: string, 
+    groupName: string
+): { finalPrompt: string; truncated: boolean; truncateReason: string } {
+    let finalPrompt = sysPrompt;
+    const totalLen = finalPrompt.length + userMsg.length;
+    if (totalLen <= 6000) {
+        return { finalPrompt, truncated: false, truncateReason: 'none' };
+    }
+
+    console.log(`[Connect AI] Final budget guard: prompt length ${totalLen} exceeds 6000 limit. Truncating...`);
+    let truncated = true;
+    let truncateReason = 'Prompt length exceeded 6000 characters';
+
+    const ragIndex = finalPrompt.indexOf('[관련 두뇌 지식 — Graph RAG');
+    if (ragIndex >= 0) {
+        const endOfRag = finalPrompt.indexOf('[', ragIndex + 1);
+        if (endOfRag >= 0) {
+            finalPrompt = finalPrompt.slice(0, ragIndex) + finalPrompt.slice(endOfRag);
+        } else {
+            finalPrompt = finalPrompt.slice(0, ragIndex);
+        }
+        truncateReason += ' | Trimmed Graph RAG context';
+    }
+
+    if (finalPrompt.length + userMsg.length <= 6000) {
+        return { finalPrompt, truncated, truncateReason };
+    }
+
+    const memHeader = ` 개인 메모리`;
+    const memIndex = finalPrompt.indexOf(memHeader);
+    if (memIndex >= 0) {
+        const startOfMem = finalPrompt.indexOf('\n', memIndex);
+        const endOfMem = finalPrompt.indexOf('[', startOfMem >= 0 ? startOfMem : memIndex);
+        if (endOfMem >= 0) {
+            const memContent = finalPrompt.slice(startOfMem >= 0 ? startOfMem : memIndex, endOfMem);
+            const trimmedMem = memContent.slice(0, 200) + '\n[...메모리 일부 생략...]\n';
+            finalPrompt = finalPrompt.slice(0, startOfMem >= 0 ? startOfMem : memIndex) + trimmedMem + finalPrompt.slice(endOfMem);
+        }
+        truncateReason += ' | Trimmed personal memory';
+    }
+
+    if (finalPrompt.length + userMsg.length <= 6000) {
+        return { finalPrompt, truncated, truncateReason };
+    }
+
+    const personaLen = 1500;
+    if (finalPrompt.length > 6000 - userMsg.length) {
+        const core = finalPrompt.slice(0, Math.max(personaLen, 6000 - userMsg.length - 100));
+        const footer = '\n[...컨텍스트 예산 초과로 하위 항목 생략...]\n';
+        finalPrompt = core + footer;
+        truncateReason += ' | Hard sliced remaining context';
+    }
+
+    return { finalPrompt, truncated, truncateReason };
+}
+
+async function readAgentSharedContext(agentId: string, opts?: { lean?: boolean }): Promise<string> {
   const lean = opts?.lean === true;
   const dir = getCompanyDir();
-  const identity = _safeReadText(path.join(dir, '_shared', 'identity.md'));
-  const companyGoals = _safeReadText(path.join(dir, '_shared', 'goals.md'));
-  const decisions = _safeReadText(path.join(dir, '_shared', 'decisions.md'));
-  const memory = _safeReadText(path.join(dir, '_agents', agentId, 'memory.md'));
   const personalGoal = readAgentGoal(agentId);
+  const memory = _safeReadText(path.join(dir, '_agents', agentId, 'memory.md'));
   const ragMode = readAgentRagMode(agentId);
   let ctx = '';
-  // Priority order (most-trusted first):
-  //   agent goal > company goals > company identity > decisions > memory > brain knowledge > tools
+
   if (personalGoal.trim()) ctx += `\n\n[당신의 개인 목표 (최우선 — 매 사이클 이 방향으로 한 스텝 진행)]\n${personalGoal.slice(0, 4000)}`;
-  if (companyGoals.trim()) ctx += `\n\n[회사 공동 목표]\n${companyGoals.slice(0, 4000)}`;
-  if (identity.trim()) ctx += `\n\n[회사 정체성]\n${identity.slice(0, 2000)}`;
-  if (decisions.trim()) ctx += `\n\n[지난 의사결정 로그]\n${decisions.slice(lean ? -1200 : -3000)}`;
-  /* Calendar — secretary's google_calendar tool writes upcoming events here.
-     Surfaced to every agent so scheduling and time-aware planning work without
-     each agent having to call the tool itself. */
-  try {
-    const cal = _safeReadText(path.join(dir, '_shared', 'calendar_cache.md'));
-    if (cal.trim()) ctx += `\n\n[다가오는 일정 (Google Calendar)]\n${cal.slice(0, 2000)}`;
-  } catch { /* ignore */ }
-  /* Unified schedule — Secretary maintains this combining calendar + each
-     agent's recent activity + user TODOs. Lets every agent plan around the
-     user's life and their teammates' workload. */
-  try {
-    const sch = _safeReadText(path.join(dir, '_shared', 'schedule.md'));
-    if (sch.trim()) ctx += `\n\n[통합 스케줄 (비서 관리)]\n${sch.slice(0, 2200)}`;
-  } catch { /* ignore */ }
-  /* Open tracker tasks — agents see what's still pending so they don't
-     duplicate work and can pick up overlapping items. Also lets them know
-     what user is on the hook for, so they avoid blocking on the user. */
-  try {
-    const trackerMd = trackerToMarkdown({ onlyOpen: true, max: 12 });
-    if (trackerMd) ctx += `\n\n[추적 중인 작업 (열린 것만)]\n${trackerMd}`;
-  } catch { /* ignore */ }
-  /* Self-RAG mode: surface verified.md FIRST as primary memory so previously
-     self-grounded claims dominate the context. memory.md still gets included
-     below as the firehose, but the agent has already been told to trust
-     verified entries above [추측] entries. */
+
   if (ragMode === 'self-rag') {
     const verified = readAgentVerifiedKnowledge(agentId);
     if (verified.trim()) {
       ctx += `\n\n[${AGENTS[agentId]?.name} 검증된 지식 (Self-RAG가 자가검증한 항목들 — 최우선 신뢰)]\n${verified.slice(0, 4000)}`;
     }
   }
-  /* v2.89.115 — Curated skills (검증된 재사용 패턴). memory.md는 firehose,
-     skills/는 사용자가 명시적으로 승격한 것만. 신뢰도가 더 높으므로 memory
-     위에 배치하고 별도 라벨로 표시. */
+
   try {
     const skillsBlock = readAgentSkills(agentId, lean ? 1500 : 4000);
     if (skillsBlock) ctx += skillsBlock;
-  } catch { /* never break the prompt */ }
-  /* v2.89.115 — 템플릿 (재사용 빌딩블록). 두뇌의 40_템플릿/<id>/ 폴더.
-     스킬보다 더 무거운 자료(코드·파일·문서) — 매니페스트만 inject, 실제 파일은
-     LLM이 필요시 read_file 로 읽기. */
+  } catch {}
+
   try {
     const templatesBlock = readAgentTemplates(agentId, lean ? 1000 : 2000);
     if (templatesBlock) ctx += templatesBlock;
-  } catch { /* never break the prompt */ }
+  } catch {}
+
   if (memory.trim()) ctx += `\n\n[${AGENTS[agentId]?.name} 개인 메모리 ${ragMode === 'self-rag' ? '— 미검증 포함, 신중히 사용' : ''}]\n${memory.slice(0, lean ? 1500 : 4000)}`;
-  /* Bridge to broader brain folder — Graph RAG retrieval is always on
-     (the brain network IS the graph; not using it would be wasteful).
-     Normal: 2400 chars cap. Lean: 900 chars cap — 두뇌가 살아있되 짐 가벼움. */
+
   try {
     ctx += readGraphRagBrainContext(agentId, lean ? 900 : 2400);
-  } catch { /* never let brain scan break the prompt */ }
-  /* Self-RAG instruction block — appended late so it overrides earlier
-     conventions. Tells the agent to ground every claim in the context above
-     and tag ungrounded claims as [추측]. This is the "self-critique" step
-     of Self-RAG, expressed as a strict output protocol. */
+  } catch {}
+
+  const group = getAgentContextGroup(agentId);
+
+  if (group === 'developer') {
+    const decisions = _safeReadText(path.join(dir, '_shared', 'decisions.md'));
+    if (decisions.trim()) {
+      ctx += `\n\n[지난 의사결정 로그]\n${decisions.slice(lean ? -1200 : -3000)}`;
+    }
+
+    const recentErrors = await loadRecentErrors();
+    if (recentErrors.trim()) {
+      ctx += `\n\n[최근 컴파일/빌드 에러 로그]\n${recentErrors}`;
+    }
+
+    const failureDna = await loadFailureDnaDb();
+    if (failureDna.trim()) {
+      ctx += `\n\n[누적 실패 DNA 데이터]\n${failureDna}`;
+    }
+
+    const workspaceCtx = await getWorkspaceContext();
+    if (workspaceCtx.trim()) {
+      ctx += workspaceCtx;
+    }
+  } 
+  else if (group === 'planner') {
+    const companyGoals = _safeReadText(path.join(dir, '_shared', 'goals.md'));
+    if (companyGoals.trim()) ctx += `\n\n[회사 공동 목표]\n${companyGoals.slice(0, 4000)}`;
+
+    const product = await loadProductMd();
+    if (product.trim()) {
+      ctx += `\n\n[서비스/제품 정의 (Product Specification)]\n${product}`;
+    }
+
+    const identity = _safeReadText(path.join(dir, '_shared', 'identity.md'));
+    if (identity.trim()) ctx += `\n\n[회사 정체성]\n${identity.slice(0, 2000)}`;
+
+    try {
+      const cal = _safeReadText(path.join(dir, '_shared', 'calendar_cache.md'));
+      if (cal.trim()) ctx += `\n\n[다가오는 일정 (Google Calendar)]\n${cal.slice(0, 2000)}`;
+    } catch {}
+
+    try {
+      const sch = _safeReadText(path.join(dir, '_shared', 'schedule.md'));
+      if (sch.trim()) ctx += `\n\n[통합 스케줄 (비서 관리)]\n${sch.slice(0, 2200)}`;
+    } catch {}
+
+    try {
+      const trackerMd = trackerToMarkdown({ onlyOpen: true, max: 12 });
+      if (trackerMd) ctx += `\n\n[추적 중인 작업 (열린 것만)]\n${trackerMd}`;
+    } catch {}
+  } 
+  else if (group === 'analyzer') {
+    const metricsStr = await loadAnalyzerMetrics();
+    if (metricsStr.trim()) {
+      ctx += `\n\n[비즈니스 & 콘텐츠 핵심 지표 (Metrics)]\n${metricsStr}`;
+    }
+
+    try {
+      const logs = readRecentConversations(2000);
+      if (logs.trim()) ctx += `\n\n[최근 회사 대화 로그]\n${logs}`;
+    } catch {}
+
+    const marketNotes = await loadMarketNotes();
+    if (marketNotes.trim()) {
+      ctx += `\n\n[시장 분석 & 트렌드 DNA (Market Notes)]\n${marketNotes}`;
+    }
+
+    const companyGoals = _safeReadText(path.join(dir, '_shared', 'goals.md'));
+    if (companyGoals.trim()) ctx += `\n\n[회사 공동 목표]\n${companyGoals.slice(0, 4000)}`;
+  } 
+  else if (group === 'ceo') {
+    const ceoSnapshot = await loadCeoSnapshot();
+    ctx += ceoSnapshot;
+  } 
+  else if (group === 'secretary') {
+    const companyGoals = _safeReadText(path.join(dir, '_shared', 'goals.md'));
+    if (companyGoals.trim()) ctx += `\n\n[회사 공동 목표]\n${companyGoals.slice(0, 4000)}`;
+
+    const identity = _safeReadText(path.join(dir, '_shared', 'identity.md'));
+    if (identity.trim()) ctx += `\n\n[회사 정체성]\n${identity.slice(0, 2000)}`;
+
+    try {
+      const cal = _safeReadText(path.join(dir, '_shared', 'calendar_cache.md'));
+      if (cal.trim()) ctx += `\n\n[다가오는 일정 (Google Calendar)]\n${cal.slice(0, 2000)}`;
+    } catch {}
+
+    try {
+      const sch = _safeReadText(path.join(dir, '_shared', 'schedule.md'));
+      if (sch.trim()) ctx += `\n\n[통합 스케줄 (비서 관리)]\n${sch.slice(0, 2200)}`;
+    } catch {}
+
+    try {
+      const trackerMd = trackerToMarkdown({ onlyOpen: true, max: 12 });
+      if (trackerMd) ctx += `\n\n[추적 중인 작업 (열린 것만)]\n${trackerMd}`;
+    } catch {}
+
+    try {
+      const logs = readRecentConversations(2000);
+      if (logs.trim()) ctx += `\n\n[최근 회사 대화 로그]\n${logs}`;
+    } catch {}
+  } 
+  else {
+    const companyGoals = _safeReadText(path.join(dir, '_shared', 'goals.md'));
+    if (companyGoals.trim()) ctx += `\n\n[회사 공동 목표]\n${companyGoals.slice(0, 1000)}`;
+    const identity = _safeReadText(path.join(dir, '_shared', 'identity.md'));
+    if (identity.trim()) ctx += `\n\n[회사 정체성]\n${identity.slice(0, 500)}`;
+  }
+
   if (ragMode === 'self-rag') {
     ctx += `\n\n[Self-RAG 자가검증 프로토콜 — 반드시 따를 것]\n`
       + `1. 답변 생성 전 위 컨텍스트(개인 목표·회사 목표·메모리·두뇌 지식)에서 근거가 되는 항목을 머릿속으로 골라내세요.\n`
       + `2. 각 사실 주장 옆에 \`[근거: <출처 한 마디>]\` 또는 \`[추측]\` 중 하나를 반드시 표기하세요. 출처가 위 컨텍스트에 없으면 \`[추측]\` 입니다.\n`
       + `3. 답변 마지막 줄에 \`자가검증: 사실 N개 / 추측 M개\` 한 줄을 추가하세요.\n`
       + `4. \`[추측]\`이 \`[근거:]\`보다 많으면 답변하지 말고 \`정보 부족 — 두뇌 폴더에 X 자료 필요\` 라고만 말하세요. 근거 없는 자신감은 회사 의사결정 로그를 오염시킵니다.`;
-    /* User-defined extra criteria — appended only if non-empty. Tagged as
-       "추가 기준" so the model treats them as authoritative checks on top
-       of the standard protocol. */
     const userCriteria = readAgentSelfRagCriteria(agentId).trim();
     if (userCriteria) {
       ctx += `\n\n[Self-RAG 추가 기준 — 사용자 정의 (위 프로토콜 위에 강제 적용)]\n${userCriteria.slice(0, 3500)}\n\n위 사용자 정의 기준 중 하나라도 만족하지 못하면 답변을 보내기 전 수정하세요. 기준 위반은 \`자가검증\` 라인에서 \`기준 위반: …\` 형태로 명시.`;
     }
   }
-  // Tool catalog — agent can invoke these via <run_command>. Only ENABLED
-  // tools surface here; disabled ones are hidden so the agent never picks
-  // them up autonomously. Absolute paths resolve correctly regardless of
-  // where the user put their brain folder.
-  /* google_calendar_write is a diagnostic-only Python script — the real
-     calendar read/write is handled by built-in TypeScript functions
-     (refreshCalendarCacheViaOAuth, createCalendarEventForTask). Exclude it
-     from the tool catalog so the agent doesn't generate 'cd && python'
-     commands for calendar operations. Same for google_calendar (iCal read). */
+
   const _BUILTIN_TOOLS = new Set(['google_calendar_write', 'google_calendar']);
   const tools = listAgentTools(agentId).filter(t => t.enabled && !_BUILTIN_TOOLS.has(t.name));
   if (tools.length > 0) {
@@ -5701,23 +6064,15 @@ function readAgentSharedContext(agentId: string, opts?: { lean?: boolean }): str
       const cd = `cd "${path.dirname(t.scriptPath)}"`;
       return `- 🛠️ \`${t.name}\` — ${t.description.replace(/\n/g, ' ').slice(0, 140)}\n  실행: <run_command>${cd} && ${_pythonCmd()} ${path.basename(t.scriptPath)}</run_command>\n  설정 파일(API 키 등): ${t.configPath}`;
     }).join('\n');
-    /* v2.89.31 — 도구 사용 의무화. 작은 LLM은 도구 카탈로그를 무시하고
-       LLM 지식만으로 답변하는 경향이 있어서, 실데이터가 필요한 task일 때
-       반드시 도구를 명시적으로 실행 요청하라고 강제. 단 한 응답 안에서
-       LLM은 도구 stdout을 못 봄 — system이 LLM 응답 종료 후 실행하고
-       결과는 출력 끝에 append되어 다음 에이전트(peerCtx)와 final report에 흘러감. */
     ctx += `\n\n[🛠️ 도구 사용 규칙 — 반드시 따를 것]\n`
       + `- 위 도구 중 task에 필요한 게 있고 [실시간 데이터] 섹션에 해당 데이터가 아직 없으면, **답변 어디든** \`run_command\` 블록을 출력하세요. 시스템이 LLM 응답 종료 후 실행하고 결과를 출력 끝에 append합니다 (당신은 이 응답에서 stdout 못 봄 — 다음 에이전트와 final report가 활용).\n`
       + `- 이미 [실시간 데이터] 섹션에 데이터가 자동 주입돼 있으면 그걸 분석에 활용 — 도구 중복 실행 X.\n`
       + `- 데이터 없이 추측·일반론으로 답하는 건 금지. 데이터가 없고 도구도 없으면 솔직히 "데이터 부족으로 분석 보류" + 평가 \`대기\`로.\n`
       + `- 같은 task에 여러 도구가 도움 되면 \`run_command\` 블록을 여러 개 출력해도 됩니다 (시스템이 순차 실행).`;
   }
-  /* Calendar context — if OAuth is connected, tell the agent it can access
-     calendar data through the built-in system (no Python script needed).
-     The actual data is already in _shared/calendar_cache.md (injected via
-     readAgentSharedContext). */
+
   if (agentId === 'secretary' && isCalendarWriteConnected()) {
-    ctx += `\n\n[📅 Google Calendar — 내장 연결됨]\n캘린더 데이터는 위 [다가오는 일정] 섹션에 자동 로드됩니다. Python 스크립트 실행 불필요 — 일정 조회는 이미 로드된 컨텍스트를 참고하세요. 일정 생성은 추적기에 due를 넣으면 자동으로 생성됩니다.`;
+    ctx += `\n\n[📅 Google Calendar — 내장 연결됨]\n캘린더 데이터는 위 [다가오는 일정] 섹션에 자동 로드됩니다. Python 스크립체 실행 불필요 — 일정 조회는 이미 로드된 컨텍스트를 참고하세요. 일정 생성은 추적기에 due를 넣으면 자동으로 생성됩니다.`;
   }
   ctx += readAgentCustomPrompt(agentId);
   return ctx;
@@ -16068,7 +16423,21 @@ class SidebarChatProvider implements vscode.WebviewViewProvider {
 
 규칙: 2~3턴, 각 30자 이내, 자연스러움. from/to는 정확히 "${aFrom.id}"와 "${aTo.id}"만.`;
             const usr = `[참여자]\n${aFrom.emoji} ${aFrom.name} (${aFrom.role})\n${aTo.emoji} ${aTo.name} (${aTo.role})\n\n[회사 목표]\n${goals}${recent}`;
-            const raw = await this._callAgentLLM(sys, usr, modelName, aFrom.id, false);
+            const group = getAgentContextGroup(aFrom.id);
+            const guard = applyContextBudgetGuard(sys, usr, aFrom.id, group);
+            const raw = await this._callAgentLLM(
+                guard.finalPrompt,
+                usr,
+                modelName,
+                aFrom.id,
+                false,
+                {
+                    contextGroup: group,
+                    truncated: guard.truncated,
+                    truncateReason: guard.truncateReason,
+                    useLeanContext: false
+                }
+            );
             const m = raw.match(/\{[\s\S]*\}/);
             if (!m) return;
             const parsed = JSON.parse(m[0]);
@@ -18546,75 +18915,8 @@ class SidebarChatProvider implements vscode.WebviewViewProvider {
 
     // Build workspace file tree + read key files
     // --------------------------------------------------------
-    private _getWorkspaceContext(): string {
-        const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-        if (!root) { return ''; }
-
-        // --- 1. File tree ---
-        const lines: string[] = [];
-        let count = 0;
-
-        const walk = (dir: string, prefix: string) => {
-            if (count >= getConfig().maxTreeFiles) { return; }
-            let entries: fs.Dirent[];
-            try {
-                entries = fs.readdirSync(dir, { withFileTypes: true });
-            } catch { return; }
-
-            entries.sort((a, b) => {
-                if (a.isDirectory() && !b.isDirectory()) { return -1; }
-                if (!a.isDirectory() && b.isDirectory()) { return 1; }
-                return a.name.localeCompare(b.name);
-            });
-
-            for (const entry of entries) {
-                if (count >= getConfig().maxTreeFiles) { break; }
-                if (EXCLUDED_DIRS.has(entry.name)) { continue; }
-                if (entry.name.startsWith('.') && entry.isDirectory()) { continue; }
-
-                if (entry.isDirectory()) {
-                    lines.push(`${prefix}📁 ${entry.name}/`);
-                    count++;
-                    walk(path.join(dir, entry.name), prefix + '  ');
-                } else {
-                    lines.push(`${prefix}📄 ${entry.name}`);
-                    count++;
-                }
-            }
-        };
-        walk(root, '');
-
-        let result = '';
-        if (lines.length > 0) {
-            result += `\n\n[WORKSPACE INFO]\n📂 경로: ${root}\n\n[프로젝트 파일 구조]\n${lines.join('\n')}`;
-        }
-
-        // --- 2. Auto-read key project files ---
-        const keyFiles = [
-            'package.json', 'tsconfig.json', 'vite.config.ts', 'vite.config.js',
-            'next.config.js', 'next.config.ts', 'README.md',
-            'index.html', 'app.js', 'app.ts', 'main.ts', 'main.js',
-            'src/index.ts', 'src/index.js', 'src/App.tsx', 'src/App.jsx',
-            'src/main.ts', 'src/main.js'
-        ];
-        let totalRead = 0;
-        const MAX_AUTO_READ = 6_000; // chars total
-
-        for (const kf of keyFiles) {
-            if (totalRead >= MAX_AUTO_READ) { break; }
-            const abs = path.join(root, kf);
-            if (fs.existsSync(abs)) {
-                try {
-                    const content = fs.readFileSync(abs, 'utf-8');
-                    if (content.length < 5000) {
-                        result += `\n\n[파일 내용: ${kf}]\n\`\`\`\n${content}\n\`\`\``;
-                        totalRead += content.length;
-                    }
-                } catch { /* skip */ }
-            }
-        }
-
-        return result;
+    private async _getWorkspaceContext(): Promise<string> {
+        return getWorkspaceContext();
     }
 
     // --------------------------------------------------------
@@ -18661,7 +18963,7 @@ class SidebarChatProvider implements vscode.WebviewViewProvider {
                         contextBlock = `\n\n[Currently open file: ${name}]\n\`\`\`\n${text}\n\`\`\``;
                     }
                 }
-                const workspaceCtx = this._getWorkspaceContext();
+                const workspaceCtx = await this._getWorkspaceContext();
                 const brainCtx = this._brainEnabled ? this._getSecondBrainContext() : '';
                 const projectMemory = this._getProjectMemory();
                 const internetCtx = internetEnabled
@@ -18832,7 +19134,7 @@ class SidebarChatProvider implements vscode.WebviewViewProvider {
             }
 
             // 2. Context: workspace file tree + key file contents
-            const workspaceCtx = this._getWorkspaceContext();
+            const workspaceCtx = await this._getWorkspaceContext();
             
             // 2.5 Inject Second Brain Knowledge (ON/OFF 토글 반영)
             const brainCtx = this._brainEnabled ? this._getSecondBrainContext() : '';
@@ -19262,12 +19564,22 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         const classifierModel = getAgentModel('ceo', '') || defaultModel || '';
         let classifyRaw = '';
         try {
+            const agentId = 'ceo';
+            const group = getAgentContextGroup(agentId);
+            const userMsg = `[사용자 명령]\n${p}`;
+            const guard = applyContextBudgetGuard(classifierPrompt, userMsg, agentId, group);
             classifyRaw = await this._callAgentLLM(
-                classifierPrompt,
-                `[사용자 명령]\n${p}`,
+                guard.finalPrompt,
+                userMsg,
                 classifierModel,
-                'ceo',
+                agentId,
                 false,
+                {
+                    contextGroup: group,
+                    truncated: guard.truncated,
+                    truncateReason: guard.truncateReason,
+                    useLeanContext: false
+                }
             );
         } catch {
             return false; /* LLM 실패 → CEO 플래너 */
@@ -19347,7 +19659,7 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         const agentModel = getAgentModel(entry.agentId, '') || defaultModel || '';
         const specialistSysPrompt = `${buildSpecialistPrompt(entry.agentId)}` +
             `\n\n[방금 시스템이 가져온 실제 데이터 — 이게 분석 근거]\n${toolOut.slice(0, 8000)}` +
-            `\n\n${readAgentSharedContext(entry.agentId, { lean: true })}` +
+            `\n\n${await readAgentSharedContext(entry.agentId, { lean: true })}` +
             `\n\n[전문가 자가 분석 지침 — 반드시 따를 것]\n` +
             `당신은 ${a.name} (${a.role}) 입니다. 위 [실제 데이터]를 보고 **그 분야 전문가로서** 깊이 있게 분석하세요.\n` +
             `1. **현재 상태 진단** — 데이터의 숫자·패턴이 의미하는 바 (단순 나열 X, 해석)\n` +
@@ -19361,12 +19673,22 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         let specialistAnalysis = '';
         let specialistError = '';
         try {
+            const agentId = entry.agentId;
+            const group = getAgentContextGroup(agentId);
+            const userMsg = `[사용자 명령]\n${prompt}\n\n위 데이터에 대한 ${a.name} (${a.role}) 시각의 전문가 분석을 작성하세요.`;
+            const guard = applyContextBudgetGuard(specialistSysPrompt, userMsg, agentId, group);
             specialistAnalysis = await this._callAgentLLM(
-                specialistSysPrompt,
-                `[사용자 명령]\n${prompt}\n\n위 데이터에 대한 ${a.name} (${a.role}) 시각의 전문가 분석을 작성하세요.`,
+                guard.finalPrompt,
+                userMsg,
                 agentModel,
-                entry.agentId,
+                agentId,
                 true,
+                {
+                    contextGroup: group,
+                    truncated: guard.truncated,
+                    truncateReason: guard.truncateReason,
+                    useLeanContext: true
+                }
             );
         } catch (e: any) {
             specialistError = e?.message || String(e);
@@ -19386,10 +19708,25 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             post({ type: 'agentStart', agent: 'ceo', task: '종합 요약' });
             post({ type: 'response', value: `👔 CEO: 사장님께 올릴 종합 정리 중...` });
             const ceoModel = getAgentModel('ceo', '') || defaultModel || '';
-            const ceoSysPrompt = `${_personalizePrompt(CEO_REPORT_PROMPT)}\n${readAgentSharedContext('ceo', { lean: true })}`;
+            const ceoSysPrompt = `${_personalizePrompt(CEO_REPORT_PROMPT)}\n${await readAgentSharedContext('ceo', { lean: true })}`;
             const ceoUserMsg = `[사장님 명령]\n${prompt}\n\n[${a.emoji} ${a.name} 전문가 분석]\n${specialistContent.slice(0, 6000)}\n\n위 ${a.name}의 분석을 사장님이 30초에 파악할 수 있게 종합 요약하세요. ${a.name}의 결론과 액션을 충실히 반영하되, 너무 길지 않게.\n\n⚠️ "분석 결과를 제공해주시면", "데이터가 들어오면" 같은 placeholder 절대 금지 — 위 분석은 이미 제공됐음.`;
             try {
-                ceoSummary = await this._callAgentLLM(ceoSysPrompt, ceoUserMsg, ceoModel, 'ceo', false);
+                const agentId = 'ceo';
+                const group = getAgentContextGroup(agentId);
+                const guard = applyContextBudgetGuard(ceoSysPrompt, ceoUserMsg, agentId, group);
+                ceoSummary = await this._callAgentLLM(
+                    guard.finalPrompt,
+                    ceoUserMsg,
+                    ceoModel,
+                    agentId,
+                    false,
+                    {
+                        contextGroup: group,
+                        truncated: guard.truncated,
+                        truncateReason: guard.truncateReason,
+                        useLeanContext: true
+                    }
+                );
                 /* CEO도 placeholder 뱉으면 무시 → specialist 분석만 보임 */
                 if (/분석\s*결과를\s*제공|데이터가\s*제공|데이터가\s*들어오면|once\s+the\s+output|when\s+the\s+output/i.test(ceoSummary)) {
                     ceoSummary = '';
@@ -19470,12 +19807,22 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                 post({ type: 'agentStart', agent: 'secretary', task: '브릿지 분류' });
                 let triageRaw = '';
                 try {
+                    const agentId = 'secretary';
+                    const group = getAgentContextGroup(agentId);
+                    const rawSys = `${SECRETARY_TRIAGE_PROMPT}\n${await readAgentSharedContext(agentId)}${readRecentConversations(800)}`;
+                    const guard = applyContextBudgetGuard(rawSys, prompt, agentId, group);
                     triageRaw = await this._callAgentLLM(
-                        `${SECRETARY_TRIAGE_PROMPT}\n${readAgentSharedContext('secretary')}${readRecentConversations(800)}`,
+                        guard.finalPrompt,
                         prompt,
                         modelName,
-                        'secretary',
-                        false
+                        agentId,
+                        false,
+                        {
+                            contextGroup: group,
+                            truncated: guard.truncated,
+                            truncateReason: guard.truncateReason,
+                            useLeanContext: false
+                        }
                     );
                 } catch (e: any) {
                     /* Bridge fail-open — if Secretary triage errors we fall
@@ -19513,12 +19860,22 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                 post({ type: 'agentStart', agent: 'ceo', task: '인사' });
                 let chatReply = '';
                 try {
+                    const agentId = 'ceo';
+                    const group = getAgentContextGroup(agentId);
+                    const rawSys = `${_personalizePrompt(CEO_CHAT_PROMPT)}\n${await readAgentSharedContext(agentId)}${readRecentConversations(800)}`;
+                    const guard = applyContextBudgetGuard(rawSys, prompt, agentId, group);
                     chatReply = await this._callAgentLLM(
-                        `${_personalizePrompt(CEO_CHAT_PROMPT)}\n${readAgentSharedContext('ceo')}${readRecentConversations(800)}`,
+                        guard.finalPrompt,
                         prompt,
                         modelName,
-                        'ceo',
-                        true
+                        agentId,
+                        true,
+                        {
+                            contextGroup: group,
+                            truncated: guard.truncated,
+                            truncateReason: guard.truncateReason,
+                            useLeanContext: false
+                        }
                     );
                 } catch (e: any) {
                     post({ type: 'agentEnd', agent: 'ceo' });
@@ -19612,7 +19969,7 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                 }
                 ceoStage = 'readAgentSharedContext';
                 let shared = '';
-                try { shared = readAgentSharedContext('ceo'); }
+                try { shared = await readAgentSharedContext('ceo'); }
                 catch (sc: any) {
                     /* 두뇌 RAG 등이 폭주해도 CEO 호출은 계속 — 컨텍스트 일부 누락한 채 진행. */
                     console.error('[Connect AI] readAgentSharedContext 실패, 빈 컨텍스트로 계속:', sc?.message || sc);
@@ -19670,13 +20027,23 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                             ]
                         });
                     } else {
+                        const agentId = 'ceo';
+                        const group = getAgentContextGroup(agentId);
+                        const userMsg = `[사용자 명령]\n${prompt}`;
+                        const guard = applyContextBudgetGuard(ceoSystemPrompt, userMsg, agentId, group);
                         planRaw = await this._callAgentLLM(
-                            ceoSystemPrompt,
-                            `[사용자 명령]\n${prompt}`,
+                            guard.finalPrompt,
+                            userMsg,
                             modelName,
-                            'ceo',
+                            agentId,
                             false,
-                            { jsonMode: true }
+                            { 
+                                jsonMode: true,
+                                contextGroup: group,
+                                truncated: guard.truncated,
+                                truncateReason: guard.truncateReason,
+                                useLeanContext: false
+                            }
                         );
                     }
                 }
@@ -19761,13 +20128,24 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             if (!plan) {
                 try { _activeChatProvider?.postSystemNote?.('CEO 첫 응답 파싱 실패 — JSON 모드로 1회 재시도', '🔄'); } catch { /* ignore */ }
                 try {
+                    const agentId = 'ceo';
+                    const group = getAgentContextGroup(agentId);
+                    const rawSys = `${_personalizePrompt(CEO_PLANNER_PROMPT)}\n\n[중요] 오직 JSON 한 객체만 출력. 설명/주석/마크다운 금지. 형식: {"brief":"…","tasks":[{"agent":"<id>","task":"…"}]}`;
+                    const userMsg = `[사용자 명령]\n${prompt}`;
+                    const guard = applyContextBudgetGuard(rawSys, userMsg, agentId, group);
                     const retryRaw = await this._callAgentLLM(
-                        `${_personalizePrompt(CEO_PLANNER_PROMPT)}\n\n[중요] 오직 JSON 한 객체만 출력. 설명/주석/마크다운 금지. 형식: {"brief":"…","tasks":[{"agent":"<id>","task":"…"}]}`,
-                        `[사용자 명령]\n${prompt}`,
+                        guard.finalPrompt,
+                        userMsg,
                         modelName,
-                        'ceo',
+                        agentId,
                         false,
-                        { jsonMode: true }
+                        { 
+                            jsonMode: true,
+                            contextGroup: group,
+                            truncated: guard.truncated,
+                            truncateReason: guard.truncateReason,
+                            useLeanContext: false
+                        }
                     );
                     plan = _parsePlan(retryRaw);
                     if (plan) planRaw = retryRaw;
@@ -20014,14 +20392,19 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                     : '';
                 /* v2.89.41 — 컨텍스트 다이어트. 실데이터(prefetch 또는 peerCtx) 있을 때
                    lean 모드 = decisions·memory·brain RAG 생략 → 토큰 ~9000자 감소 →
-                   추론 30~50% 빨라짐 + 환각 더 줄어듦 (메모리에서 끌어올 거리 없음). */
-                const useLeanContext = (realtimeData.length > 200) || (peerCtx.length > 500);
+                   추론 30~50% 빨라짐 + 환각 더 줄어듦 (메모리에서 끌어올 거리 없음).
+                   v2.90.0 — Default useLeanContext to true for all local model execution to prevent OOM/timeouts. */
+                let useLeanContext = true;
                 /* v2.89.131 — 최근 파일 액션 컨텍스트. 코다리가 직전에 만든 파일의 절대
                    경로를 잊고 "_agents/developer/test/" 같은 추측 경로로 list_files
                    호출해 실패하던 사고 차단. */
                 const recentFilesCtx = this._buildRecentFilesContext(t.agent);
-                const sysPrompt = `${buildSpecialistPrompt(t.agent)}${this._getProjectMemory()}${buildAgentConfigStatus(t.agent)}${realtimeData}${readAgentSharedContext(t.agent, { lean: useLeanContext })}${peerCtx}${hallucinationGuard}${recentFilesCtx}`;
+                let sysPrompt = `${buildSpecialistPrompt(t.agent)}${this._getProjectMemory()}${buildAgentConfigStatus(t.agent)}${realtimeData}${await readAgentSharedContext(t.agent, { lean: useLeanContext })}${peerCtx}${hallucinationGuard}${recentFilesCtx}`;
                 const userMsg = `[CEO의 지시]\n${t.task}\n\n[원 사용자 명령 참고]\n${prompt}`;
+ 
+                const group = getAgentContextGroup(t.agent);
+                const guard = applyContextBudgetGuard(sysPrompt, userMsg, t.agent, group);
+                sysPrompt = guard.finalPrompt;
 
                 let out = '';
                 /* v2.89.133 — 키트 shortcut. 명시적 호출(`코다리야 ...`) + 두뇌 키트
@@ -20106,6 +20489,10 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                 }, 2500); /* v2.89.157 — 2.5초로 단축. 사무실 시각 효과 (sparkle·thought·status) 더 자주 갱신 → 정지처럼 안 보임. */
                 try {
                     out = await this._callAgentLLM(sysPrompt, userMsg, modelName, t.agent, true, {
+                        contextGroup: group,
+                        truncated: guard.truncated,
+                        truncateReason: guard.truncateReason,
+                        useLeanContext,
                         onFirstToken: () => {
                             clearInterval(heartbeatInterval);
                             const waitSec = Math.round((Date.now() - llmStartTs) / 1000);
@@ -20506,7 +20893,23 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             if (plan.tasks.length >= 2) {
                 try {
                     const conferInput = `[원 명령]\n${prompt}\n\n[산출물 요약]\n${plan.tasks.map(t => `\n## ${AGENTS[t.agent]?.name}\n${(outputs[t.agent] || '').slice(0, 800)}`).join('\n')}`;
-                    const conferRaw = await this._callAgentLLM(_personalizePrompt(CONFER_PROMPT), conferInput, modelName, 'ceo', false);
+                    const agentId = 'ceo';
+                    const group = getAgentContextGroup(agentId);
+                    const rawSys = _personalizePrompt(CONFER_PROMPT);
+                    const guard = applyContextBudgetGuard(rawSys, conferInput, agentId, group);
+                    const conferRaw = await this._callAgentLLM(
+                        guard.finalPrompt,
+                        conferInput,
+                        modelName,
+                        agentId,
+                        false,
+                        {
+                            contextGroup: group,
+                            truncated: guard.truncated,
+                            truncateReason: guard.truncateReason,
+                            useLeanContext: false
+                        }
+                    );
                     const m = conferRaw.match(/\{[\s\S]*\}/);
                     const parsed = JSON.parse(m ? m[0] : conferRaw);
                     if (parsed && Array.isArray(parsed.turns)) {
@@ -20570,12 +20973,22 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                     `규칙: 위 산출물 안의 실제 내용·숫자만 인용해 보고서 작성. "산출물을 기다리고 있습니다", "데이터가 제공되면" 같은 placeholder 표현 절대 금지 — 산출물은 이미 위에 있음.`;
                 let ceoNarrative = '';
                 try {
+                    const agentId = 'ceo';
+                    const group = getAgentContextGroup(agentId);
+                    const rawSys = `${_personalizePrompt(CEO_REPORT_PROMPT)}\n${await readAgentSharedContext(agentId, { lean: true })}`;
+                    const guard = applyContextBudgetGuard(rawSys, reportInput, agentId, group);
                     ceoNarrative = await this._callAgentLLM(
-                        `${_personalizePrompt(CEO_REPORT_PROMPT)}\n${readAgentSharedContext('ceo', { lean: true })}`,
+                        guard.finalPrompt,
                         reportInput,
                         modelName,
-                        'ceo',
-                        false
+                        agentId,
+                        false,
+                        {
+                            contextGroup: group,
+                            truncated: guard.truncated,
+                            truncateReason: guard.truncateReason,
+                            useLeanContext: true
+                        }
                     );
                     /* CEO가 그래도 placeholder 뱉으면 무시 */
                     if (/산출물을\s*기다|데이터가\s*제공|once\s+the\s+output|when\s+the\s+output/i.test(ceoNarrative)) {
@@ -20640,7 +21053,22 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             const learnedDecisions: string[] = [];
             try {
                 const learnInput = `[원 명령]\n${prompt}\n\n[보고서]\n${finalReport.slice(0, 2500)}\n\n[대화]\n${conferTurns.map(t => `${AGENTS[t.from]?.name} → ${AGENTS[t.to]?.name}: ${t.text}`).join('\n')}`;
-                const learnRaw = await this._callAgentLLM(DECISIONS_EXTRACT_PROMPT, learnInput, modelName, 'ceo', false);
+                const agentId = 'ceo';
+                const group = getAgentContextGroup(agentId);
+                const guard = applyContextBudgetGuard(DECISIONS_EXTRACT_PROMPT, learnInput, agentId, group);
+                const learnRaw = await this._callAgentLLM(
+                    guard.finalPrompt,
+                    learnInput,
+                    modelName,
+                    agentId,
+                    false,
+                    {
+                        contextGroup: group,
+                        truncated: guard.truncated,
+                        truncateReason: guard.truncateReason,
+                        useLeanContext: false
+                    }
+                );
                 const m = learnRaw.match(/\{[\s\S]*\}/);
                 const parsed = JSON.parse(m ? m[0] : learnRaw);
                 if (parsed && Array.isArray(parsed.decisions)) {
@@ -20683,9 +21111,24 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             // through the same channels as Secretary's other replies.
             if (bridgeMode !== 'off') {
                 try {
+                    const agentId = 'secretary';
+                    const group = getAgentContextGroup(agentId);
                     const wrapSys = `당신은 1인 기업의 비서입니다. 방금 회사가 사장님 명령을 처리해서 종합 보고서가 나왔습니다.\n사장님(사용자)께 1~2 문장으로 친근하게 정리해서 전달하세요.\n- "사장님, ~"으로 시작\n- 핵심 결과 1개 + 필요하면 다음 액션 한 줄\n- JSON·머리말·꼬리말 금지. 평문만.`;
                     const wrapUsr = `[사장님 명령]\n${prompt.slice(0, 400)}\n\n[CEO 종합 보고]\n${finalReport.slice(0, 1500)}`;
-                    const wrap = await this._callAgentLLM(wrapSys, wrapUsr, modelName, 'secretary', false);
+                    const guard = applyContextBudgetGuard(wrapSys, wrapUsr, agentId, group);
+                    const wrap = await this._callAgentLLM(
+                        guard.finalPrompt,
+                        wrapUsr,
+                        modelName,
+                        agentId,
+                        false,
+                        {
+                            contextGroup: group,
+                            truncated: guard.truncated,
+                            truncateReason: guard.truncateReason,
+                            useLeanContext: false
+                        }
+                    );
                     const wrapText = (wrap || '').trim().slice(0, 500);
                     if (wrapText) {
                         this._displayMessages.push({ text: `📱 비서: ${wrapText}`, role: 'ai' });
@@ -20757,7 +21200,14 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         modelName: string,
         agentId: string,
         broadcast: boolean,
-        opts?: { jsonMode?: boolean; onFirstToken?: () => void }
+        opts?: { 
+            jsonMode?: boolean; 
+            onFirstToken?: () => void;
+            useLeanContext?: boolean;
+            truncated?: boolean;
+            truncateReason?: string;
+            contextGroup?: string;
+        }
     ): Promise<string> {
         const { ollamaBase, defaultModel, timeout } = getConfig();
         /* v2.89.26 — 에이전트별 모델 override. 사용자가 외부 연결 패널에서
@@ -20767,8 +21217,23 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         let isLMStudio = _isLMStudioEngine(ollamaBase);
         let apiUrl = isLMStudio ? `${ollamaBase}/v1/chat/completions` : `${ollamaBase}/api/chat`;
         if (!isLMStudio) {
-            try { await axios.get(`${ollamaBase}/api/tags`, { timeout: 1000 }); }
-            catch { apiUrl = 'http://127.0.0.1:1234/v1/chat/completions'; isLMStudio = true; }
+            let healthy = false;
+            try { 
+                await axios.get(`${ollamaBase}/api/tags`, { timeout: 3000 }); 
+                healthy = true;
+            } catch (err1) { 
+                console.warn(`[Connect AI] Ollama health check retry 1 failed, retrying... Error: ${err1?.message || err1}`);
+                try {
+                    await axios.get(`${ollamaBase}/api/tags`, { timeout: 3000 });
+                    healthy = true;
+                } catch (err2) {
+                    console.error(`[Connect AI] Ollama health check failed after retry. Falling back to LM Studio. Error: ${err2?.message || err2}`);
+                }
+            }
+            if (!healthy) {
+                apiUrl = 'http://127.0.0.1:1234/v1/chat/completions'; 
+                isLMStudio = true; 
+            }
         }
 
         const messages = [
@@ -20781,6 +21246,59 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
 
         const signal = this._abortController?.signal;
 
+        const finalModel = modelName || defaultModel;
+        const totalPromptLen = systemPrompt.length + userMsg.length;
+        const safeNumCtx = 8192;
+        const safeNumPredict = 2048; // bounded value: default 2048, max 3072
+        const safeTemp = 0.2; // Safe temperature
+
+        const contextGroup = opts?.contextGroup || getAgentContextGroup(agentId);
+        const useLean = opts?.useLeanContext !== false;
+        const isTruncated = opts?.truncated || false;
+        const truncReason = opts?.truncateReason || 'none';
+
+        let loadedFilesList: string[] = [];
+        if (contextGroup === 'developer') {
+            loadedFilesList = ['decisions.md', 'recent_errors.md', 'failure_dna_db.json', 'workspace source summary'];
+        } else if (contextGroup === 'planner') {
+            loadedFilesList = ['goals.md', 'product.md', 'identity.md', 'calendar_cache.md', 'schedule.md', 'tracker.json'];
+        } else if (contextGroup === 'analyzer') {
+            loadedFilesList = ['metrics.json', 'recent_conversations', 'trend_dna_db.json', 'goals.md'];
+        } else if (contextGroup === 'ceo') {
+            loadedFilesList = ['goals.md', 'decisions.md', 'metrics.json', 'tracker.json'];
+        } else if (contextGroup === 'secretary') {
+            loadedFilesList = ['goals.md', 'identity.md', 'calendar_cache.md', 'schedule.md', 'tracker.json', 'recent_conversations'];
+        } else {
+            loadedFilesList = ['identity.md', 'goals.md', 'decisions.md', 'memory.md'];
+        }
+
+        console.log(`contextGroup=${contextGroup}
+loadedFiles=${loadedFilesList.join(',')}
+contextSize=${systemPrompt.length}
+promptLength=${totalPromptLen}`);
+
+        if (isLMStudio) {
+            console.log(`provider=lmstudio
+model=${finalModel}
+contextGroup=${contextGroup}
+max_tokens=${safeNumPredict}
+temperature=${safeTemp}
+useLeanContext=${useLean}
+promptLength=${totalPromptLen}
+truncated=${isTruncated}
+truncateReason=${truncReason}`);
+        } else {
+            console.log(`provider=ollama
+model=${finalModel}
+contextGroup=${contextGroup}
+num_ctx=${safeNumCtx}
+num_predict=${safeNumPredict}
+useLeanContext=${useLean}
+promptLength=${totalPromptLen}
+truncated=${isTruncated}
+truncateReason=${truncReason}`);
+        }
+
         /* v2.89.89 — 출력 cap 제거 + JSON 모드 지원. 이전엔 LM Studio max_tokens=4096,
            Ollama num_predict=2048로 출력을 잘랐는데, 멀티태스크 plan(특히 한국어)이
            이 천장에 부딪혀 잘린 JSON을 토하는 사고가 잦았음. 이제:
@@ -20788,14 +21306,17 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
            - LM Studio: max_tokens 미지정 (모델 자체 최대치 사용)
            - jsonMode=true면 양쪽 다 JSON 강제(format/response_format) — 닫는 } 만나면
              즉시 stop이라 cap 해제해도 무한 생성 위험 없음. 안전장치는
-             기존 first-token / idle timeout(line 16910)이 그대로 막아줌. */
+             기존 first-token / idle timeout(line 16910)이 그대로 막아줌.
+           * v2.90.0 — local CPU-bound Ollama models hang when num_predict is -1.
+             Replacing num_predict: -1 with bounded value 2048. Add safe generation options. */
         if (isLMStudio) {
             const body: any = {
-                model: modelName || defaultModel,
+                model: finalModel,
                 messages,
                 stream: true,
-                temperature: this._temperature,
-                top_p: this._topP
+                temperature: safeTemp,
+                top_p: this._topP || 0.9,
+                max_tokens: safeNumPredict
             };
             if (opts?.jsonMode) body.response_format = { type: 'json_object' };
             /* v2.89.100 — 일부 LM Studio 빌드(예: 0.3.x 일부)는 response_format에 'json_object'를
@@ -20841,10 +21362,16 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
             });
         } else {
             const body: any = {
-                model: modelName || defaultModel,
+                model: finalModel,
                 messages,
                 stream: true,
-                options: { num_ctx: 8192, num_predict: -1, temperature: this._temperature, top_p: this._topP, top_k: this._topK }
+                options: { 
+                    num_ctx: safeNumCtx, 
+                    num_predict: safeNumPredict, 
+                    temperature: safeTemp, 
+                    top_p: this._topP || 0.9, 
+                    top_k: this._topK || 40 
+                }
             };
             if (opts?.jsonMode) body.format = 'json';
             const response = await axios.post(apiUrl, body, { timeout, responseType: 'stream', signal });
@@ -21809,3 +22336,12 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
         }
     }
 }
+
+// Exported for routing validation tests
+export {
+    getWorkspaceContext,
+    getAgentContextGroup,
+    readAgentSharedContext,
+    applyContextBudgetGuard
+};
+

@@ -1,119 +1,120 @@
 {
   "status": "completed",
   "step": "completed",
-  "message": "드라이 런 완료!",
+  "message": "완전 자동화 완료!",
   "progress": 100,
-  "updated_at": "2026-06-11T08:13:00.438Z",
-  "id": "1781165469955",
-  "videoUrl": "/shorts/dry_run_mock.mp4",
-  "videoPath": "",
-  "youtubeVideoId": "DRY_RUN",
+  "updated_at": "2026-06-11T09:20:15.854Z",
+  "id": "1781169298392",
+  "videoUrl": "/shorts/cinema_shorts_auto_1781169298392.mp4",
+  "videoPath": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_shorts_auto_1781169298392.mp4",
+  "youtubeVideoId": "MOCK_VIDEO_ID",
   "isMockUpload": true,
-  "uploadMessage": "Dry run completed successfully.",
-  "productTitle": "에스프레소 머신",
-  "affiliateLink": "{COUPANG_LINK}",
-  "commentText": "사용한 제품👇\n\n{COUPANG_LINK}\n\n파트너스 활동의 일환으로\n수수료를 받을 수 있습니다.",
-  "created_at": "2026-06-11T08:13:00.430Z",
+  "uploadMessage": "품질 보드 심사 점수가 80점 미만(평균 71.0점)으로 유튜브 자동 업로드가 차단(보류)되었습니다.",
+  "productTitle": "정관장 홍삼정 에브리타임",
+  "affiliateLink": "https://link.coupang.com/a/mock______________",
+  "commentText": "오늘 영상에서 활약한 [정관장 홍삼정 에브리타임] 최저가 좌표입니다 ➔ https://link.coupang.com/a/mock______________",
+  "created_at": "2026-06-11T09:20:15.845Z",
   "scriptData": {
     "product_analysis": {
-      "category": "가정용 에스프레소 머신",
-      "brand": "맹칠컴퍼니",
+      "category": "건강기능식품 (홍삼)",
+      "brand": "정관장",
       "features": [
-        "고압력 추출 시스템",
-        "정밀 온도 제어",
-        "원터치 조작"
+        "6년근 홍삼 농축액",
+        "스틱형 포장",
+        "간편한 섭취 방식"
       ],
       "benefits": [
-        "카페 수준의 홈카페 구현",
-        "시간과 비용 절감"
+        "면역력 증진",
+        "피로 개선",
+        "혈소판 응집 억제를 통한 혈행 개선"
       ],
-      "target_audience": "매일 아메리카노를 마셔야 직성이 풀리는 홈카페 입문자 및 애호가",
-      "usage_context": "출근 전 바쁜 아침이나 여유로운 주말 오후 홈카페에서",
-      "purchase_desire": "매일 카페에 지불하는 비용의 부담을 줄이고 싶은 욕구",
-      "problem_solved": "매번 카페까지 나가야 하는 번거로움과 커피값 지출의 고통",
-      "competitor_differentiation": "복잡한 세팅 없이 버튼 하나로 균일한 맛을 구현하는 직관성"
+      "target_audience": "피로에 지친 직장인 및 바쁜 현대인",
+      "usage_context": "출근길 지하철, 사무실 책상, 운동 전후",
+      "purchase_desire": "간편하게 에너지를 충전하고 싶은 욕구",
+      "problem_solved": "만성 피로와 급격한 체력 저하",
+      "competitor_differentiation": "독보적인 브랜드 신뢰도와 휴대성"
     },
-    "title": "카페 커피, 끊어야 하는 이유",
-    "youtube_description": "매일 사 마시는 아메리카노 값, 이제 아껴보세요. 집에서 즐기는 완벽한 한 잔의 비밀을 공개합니다. #홈카페 #에스프레소머신 #커피라이프 #절약꿀팁 #커피스타그램",
+    "title": "당신의 정신이 무너지고 있습니다",
+    "youtube_description": "어느 순간 찾아오는 극심한 무기력증, 그 실체를 밝힙니다. 지금 바로 확인하세요. #정관장 #홍삼정 #에브리타임 #피로회복 #건강관리",
     "ad_score": 30,
     "hook_candidates": [
-      "매일 사 마시는 커피가 독이 된다고? ☕",
-      "카페 사장님이 절대 안 알려주는 비밀 🤫",
-      "당신의 아메리카노, 낭비일 수 있습니다 💸",
-      "커피값 아껴서 여행 가는 법 ✈️",
-      "진짜 맛있는 커피의 기준이 바뀝니다 ☕"
+      "어느 날 갑자기 당신의 정신이 끊어집니다 😱",
+      "당신을 서서히 갉아먹는 보이지 않는 공포 💀",
+      "멈출 수 없는 피로, 그 끝은 어디인가 ⏳",
+      "당신의 몸이 보내는 마지막 경고 신호 ⚠️",
+      "오늘도 버티기만 하는 당신이 위험한 이유 🆘"
     ],
     "cuts": [
       {
-        "subtitle": "진짜 맛있는 커피의 기준이 바뀝니다 ☕",
-        "description": "카페에서 비싼 가격의 아메리카노를 결제하며 한숨을 쉬는 사람의 실루엣",
-        "prompt": "Cinematic close-up of a person looking frustrated at a cafe receipt, dimly lit, aesthetic moody atmosphere, vertical 9:16 framing, 8k",
-        "searchKeyword": "frustrated coffee customer",
+        "subtitle": "당신을 서서히 갉아먹는 보이지 않는 공포 💀",
+        "description": "어두운 사무실, 모니터 불빛에 의지한 채 멍하니 앉아있는 사람의 클로즈업",
+        "prompt": "hyperrealistic, close up of a tired office worker sitting in a dark office, glowing monitor light on face, cinematic lighting, 8k, professional photography, vertical 9:16",
+        "searchKeyword": "tired worker dark",
         "cameraMovement": "zoom in",
-        "duration": 1,
-        "keywords": "커피값, 낭비",
-        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_1.jpg",
+        "duration": 5,
+        "keywords": "피로, 무기력",
+        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781169298392_r2_cut_1.jpg",
         "vision_score": 40,
-        "vision_feedback": "프롬프트와 완전히 다른 이미지입니다. 카페 영수증을 보는 인물이 아닌, 모니터와 기계 장치를 잡고 있는 손이 묘사되었으며, 손가락의 관절과 형태가 심각하게 왜곡되어 있습니다."
+        "vision_feedback": "프롬프트와 완전히 일치하지 않습니다. 사무실 노동자나 모니터 빛은 전혀 묘사되지 않았으며, 책과 안경이 있는 정물화로 생성되어 프롬프트 이탈이 심각합니다."
       },
       {
-        "subtitle": "매달 나가는 비용, 상상 이상이죠 💸",
-        "description": "지갑 속 영수증이 쌓여가는 것을 보며 답답해하는 모습",
-        "prompt": "Cinematic shot of messy receipts and coins on a wooden table, soft focus background, warm lighting, vertical 9:16 framing, 8k",
-        "searchKeyword": "too many receipts",
+        "subtitle": "도대체 무엇이 당신을 이렇게 만들었을까 🥀",
+        "description": "책상 위에 쌓인 서류와 차갑게 식은 커피잔을 비추며 고조되는 긴장감",
+        "prompt": "hyperrealistic, pile of messy paperwork on a desk, cold coffee in a cup, moody atmosphere, cinematic shadow, depth of field, vertical 9:16",
+        "searchKeyword": "messy desk stress",
         "cameraMovement": "panning",
-        "duration": 2,
-        "keywords": "비용 절감, 카페",
-        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_2.jpg",
+        "duration": 5,
+        "keywords": "업무 스트레스, 번아웃",
+        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781169298392_r2_cut_2.jpg",
         "vision_score": 30,
-        "vision_feedback": "프롬프트의 '영수증과 동전'은 전혀 나타나지 않았습니다. 대신 색소폰을 연주하는 인물이 등장하여 프롬프트 일치도가 매우 낮으며, 악기 구조와 손가락의 묘사가 부자연스럽습니다."
+        "vision_feedback": "프롬프트에 명시된 서류 더미와 차가운 커피는 존재하지 않으며, 코딩 화면이 담긴 노트북이 생성되었습니다. 내용 일치도가 매우 낮고 일관성이 결여되어 있습니다."
       },
       {
-        "subtitle": "이제 집에서 더 완벽하게 즐기세요 ✨",
-        "description": "따뜻한 햇살이 비치는 깔끔한 주방 공간을 몽환적으로 비춤",
-        "prompt": "Cinematic view of a sunlit modern kitchen counter, blurred background, peaceful morning mood, vertical 9:16 framing, 8k",
-        "searchKeyword": "cozy kitchen",
+        "subtitle": "이 지옥에서 탈출할 단 하나의 방법이 있습니다 🔑",
+        "description": "어두운 화면 속에서 한 줄기 빛이 내리쬐며 무언가 해결책이 등장할 것 같은 미스터리한 분위기",
+        "prompt": "hyperrealistic, a single beam of light hitting a clean wooden surface, mysterious atmosphere, high contrast, cinematic, vertical 9:16",
+        "searchKeyword": "mysterious light",
         "cameraMovement": "zoom out",
-        "duration": 2,
-        "keywords": "홈카페, 해결책",
-        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_3.jpg",
-        "vision_score": 50,
-        "vision_feedback": "현대적인 주방 카운터라는 프롬프트와 달리, 산장 같은 목재 인테리어와 정체불명의 식재료가 배치되어 있습니다. 화풍이 다른 컷들과 일관되지 않으며, 창밖 배경의 묘사가 뭉개져 있습니다."
+        "duration": 5,
+        "keywords": "해결책, 희망",
+        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781169298392_r2_cut_3.jpg",
+        "vision_score": 20,
+        "vision_feedback": "프롬프트의 '나무 표면'과 '빛'에 대한 묘사는 무시되었으며, 뜬금없이 조각상 이미지가 생성되었습니다. 이전 컷들과 화풍 및 주제의 연관성이 전혀 없습니다."
       },
       {
-        "subtitle": "맹칠 에스프레소 머신으로 끝내세요 ☕",
-        "description": "고급스러운 에스프레소 머신이 커피를 추출하는 정갈한 클로즈업 샷과 고정댓글 링크 안내",
-        "prompt": "Cinematic macro shot of professional espresso machine extracting rich coffee crema, steam rising, elegant lighting, vertical 9:16 framing, 8k",
-        "searchKeyword": "professional espresso machine",
+        "subtitle": "정관장 홍삼정 에브리타임으로 시작하세요 🎁",
+        "description": "정관장 홍삼정 에브리타임 제품이 깔끔하게 놓여있는 모습, 고정댓글 링크 안내",
+        "prompt": "hyperrealistic, product photography of CheongKwanJang Everytime red ginseng stick on a clean table, bright and professional lighting, high resolution, vertical 9:16",
+        "searchKeyword": "red ginseng stick",
         "cameraMovement": "zoom in",
-        "duration": 3,
-        "keywords": "에스프레소 머신, 홈카페 완성",
-        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781165469955_r1_cut_4.jpg",
-        "vision_score": 60,
-        "vision_feedback": "에스프레소 머신은 묘사되었으나, 프롬프트에 명시된 '커피 추출(crema)'과 '상승하는 증기'가 전혀 보이지 않습니다. 기계의 금속 질감은 표현되었으나 전체적인 구성이 단조롭습니다."
+        "duration": 5,
+        "keywords": "정관장, 에브리타임",
+        "image_path": "C:/Users/user/Desktop/명철/개발/viewer-app/public/shorts/cinema_images/img_auto_1781169298392_r2_cut_4.jpg",
+        "vision_score": 10,
+        "vision_feedback": "제품 광고 프롬프트임에도 불구하고 샐러드 이미지가 생성되었습니다. 브랜드 제품(정관장)이 전혀 묘사되지 않아 광고용 이미지로서의 가치가 없습니다."
       }
     ]
   },
-  "topic": "에스프레소 머신",
-  "category": "상품 홍보",
+  "topic": "정관장 홍삼정 에브리타임",
+  "category": "건강",
   "preUploadAnalysis": {
     "scores": {
       "hookStrength": 85,
-      "scriptContent": 90,
-      "sceneVisuals": 45,
+      "scriptContent": 80,
+      "sceneVisuals": 25,
       "subtitleAesthetics": 80,
-      "soundDesign": 80
+      "soundDesign": 85
     },
-    "relevance_score": 95,
-    "relevance_feedback": "타겟 고객의 페인 포인트인 비용 문제를 정확히 짚어내어 상품의 필요성을 효과적으로 연결했습니다.",
+    "relevance_score": 90,
+    "relevance_feedback": "직장인의 피로라는 타겟 페르소나와 제품의 해결책이 명확하게 연결되어 상품 적합성이 매우 높습니다.",
     "fact_score": 90,
-    "fact_feedback": "허위 스펙은 없으나 완벽한 한 잔이라는 표현이 다소 주관적일 수 있어 감점 요인이 있습니다.",
+    "fact_feedback": "건강기능식품의 효능 범위를 벗어나는 허위 사실은 없으나, 피로를 지옥이나 공포로 표현한 점이 과장 광고 소지가 있어 감점하였습니다.",
     "evaluations": {
-      "hookStrength": "카페 비용에 대한 공감대를 형성하여 시청자의 이목을 끄는 데 성공했습니다.",
-      "scriptContent": "문제 제기에서 해결책 제시까지의 흐름이 논리적이며 상품의 핵심 가치를 잘 전달합니다.",
-      "sceneVisuals": "감성적인 연출을 통해 홈카페에 대한 로망을 자극하는 영상미가 돋보입니다.",
-      "subtitleAesthetics": "가독성이 좋고 핵심 메시지를 강조하는 자막 배치가 적절합니다.",
-      "soundDesign": "커피 추출 소리 등 현장감을 살릴 수 있는 오디오 요소의 활용이 기대됩니다."
+      "hookStrength": "공포와 무기력증을 키워드로 사용하여 시청자의 호기심을 강하게 자극하는 후킹이 돋보입니다.",
+      "scriptContent": "문제 제기에서 해결책 제시로 이어지는 구조가 깔끔하지만, 제품의 구체적인 이점 설명이 다소 부족합니다.",
+      "sceneVisuals": "어두운 사무실에서 제품으로 전환되는 시각적 대비가 제품의 가치를 돋보이게 합니다.",
+      "subtitleAesthetics": "긴장감을 조성하는 자막 문구와 이모지 활용이 쇼츠 플랫폼 트렌드에 적합합니다.",
+      "soundDesign": "미스터리한 분위기를 조성하는 사운드 연출이 시청자의 몰입도를 높이는 데 효과적입니다."
     },
     "details": {
       "category_match": true,
@@ -133,13 +134,13 @@
   "successFactors": "",
   "failureFactors": "",
   "selfImprovementApplied": true,
-  "diversity_score": 50,
-  "similarity_score": 50,
-  "style_dna": "Product Reveal",
-  "used_style": "Cinematic",
-  "hook_type": "반전형",
-  "shot_pattern": "A형 (빌드업)",
-  "is_experiment": false,
+  "diversity_score": 70,
+  "similarity_score": 30,
+  "style_dna": "Motivation",
+  "used_style": "Hyperrealistic",
+  "hook_type": "공포형",
+  "shot_pattern": "D형 (빠른 템포)",
+  "is_experiment": true,
   "custom_font": "Pretendard-Bold",
   "custom_caption_style": "minimal",
   "custom_caption_position": "bottom",
@@ -224,38 +225,17 @@
   ],
   "is_mock": false,
   "source": "autopilot",
-  "product_name": "에스프레소 머신",
-  "target_audience": "홈카페 아메리카노 애호가",
-  "video_style": "Cinematic",
-  "ad_score": 30,
-  "quality_score": 76,
-  "product_relevance_score": 95,
-  "product_fact_score": 90,
-  "upload_mode": "product-driven",
-  "pinned_comment_status": "pending",
+  "product_name": "정관장 홍삼정 에브리타임",
+  "product_url": "",
+  "coupang_link": "https://link.coupang.com/a/mock______________",
+  "target_audience": "",
+  "video_style": "Hyperrealistic",
+  "ad_score": 0,
+  "quality_score": 71,
+  "upload_mode": "archetype",
+  "pinned_comment_status": "not_attempted",
   "compliance": {
     "passed": true,
-    "cutChecks": [
-      {
-        "cutIndex": 1,
-        "passed": true,
-        "message": "상품명 노출 없음 (통과)"
-      },
-      {
-        "cutIndex": 2,
-        "passed": true,
-        "message": "상품명 노출 없음 (통과)"
-      },
-      {
-        "cutIndex": 3,
-        "passed": true,
-        "message": "상품명 노출 없음 (통과)"
-      },
-      {
-        "cutIndex": 4,
-        "passed": true,
-        "message": "상품명 공개 확인 (통과)"
-      }
-    ]
+    "cutChecks": []
   }
 }

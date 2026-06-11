@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-08T09:14:30.739646+00:00",
+  "last_updated": "2026-06-11T09:14:58.524896+00:00",
   "monetization_log": [
     {
       "date": "2026-06-01",
@@ -800,10 +800,60 @@
           "expected_revenue_per_100k": 168000
         }
       ]
+    },
+    {
+      "date": "2026-06-11",
+      "top_picks": [
+        {
+          "rank": 1,
+          "topic": "AI",
+          "product_name": "AI 수익화 부업 마스터북 전자책",
+          "expected_ctr": 8.0,
+          "expected_conv": 6.0,
+          "price": 35000,
+          "expected_revenue_per_100k": 504000
+        },
+        {
+          "rank": 2,
+          "topic": "다이어트",
+          "product_name": "허닭 국산 닭가슴살 볶음밥 10팩",
+          "expected_ctr": 5.6,
+          "expected_conv": 5.0,
+          "price": 29900,
+          "expected_revenue_per_100k": 251160
+        },
+        {
+          "rank": 3,
+          "topic": "자기계발",
+          "product_name": "모트모트 플래너 스타터 패키지",
+          "expected_ctr": 6.5,
+          "expected_conv": 3.75,
+          "price": 16500,
+          "expected_revenue_per_100k": 120656
+        },
+        {
+          "rank": 4,
+          "topic": "자기계발",
+          "product_name": "인체공학적 멀티 독서대",
+          "expected_ctr": 6.0,
+          "expected_conv": 3.35,
+          "price": 24000,
+          "expected_revenue_per_100k": 144720
+        },
+        {
+          "rank": 5,
+          "topic": "건강",
+          "product_name": "락토핏 유산균 골드",
+          "expected_ctr": 5.0,
+          "expected_conv": 4.0,
+          "price": 28000,
+          "expected_revenue_per_100k": 168000
+        }
+      ]
     }
   ],
   "performance_summary": {
-    "total_estimated_revenue": 56511000,
+    "total_estimated_revenue": 57015000,
     "total_actual_revenue": 0,
     "best_performing_topic": "AI"
   }
