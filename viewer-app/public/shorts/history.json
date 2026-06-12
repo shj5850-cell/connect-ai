@@ -235,7 +235,15 @@
           "message": "상품명 공개 확인 (통과)"
         }
       ]
-    }
+    },
+    "affiliate_clicks": 2,
+    "clicks": 2,
+    "click_rate": 0,
+    "conversions": 4,
+    "affiliate_conversions": 4,
+    "affiliate_revenue": 6000,
+    "estimated_youtube_revenue": 3,
+    "revenue_per_video": 6003
   },
   {
     "id": "1781244061944",
@@ -877,10 +885,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 105,
+    "likeRate": 0.9523809523809524,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 41,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -987,7 +995,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.35,
+    "retention": 41,
+    "average_view_duration": 8,
+    "watch_time": 840,
+    "impressions": 1653,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 1,
+    "comments": 0
   },
   {
     "id": "1781165469955",
@@ -2915,10 +2935,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 224,
+    "likeRate": 1.3392857142857142,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 42,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -3025,7 +3045,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.7,
+    "retention": 42,
+    "average_view_duration": 8,
+    "watch_time": 1792,
+    "impressions": 3343,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1781083235579",
@@ -3119,10 +3151,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 225,
+    "likeRate": 1.3333333333333335,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 44,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -3229,7 +3261,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.7,
+    "retention": 44,
+    "average_view_duration": 8,
+    "watch_time": 1800,
+    "impressions": 3358,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1781082922439",
@@ -3323,10 +3367,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 225,
+    "likeRate": 1.3333333333333335,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 48,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -3433,7 +3477,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.7,
+    "retention": 48,
+    "average_view_duration": 9,
+    "watch_time": 2025,
+    "impressions": 3358,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1781082639451",
@@ -3527,10 +3583,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 45,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 17,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -3624,7 +3680,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 3,
+    "retention": 17,
+    "average_view_duration": 3,
+    "watch_time": 135,
+    "impressions": 1500,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1781082356420",
@@ -3718,10 +3786,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 3622,
+    "likeRate": 3.9757040309221425,
+    "commentCount": 36,
+    "avgRetention": 78,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -3828,7 +3896,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 12.55,
+    "retention": 78,
+    "average_view_duration": 15,
+    "watch_time": 54330,
+    "impressions": 28860,
+    "shares": 17,
+    "subscribers_gained": 43,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 144,
+    "comments": 36
   },
   {
     "id": "1781082043394",
@@ -3922,10 +4002,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 226,
+    "likeRate": 1.3274336283185841,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 43,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -4032,7 +4112,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.45,
+    "retention": 43,
+    "average_view_duration": 8,
+    "watch_time": 1808,
+    "impressions": 3503,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1781081775515",
@@ -4126,10 +4218,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 3635,
+    "likeRate": 3.988995873452544,
+    "commentCount": 36,
+    "avgRetention": 77,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -4236,7 +4328,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 12.8,
+    "retention": 77,
+    "average_view_duration": 15,
+    "watch_time": 54525,
+    "impressions": 28398,
+    "shares": 17,
+    "subscribers_gained": 43,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 145,
+    "comments": 36
   },
   {
     "id": "1781081482447",
@@ -4330,10 +4434,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 227,
+    "likeRate": 1.3215859030837005,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 48,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -4440,7 +4544,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.6,
+    "retention": 48,
+    "average_view_duration": 9,
+    "watch_time": 2043,
+    "impressions": 3439,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1781081134061",
@@ -4534,10 +4650,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 45,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 19,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -4644,7 +4760,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 3,
+    "retention": 19,
+    "average_view_duration": 3,
+    "watch_time": 135,
+    "impressions": 1500,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1781080815355",
@@ -4747,10 +4875,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 3656,
+    "likeRate": 3.9934354485776806,
+    "commentCount": 36,
+    "avgRetention": 77,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -4878,7 +5006,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 12.8,
+    "retention": 77,
+    "average_view_duration": 3,
+    "watch_time": 10968,
+    "impressions": 28562,
+    "shares": 17,
+    "subscribers_gained": 43,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 146,
+    "comments": 36
   },
   {
     "id": "1781080422006",
@@ -4972,10 +5112,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 45,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 20,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -5082,7 +5222,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 3.25,
+    "retention": 20,
+    "average_view_duration": 4,
+    "watch_time": 180,
+    "impressions": 1384,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1781079761238",
@@ -5176,10 +5328,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 229,
+    "likeRate": 1.3100436681222707,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 47,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -5286,7 +5438,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.65,
+    "retention": 47,
+    "average_view_duration": 9,
+    "watch_time": 2061,
+    "impressions": 3443,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780912919349",
@@ -5382,10 +5546,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 251,
+    "likeRate": 1.1952191235059761,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 46,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -5513,7 +5677,19 @@
           "message": "상품명 공개 확인 (통과)"
         }
       ]
-    }
+    },
+    "ctr": 6.7,
+    "retention": 46,
+    "average_view_duration": 9,
+    "watch_time": 2259,
+    "impressions": 3746,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780910748545",
@@ -5609,10 +5785,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 4019,
+    "likeRate": 3.9810898233391394,
+    "commentCount": 40,
+    "avgRetention": 75,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -5740,7 +5916,19 @@
           "message": "상품명 공개 확인 (통과)"
         }
       ]
-    }
+    },
+    "ctr": 12.8,
+    "retention": 75,
+    "average_view_duration": 15,
+    "watch_time": 60285,
+    "impressions": 31398,
+    "shares": 19,
+    "subscribers_gained": 48,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 160,
+    "comments": 40
   },
   {
     "id": "1780895180444",
@@ -5834,10 +6022,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 252,
+    "likeRate": 1.1904761904761905,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 45,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -5931,7 +6119,19 @@
     "compliance": {
       "passed": true,
       "cutChecks": []
-    }
+    },
+    "ctr": 6.45,
+    "retention": 45,
+    "average_view_duration": 9,
+    "watch_time": 2268,
+    "impressions": 3906,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780892679094",
@@ -6045,9 +6245,9 @@
       "subscribers_gained": 13
     },
     "views": 6897,
-    "likeRate": 3.8,
-    "commentCount": 45,
-    "avgRetention": 65,
+    "likeRate": 1.4934029288096273,
+    "commentCount": 13,
+    "avgRetention": 47,
     "successFactors": "없음",
     "failureFactors": "후킹 점수가 낮았던 만큼 초반 1초 이탈이 급증함. 대본이 설명에만 치우쳐 긴장감 부재.",
     "selfImprovementApplied": true,
@@ -6155,8 +6355,18 @@
       "passed": true,
       "cutChecks": []
     },
-    "ctr": 6.3,
-    "subscribers_gained": 13
+    "ctr": 6.45,
+    "subscribers_gained": 13,
+    "retention": 47,
+    "average_view_duration": 9,
+    "watch_time": 62073,
+    "impressions": 106930,
+    "shares": 12,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 103,
+    "comments": 13
   },
   {
     "id": "1780885410358",
@@ -6269,9 +6479,9 @@
       "subscribers_gained": 2
     },
     "views": 1086,
-    "likeRate": 3.3,
-    "commentCount": 3,
-    "avgRetention": 27,
+    "likeRate": 1.4732965009208103,
+    "commentCount": 2,
+    "avgRetention": 47,
     "successFactors": "없음",
     "failureFactors": "후킹 점수가 낮았던 만큼 초반 1초 이탈이 급증함. 대본이 설명에만 치우쳐 긴장감 부재.",
     "selfImprovementApplied": true,
@@ -6366,8 +6576,18 @@
     ],
     "is_mock": false,
     "source": "autopilot",
-    "ctr": 9.6,
-    "subscribers_gained": 2
+    "ctr": 6.65,
+    "subscribers_gained": 2,
+    "retention": 47,
+    "average_view_duration": 9,
+    "watch_time": 9774,
+    "impressions": 16330,
+    "shares": 1,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 16,
+    "comments": 2
   },
   {
     "id": "1780884901481",
@@ -6467,10 +6687,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 50,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 15,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -6564,7 +6784,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 3,
+    "retention": 15,
+    "average_view_duration": 1,
+    "watch_time": 50,
+    "impressions": 1666,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780884597924",
@@ -6664,10 +6896,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 253,
+    "likeRate": 1.185770750988142,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 45,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -6720,7 +6952,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 6.45,
+    "retention": 45,
+    "average_view_duration": 5,
+    "watch_time": 1265,
+    "impressions": 3922,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780822767361",
@@ -6813,10 +7057,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 51,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 15,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -6910,7 +7154,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 3,
+    "retention": 15,
+    "average_view_duration": 3,
+    "watch_time": 153,
+    "impressions": 1700,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780822614666",
@@ -7003,10 +7259,10 @@
       "similarityPenaltyApplied": true
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 51,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 16,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -7100,7 +7356,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 3.25,
+    "retention": 16,
+    "average_view_duration": 3,
+    "watch_time": 153,
+    "impressions": 1569,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780822446834",
@@ -7193,10 +7461,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 257,
+    "likeRate": 1.1673151750972763,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 43,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -7311,7 +7579,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 6.45,
+    "retention": 43,
+    "average_view_duration": 8,
+    "watch_time": 2056,
+    "impressions": 3984,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780822082939",
@@ -7404,10 +7684,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 257,
+    "likeRate": 1.1673151750972763,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 44,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -7497,7 +7777,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 6.7,
+    "retention": 44,
+    "average_view_duration": 8,
+    "watch_time": 2056,
+    "impressions": 3835,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780821586255",
@@ -7609,10 +7901,10 @@
       "ctr": 9.3,
       "subscribers_gained": 1
     },
-    "views": 521,
-    "likeRate": 1.2,
-    "commentCount": 0,
-    "avgRetention": 44,
+    "views": 4118,
+    "likeRate": 3.98251578436134,
+    "commentCount": 41,
+    "avgRetention": 81,
     "successFactors": "없음",
     "failureFactors": "후킹 점수가 낮았던 만큼 초반 1초 이탈이 급증함. 대본이 설명에만 치우쳐 긴장감 부재.",
     "selfImprovementApplied": true,
@@ -7720,8 +8012,18 @@
     ],
     "is_mock": false,
     "source": "autopilot",
-    "ctr": 9.3,
-    "subscribers_gained": 1
+    "ctr": 12.8,
+    "subscribers_gained": 49,
+    "retention": 81,
+    "average_view_duration": 16,
+    "watch_time": 65888,
+    "impressions": 32171,
+    "shares": 19,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 164,
+    "comments": 41
   },
   {
     "id": "1780821586210",
@@ -7814,10 +8116,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 4118,
+    "likeRate": 3.98251578436134,
+    "commentCount": 41,
+    "avgRetention": 76,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -7907,7 +8209,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 12.55,
+    "retention": 76,
+    "average_view_duration": 15,
+    "watch_time": 61770,
+    "impressions": 32812,
+    "shares": 19,
+    "subscribers_gained": 49,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 164,
+    "comments": 41
   },
   {
     "id": "1780821579205",
@@ -8000,10 +8314,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 4118,
+    "likeRate": 3.98251578436134,
+    "commentCount": 41,
+    "avgRetention": 79,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -8093,7 +8407,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 12.8,
+    "retention": 79,
+    "average_view_duration": 15,
+    "watch_time": 61770,
+    "impressions": 32171,
+    "shares": 19,
+    "subscribers_gained": 49,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 164,
+    "comments": 41
   },
   {
     "id": "1780821579160",
@@ -8186,10 +8512,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
-    "commentCount": 0,
-    "avgRetention": 0,
+    "views": 4118,
+    "likeRate": 3.98251578436134,
+    "commentCount": 41,
+    "avgRetention": 74,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -8279,7 +8605,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 12.55,
+    "retention": 74,
+    "average_view_duration": 14,
+    "watch_time": 57652,
+    "impressions": 32812,
+    "shares": 19,
+    "subscribers_gained": 49,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 164,
+    "comments": 41
   },
   {
     "id": "1780821249353",
@@ -8372,10 +8710,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 257,
+    "likeRate": 1.1673151750972763,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 42,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -8465,7 +8803,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 6.4,
+    "retention": 42,
+    "average_view_duration": 8,
+    "watch_time": 2056,
+    "impressions": 4015,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780821249379",
@@ -8558,10 +8908,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 257,
+    "likeRate": 1.1673151750972763,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 44,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -8651,7 +9001,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 6.7,
+    "retention": 44,
+    "average_view_duration": 8,
+    "watch_time": 2056,
+    "impressions": 3835,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780821026512",
@@ -8751,10 +9113,10 @@
       "similarityPenaltyApplied": false
     },
     "postUploadAnalysis": null,
-    "views": 0,
-    "likeRate": 0,
+    "views": 257,
+    "likeRate": 1.1673151750972763,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 41,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -8861,7 +9223,19 @@
       }
     ],
     "is_mock": false,
-    "source": "autopilot"
+    "source": "autopilot",
+    "ctr": 6.35,
+    "retention": 41,
+    "average_view_duration": 3,
+    "watch_time": 771,
+    "impressions": 4047,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 3,
+    "comments": 0
   },
   {
     "id": "1780815183276",
@@ -8933,10 +9307,10 @@
       }
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 51,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 18,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": false,
@@ -8975,7 +9349,19 @@
       }
     ],
     "is_mock": true,
-    "source": "seed_test"
+    "source": "seed_test",
+    "ctr": 3.25,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 153,
+    "impressions": 1569,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780728783276",
@@ -9047,10 +9433,10 @@
       }
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 52,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 18,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -9089,7 +9475,19 @@
       }
     ],
     "is_mock": true,
-    "source": "seed_test"
+    "source": "seed_test",
+    "ctr": 3.25,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 156,
+    "impressions": 1600,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780642383276",
@@ -9161,10 +9559,10 @@
       }
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 53,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 18,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -9203,7 +9601,19 @@
       }
     ],
     "is_mock": true,
-    "source": "seed_test"
+    "source": "seed_test",
+    "ctr": 3.25,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 159,
+    "impressions": 1630,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780555983276",
@@ -9275,10 +9685,10 @@
       }
     },
     "postUploadAnalysis": null,
-    "views": 0,
+    "views": 55,
     "likeRate": 0,
     "commentCount": 0,
-    "avgRetention": 0,
+    "avgRetention": 18,
     "successFactors": "",
     "failureFactors": "",
     "selfImprovementApplied": true,
@@ -9317,7 +9727,19 @@
       }
     ],
     "is_mock": true,
-    "source": "seed_test"
+    "source": "seed_test",
+    "ctr": 3.25,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 165,
+    "impressions": 1692,
+    "shares": 0,
+    "subscribers_gained": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 0,
+    "comments": 0
   },
   {
     "id": "1780469583276",
@@ -9409,9 +9831,9 @@
       "subscribers_gained": 4
     },
     "views": 2183,
-    "likeRate": 3.2,
+    "likeRate": 1.4658726523133303,
     "commentCount": 4,
-    "avgRetention": 47,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -9451,8 +9873,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 11,
-    "subscribers_gained": 4
+    "ctr": 3.25,
+    "subscribers_gained": 4,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 6549,
+    "impressions": 67169,
+    "shares": 3,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 32,
+    "comments": 4
   },
   {
     "id": "1780383183276",
@@ -9544,9 +9976,9 @@
       "subscribers_gained": 2
     },
     "views": 1193,
-    "likeRate": 1.3,
+    "likeRate": 1.4249790444258172,
     "commentCount": 2,
-    "avgRetention": 43,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -9586,8 +10018,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.6,
-    "subscribers_gained": 2
+    "ctr": 3.25,
+    "subscribers_gained": 2,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 3579,
+    "impressions": 36707,
+    "shares": 2,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 17,
+    "comments": 2
   },
   {
     "id": "1780296783276",
@@ -9679,9 +10121,9 @@
       "subscribers_gained": 24
     },
     "views": 12051,
-    "likeRate": 7.4,
-    "commentCount": 96,
-    "avgRetention": 88,
+    "likeRate": 1.4936519790888723,
+    "commentCount": 24,
+    "avgRetention": 18,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
@@ -9721,8 +10163,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 11.7,
-    "subscribers_gained": 24
+    "ctr": 3.25,
+    "subscribers_gained": 24,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 36153,
+    "impressions": 370800,
+    "shares": 21,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 180,
+    "comments": 24
   },
   {
     "id": "1780210383276",
@@ -9814,9 +10266,9 @@
       "subscribers_gained": 0
     },
     "views": 474,
-    "likeRate": 2.5,
+    "likeRate": 1.4767932489451476,
     "commentCount": 0,
-    "avgRetention": 26,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -9856,8 +10308,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.9,
-    "subscribers_gained": 0
+    "ctr": 3.25,
+    "subscribers_gained": 0,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 1422,
+    "impressions": 14584,
+    "shares": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 7,
+    "comments": 0
   },
   {
     "id": "1780123983276",
@@ -9949,9 +10411,9 @@
       "subscribers_gained": 4
     },
     "views": 2047,
-    "likeRate": 2.3,
+    "likeRate": 1.4655593551538837,
     "commentCount": 4,
-    "avgRetention": 48,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -9991,8 +10453,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 13,
-    "subscribers_gained": 4
+    "ctr": 3.25,
+    "subscribers_gained": 4,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 6141,
+    "impressions": 62984,
+    "shares": 3,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 30,
+    "comments": 4
   },
   {
     "id": "1780037583276",
@@ -10084,9 +10556,9 @@
       "subscribers_gained": 111
     },
     "views": 55611,
-    "likeRate": 10.6,
-    "commentCount": 444,
-    "avgRetention": 78,
+    "likeRate": 1.4997032961104817,
+    "commentCount": 111,
+    "avgRetention": 18,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
@@ -10126,8 +10598,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 10.2,
-    "subscribers_gained": 111
+    "ctr": 3.25,
+    "subscribers_gained": 111,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 166833,
+    "impressions": 1711107,
+    "shares": 100,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 834,
+    "comments": 111
   },
   {
     "id": "1779951183276",
@@ -10219,9 +10701,9 @@
       "subscribers_gained": 2
     },
     "views": 1057,
-    "likeRate": 2.4,
+    "likeRate": 1.4191106906338695,
     "commentCount": 2,
-    "avgRetention": 49,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -10261,8 +10743,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 13.8,
-    "subscribers_gained": 2
+    "ctr": 3.25,
+    "subscribers_gained": 2,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 3171,
+    "impressions": 32523,
+    "shares": 1,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 15,
+    "comments": 2
   },
   {
     "id": "1779864783276",
@@ -10354,9 +10846,9 @@
       "subscribers_gained": 5
     },
     "views": 2642,
-    "likeRate": 2,
+    "likeRate": 1.4761544284632853,
     "commentCount": 5,
-    "avgRetention": 33,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -10396,8 +10888,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 7.4,
-    "subscribers_gained": 5
+    "ctr": 3.25,
+    "subscribers_gained": 5,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 7926,
+    "impressions": 81292,
+    "shares": 4,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 39,
+    "comments": 5
   },
   {
     "id": "1779778383276",
@@ -10489,9 +10991,9 @@
       "subscribers_gained": 36
     },
     "views": 18133,
-    "likeRate": 8.5,
-    "commentCount": 145,
-    "avgRetention": 75,
+    "likeRate": 1.4945127667788012,
+    "commentCount": 36,
+    "avgRetention": 18,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
@@ -10531,8 +11033,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 10.7,
-    "subscribers_gained": 36
+    "ctr": 3.25,
+    "subscribers_gained": 36,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 54399,
+    "impressions": 557938,
+    "shares": 32,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 271,
+    "comments": 36
   },
   {
     "id": "1779691983276",
@@ -10624,9 +11136,9 @@
       "subscribers_gained": 4
     },
     "views": 2458,
-    "likeRate": 3.6,
+    "likeRate": 1.4646053702196908,
     "commentCount": 4,
-    "avgRetention": 36,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -10666,8 +11178,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 9.3,
-    "subscribers_gained": 4
+    "ctr": 3.25,
+    "subscribers_gained": 4,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 7374,
+    "impressions": 75630,
+    "shares": 4,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 36,
+    "comments": 4
   },
   {
     "id": "1779605583276",
@@ -10759,9 +11281,9 @@
       "subscribers_gained": 2
     },
     "views": 1084,
-    "likeRate": 1.6,
+    "likeRate": 1.4760147601476015,
     "commentCount": 2,
-    "avgRetention": 41,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -10801,8 +11323,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 7.8,
-    "subscribers_gained": 2
+    "ctr": 3.25,
+    "subscribers_gained": 2,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 3252,
+    "impressions": 33353,
+    "shares": 1,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 16,
+    "comments": 2
   },
   {
     "id": "1779519183276",
@@ -10894,9 +11426,9 @@
       "subscribers_gained": 113
     },
     "views": 56762,
-    "likeRate": 7.8,
-    "commentCount": 454,
-    "avgRetention": 82,
+    "likeRate": 1.4992424509354851,
+    "commentCount": 113,
+    "avgRetention": 18,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
@@ -10936,8 +11468,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 9.9,
-    "subscribers_gained": 113
+    "ctr": 3.25,
+    "subscribers_gained": 113,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 170286,
+    "impressions": 1746523,
+    "shares": 102,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 851,
+    "comments": 113
   },
   {
     "id": "1779432783276",
@@ -11029,9 +11571,9 @@
       "subscribers_gained": 4
     },
     "views": 2371,
-    "likeRate": 2.6,
+    "likeRate": 1.4761703922395615,
     "commentCount": 4,
-    "avgRetention": 30,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -11071,8 +11613,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 13.4,
-    "subscribers_gained": 4
+    "ctr": 3.25,
+    "subscribers_gained": 4,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 7113,
+    "impressions": 72953,
+    "shares": 4,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 35,
+    "comments": 4
   },
   {
     "id": "1779346383276",
@@ -11164,9 +11716,9 @@
       "subscribers_gained": 1
     },
     "views": 506,
-    "likeRate": 2.7,
+    "likeRate": 1.383399209486166,
     "commentCount": 1,
-    "avgRetention": 26,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -11206,8 +11758,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.4,
-    "subscribers_gained": 1
+    "ctr": 3.25,
+    "subscribers_gained": 1,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 1518,
+    "impressions": 15569,
+    "shares": 0,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 7,
+    "comments": 1
   },
   {
     "id": "1779259983276",
@@ -11299,9 +11861,9 @@
       "subscribers_gained": 89
     },
     "views": 44976,
-    "likeRate": 8.7,
-    "commentCount": 359,
-    "avgRetention": 77,
+    "likeRate": 1.4985770188545002,
+    "commentCount": 89,
+    "avgRetention": 18,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
@@ -11341,8 +11903,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 10.9,
-    "subscribers_gained": 89
+    "ctr": 3.25,
+    "subscribers_gained": 89,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 134928,
+    "impressions": 1383876,
+    "shares": 80,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 674,
+    "comments": 89
   },
   {
     "id": "1779173583276",
@@ -11434,9 +12006,9 @@
       "subscribers_gained": 4
     },
     "views": 2363,
-    "likeRate": 2.7,
+    "likeRate": 1.4811680067710538,
     "commentCount": 4,
-    "avgRetention": 33,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -11476,8 +12048,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 9.9,
-    "subscribers_gained": 4
+    "ctr": 3.25,
+    "subscribers_gained": 4,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 7089,
+    "impressions": 72707,
+    "shares": 4,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 35,
+    "comments": 4
   },
   {
     "id": "1779087183276",
@@ -11569,9 +12151,9 @@
       "subscribers_gained": 2
     },
     "views": 1195,
-    "likeRate": 1.9,
+    "likeRate": 1.4225941422594142,
     "commentCount": 2,
-    "avgRetention": 46,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -11611,8 +12193,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6.2,
-    "subscribers_gained": 2
+    "ctr": 3.25,
+    "subscribers_gained": 2,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 3585,
+    "impressions": 36769,
+    "shares": 2,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 17,
+    "comments": 2
   },
   {
     "id": "1779000783276",
@@ -11704,9 +12296,9 @@
       "subscribers_gained": 131
     },
     "views": 65630,
-    "likeRate": 8.9,
-    "commentCount": 525,
-    "avgRetention": 81,
+    "likeRate": 1.4993143379552034,
+    "commentCount": 131,
+    "avgRetention": 18,
     "successFactors": "첫 컷 후킹 카피와 비주얼 연출 일치도가 아주 우수하여 시청 지속 시간이 길어졌음.",
     "failureFactors": "없음",
     "selfImprovementApplied": true,
@@ -11746,8 +12338,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 6,
-    "subscribers_gained": 131
+    "ctr": 3.25,
+    "subscribers_gained": 131,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 196890,
+    "impressions": 2019384,
+    "shares": 118,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 984,
+    "comments": 131
   },
   {
     "id": "1778914383276",
@@ -11839,9 +12441,9 @@
       "subscribers_gained": 3
     },
     "views": 1665,
-    "likeRate": 1.9,
+    "likeRate": 1.4414414414414414,
     "commentCount": 3,
-    "avgRetention": 35,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -11881,8 +12483,18 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 10.4,
-    "subscribers_gained": 3
+    "ctr": 3.25,
+    "subscribers_gained": 3,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 4995,
+    "impressions": 51230,
+    "shares": 2,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 24,
+    "comments": 3
   },
   {
     "id": "1778827983276",
@@ -11974,9 +12586,9 @@
       "subscribers_gained": 2
     },
     "views": 1150,
-    "likeRate": 2.9,
+    "likeRate": 1.4782608695652173,
     "commentCount": 2,
-    "avgRetention": 26,
+    "avgRetention": 18,
     "successFactors": "BGM 매칭은 적절했음.",
     "failureFactors": "첫 문장이 상품 설명형으로 들어가 1초 이탈률이 70%에 달함. 템포가 느림.",
     "selfImprovementApplied": true,
@@ -12016,7 +12628,17 @@
     ],
     "is_mock": true,
     "source": "seed_test",
-    "ctr": 12.6,
-    "subscribers_gained": 2
+    "ctr": 3.25,
+    "subscribers_gained": 2,
+    "retention": 18,
+    "average_view_duration": 3,
+    "watch_time": 3450,
+    "impressions": 35384,
+    "shares": 2,
+    "clicks": 0,
+    "affiliate_clicks": 0,
+    "click_rate": 0,
+    "likes": 17,
+    "comments": 2
   }
 ]

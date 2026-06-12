@@ -254,10 +254,10 @@ async function runAutopilotProcess(forcedParams = {}) {
           }
         }
 
-        // Read top product (fallback to Macbook Air M3)
-        productTitle = '맥북 에어 M3 15인치 (AI 런타임 최적)';
-        affiliateLink = 'https://link.coupang.com/a/macbook_m3';
-        keyword = '초간단 AI 꿀팁 - 맥북 에어 M3 15인치 (AI 런타임 최적)';
+        // Read top product (fallback to 친환경 무선 스팀 물걸레 청소기)
+        productTitle = '친환경 무선 스팀 물걸레 청소기';
+        affiliateLink = 'https://link.coupang.com/a/test_cleaner';
+        keyword = '스마트 청소 꿀팁 - 친환경 무선 스팀 물걸레 청소기';
         
         const dbPath = path.join(process.cwd(), '..', '_company', '_shared', 'monetization_db.json');
         if (fs.existsSync(dbPath)) {
@@ -337,10 +337,31 @@ async function runAutopilotProcess(forcedParams = {}) {
           console.log(`[Autopilot] DYNAMIC EXPERIMENT ACTIVE! Category: ${selectedCategory}, Product: ${productTitle}, Rate: ${experimentRate*100}%`);
         }
       } else {
-        selectedCategory = selectedCategory || '맥북';
+        selectedCategory = selectedCategory || '청소업';
         console.log(`[Autopilot] SUCCESS/REVENUE DNA OPTIMIZATION ACTIVE. Rate: ${(1 - experimentRate)*100}%`);
       }
     }
+
+    // Guard for forbidden niches
+    const lowerTitle = (productTitle || '').toLowerCase();
+    const lowerCat = (selectedCategory || '').toLowerCase();
+
+    const isForbidden = 
+      lowerTitle.includes('macbook') || lowerTitle.includes('맥북') ||
+      lowerTitle.includes('ebook') || lowerTitle.includes('전자책') ||
+      lowerTitle.includes('홍삼') || lowerTitle.includes('ginseng') ||
+      lowerTitle.includes('부업') || lowerTitle.includes('side hustle') ||
+      lowerTitle.includes('동기부여') || lowerTitle.includes('motivation') ||
+      lowerCat.includes('부업') || lowerCat.includes('전자책') || 
+      lowerCat.includes('건강') || lowerCat.includes('자기계발');
+
+    if (isForbidden) {
+      throw new Error(`Forbidden niche product or category detected: Title: "${productTitle}", Category: "${selectedCategory}"`);
+    }
+
+    // Wrap affiliateLink with click tracker redirect URL
+    const originalLink = affiliateLink;
+    affiliateLink = `http://localhost:3000/api/track/click?id=${timestamp}&url=${encodeURIComponent(originalLink)}`;
 
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -449,7 +470,7 @@ async function runAutopilotProcess(forcedParams = {}) {
     let factScore = 100;
     let productInfo = null;
     let retryCount = 0;
-    const maxRetries = 3;
+    const maxRetries = 0; // Enforce no-fallback, budget: max 4 Gemini calls
 
     while (retryCount <= maxRetries) {
       if (retryCount > 0) {
@@ -921,6 +942,30 @@ async function runAutopilotProcess(forcedParams = {}) {
 
   } catch (error) {
     console.error('[Autopilot] Process Failed:', error);
+    
+    // Log to autopilot_failures.json
+    try {
+      const failuresPath = path.join(process.cwd(), 'public', 'shorts', 'autopilot_failures.json');
+      let failures = [];
+      if (fs.existsSync(failuresPath)) {
+        try {
+          failures = JSON.parse(fs.readFileSync(failuresPath, 'utf-8'));
+        } catch (e) {
+          console.error('Failed to parse autopilot_failures.json:', e);
+        }
+      }
+      failures.push({
+        timestamp: new Date().toISOString(),
+        product_name: productTitle || 'Unknown',
+        error_message: error.message,
+        category: selectedCategory || 'Unknown'
+      });
+      fs.mkdirSync(path.dirname(failuresPath), { recursive: true });
+      fs.writeFileSync(failuresPath, JSON.stringify(failures, null, 2), 'utf-8');
+    } catch (failErr) {
+      console.error('Failed to write autopilot_failures.json:', failErr);
+    }
+
     updateStatus('error', `오류 발생으로 일시정지됨: ${error.message}`, 0, {
       error_message: error.message
     });

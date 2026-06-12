@@ -188,14 +188,10 @@ function antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna)
 
 const EXPERIMENT_MAP = {
   'AI': { product: 'AI 자동화 마스터 클래스 수강권', keyword: 'AI 자동화', topic: 'AI' },
-  '부업': { product: '무자본 1인 창업 올인원 패키지', keyword: '방구석 부업', topic: '부업' },
-  '전자책': { product: '월 100만원 수익형 전자책 템플릿', keyword: '전자책 작성법', topic: '전자책' },
   '커피': { product: '가성비 홈카페 에스프레소 머신', keyword: '홈카페 레시피', topic: '커피' },
-  '건강': { product: '정관장 홍삼정 에브리타임', keyword: '피로회복 영양제', topic: '건강' },
   '반려견': { product: '유기농 저알러지 강아지 사료', keyword: '반려견 행동 훈련', topic: '반려견' },
   '청소업': { product: '친환경 무선 스팀 물걸레 청소기', keyword: '청소 꿀팁', topic: '청소업' },
   '투자': { product: '주식 초보자를 위한 밸류에이션 차트북', keyword: '투자 포트폴리오', topic: '투자' },
-  '자기계발': { product: '습관 형성 100일 만다라트 플래너', keyword: '자기계발 동기부여', topic: '자기계발' },
   '미스터리': { product: '세계 미스터리 & 음모론 백과사전', keyword: '미스터리 스토리', topic: '미스터리' },
   '백룸': { product: '백룸 괴담 단편 소설집', keyword: '도시 전설 백룸', topic: '백룸' },
   '생활꿀팁': { product: '다이소 가성비 리빙 정리 수납함', keyword: '생활 속 꿀팁', topic: '생활꿀팁' }

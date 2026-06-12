@@ -87,8 +87,16 @@ export async function GET() {
         const db = JSON.parse(fs.readFileSync(intelDbPath, 'utf-8'));
         growthMetrics = db.agent_growth_metrics || {};
         
-        // Calculate average metrics on the fly using realHistory (excluding dry runs)
-        const realHistory = history.filter(v => !v.isDryRun && v.youtubeVideoId !== 'DRY_RUN');
+        // Calculate average metrics on the fly using realHistory (excluding dry runs and videos without at least 2 real metrics)
+        const realHistory = history.filter(v => {
+          if (v.isDryRun || v.youtubeVideoId === 'DRY_RUN') return false;
+          let countMetrics = 0;
+          if (v.views > 0) countMetrics++;
+          if (v.ctr > 0) countMetrics++;
+          if (v.watch_time > 0 || v.retention > 0) countMetrics++;
+          if (v.affiliate_clicks > 0 || v.clicks > 0) countMetrics++;
+          return countMetrics >= 2;
+        });
 
         const totalDiv = realHistory.reduce((acc, v) => acc + (v.diversity_score || 80), 0);
         growthMetrics.diversity_score_average = realHistory.length > 0
@@ -455,17 +463,13 @@ function generateSeedHistoryData() {
   const seedItems = [];
   const baseTime = Date.now();
   
-  const EXPERIMENT_CATEGORIES = ['AI', '부업', '전자책', '커피', '건강', '반려견', '청소업', '투자', '자기계발', '미스터리', '백룸', '생활꿀팁'];
+  const EXPERIMENT_CATEGORIES = ['AI', '커피', '반려견', '청소업', '투자', '미스터리', '백룸', '생활꿀팁'];
   const EXPERIMENT_MAP = {
     'AI': { product: 'AI 자동화 마스터 클래스 수강권', keyword: 'AI 자동화', topic: 'AI' },
-    '부업': { product: '무자본 1인 창업 올인원 패키지', keyword: '방구석 부업', topic: '부업' },
-    '전자책': { product: '월 100만원 수익형 전자책 템플릿', keyword: '전자책 작성법', topic: '전자책' },
     '커피': { product: '가성비 홈카페 에스프레소 머신', keyword: '홈카페 레시피', topic: '커피' },
-    '건강': { product: '정관장 홍삼정 에브리타임', keyword: '피로회복 영양제', topic: '건강' },
     '반려견': { product: '유기농 저알러지 강아지 사료', keyword: '반려견 행동 훈련', topic: '반려견' },
     '청소업': { product: '친환경 무선 스팀 물걸레 청소기', keyword: '청소 꿀팁', topic: '청소업' },
     '투자': { product: '주식 초보자를 위한 밸류에이션 차트북', keyword: '투자 포트폴리오', topic: '투자' },
-    '자기계발': { product: '습관 형성 100일 만다라트 플래너', keyword: '자기계발 동기부여', topic: '자기계발' },
     '미스터리': { product: '세계 미스터리 & 음모론 백과사전', keyword: '미스터리 스토리', topic: '미스터리' },
     '백룸': { product: '백룸 괴담 단편 소설집', keyword: '도시 전설 백룸', topic: '백룸' },
     '생활꿀팁': { product: '다이소 가성비 리빙 정리 수납함', keyword: '생활 속 꿀팁', topic: '생활꿀팁' }
@@ -1117,6 +1121,23 @@ function runStyleDnaExtraction(list) {
   }
 }
 
+// Helper to verify if a video has at least 2 real metrics
+function checkRealMetrics(v) {
+  if (v.is_mock && v.views === 0) return false; // fallback for uninitialized mock
+  let countMetrics = 0;
+  if (v.views > 0) countMetrics++;
+  if (v.ctr > 0) countMetrics++;
+  
+  // Calculate watch time or use retention to see if it's there
+  const watchTime = v.watch_time || (v.views * (v.retention || 0));
+  if (watchTime > 0) countMetrics++;
+  
+  const clicks = v.affiliate_clicks || 0;
+  if (clicks > 0) countMetrics++;
+  
+  return countMetrics >= 2;
+}
+
 // Revenue DNA extraction engine
 function runRevenueDnaExtraction(list) {
   try {
@@ -1143,6 +1164,8 @@ function runRevenueDnaExtraction(list) {
 
     list.forEach(v => {
       if (fallbackTitles.includes(v.title)) return;
+      if (!checkRealMetrics(v)) return; // DNA 학습 제한: 실측 데이터 없는 영상 금지
+
       // Find matches in history
       const histItem = history.find(h => h.id === v.video_id);
       
@@ -1153,15 +1176,10 @@ function runRevenueDnaExtraction(list) {
 
       const is_mock = v.is_mock === true || (histItem && histItem.is_mock === true) || false;
 
-      // Evaluate registration conditions (A, B, C, D, E)
-      const conditions = [];
-      if (v.affiliate_conversions > 0) conditions.push('A. Conversions > 0');
-      if (v.affiliate_clicks >= 3) conditions.push('B. Clicks >= 3');
-      if (v.subscribers_gained > 0 && v.views >= 300) conditions.push('C. Subs Gained & Views >= 300');
-      if (v.comments >= 2 && v.views >= 300) conditions.push('D. Comments >= 2 & Views >= 300');
-      if (v.money_score >= 70) conditions.push('E. Money Score >= 70');
+      // Revenue DNA 조건: 클릭, 구매, 구독 중 하나라도 실제 발생
+      const hasRevenueAction = v.affiliate_clicks > 0 || v.affiliate_conversions > 0 || v.subscribers_gained > 0;
 
-      if (conditions.length > 0) {
+      if (hasRevenueAction) {
         extracted.push({
           video_id: v.video_id,
           source_video_title: v.title || '',
@@ -1175,7 +1193,7 @@ function runRevenueDnaExtraction(list) {
           subscribers_gained: v.subscribers_gained || 0,
           comments: v.comments || 0,
           money_score: v.money_score || 0,
-          reason_for_registration: conditions.join(', '),
+          reason_for_registration: `Clicks: ${v.affiliate_clicks}, Conversions: ${v.affiliate_conversions}, Subs: ${v.subscribers_gained}`,
           created_at: new Date().toISOString(),
           is_mock: is_mock
         });
@@ -1204,9 +1222,10 @@ function runDnaExtraction(list) {
       '피로회복 끝판왕 홍삼정 추천'
     ];
 
-    const targetList = list.filter(v => !fallbackTitles.includes(v.title));
+    // Filter valid videos with at least 2 real metrics
+    const targetList = list.filter(v => !fallbackTitles.includes(v.title) && checkRealMetrics(v));
     if (targetList.length === 0) {
-      console.log('[Dna Extraction] No performance items found for success/failure extraction.');
+      console.log('[Dna Extraction] No real performance items found for success/failure extraction.');
       const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
       const failureDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'failure_dna_db.json');
       fs.writeFileSync(successDnaPath, JSON.stringify({ success_dna_list: [] }, null, 2), 'utf-8');
@@ -1214,21 +1233,31 @@ function runDnaExtraction(list) {
       return;
     }
 
-    const sortedDesc = [...targetList].sort((a, b) => b.views - a.views);
-    
-    // Top 10% (minimum 1 video)
-    const topCount = Math.max(1, Math.ceil(targetList.length * 0.1));
-    const topVids = sortedDesc.slice(0, topCount);
+    // --- Success DNA (CTR 상위 20% 또는 Watch Time 상위 20%) ---
+    // Sort by CTR desc to find 20% threshold
+    const sortedByCtr = [...targetList].sort((a, b) => b.ctr - a.ctr);
+    const ctrThresholdIndex = Math.max(0, Math.ceil(targetList.length * 0.2) - 1);
+    const ctrThreshold = sortedByCtr[ctrThresholdIndex]?.ctr || 0;
+
+    // Sort by Watch Time desc to find 20% threshold
+    const getWT = (v) => v.watch_time || (v.views * (v.retention || 0));
+    const sortedByWatchTime = [...targetList].sort((a, b) => getWT(b) - getWT(a));
+    const watchTimeThresholdIndex = Math.max(0, Math.ceil(targetList.length * 0.2) - 1);
+    const watchTimeThreshold = getWT(sortedByWatchTime[watchTimeThresholdIndex]);
+
+    const successVids = targetList.filter(v => v.ctr >= ctrThreshold || getWT(v) >= watchTimeThreshold);
 
     const successDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'success_dna_db.json');
     const successDb = {
-      success_dna_list: topVids.map(v => ({
+      success_dna_list: successVids.map(v => ({
         id: v.video_id,
         title: v.title,
         hook: v.title,
         views: v.views,
+        ctr: v.ctr,
+        watch_time: getWT(v),
         avgRetention: v.retention,
-        successFactors: `후킹 점수 ${v.hook_score}점 및 비주얼 점수 ${v.visual_score}점 시너지로 높은 성과 기록.`,
+        successFactors: `CTR ${v.ctr}% 및 Watch Time ${getWT(v)}로 성공 DNA 판정.`,
         hook_score: v.hook_score,
         visual_score: v.visual_score,
         subtitle_score: v.subtitle_score,
@@ -1238,26 +1267,36 @@ function runDnaExtraction(list) {
     };
     fs.writeFileSync(successDnaPath, JSON.stringify(successDb, null, 2), 'utf-8');
 
-    // Bottom 20% (minimum 1 video)
-    const bottomCount = Math.max(1, Math.ceil(list.length * 0.2));
-    const bottomVids = [...sortedDesc].reverse().slice(0, bottomCount);
+    // --- Failure DNA (CTR 하위 20% 또는 Retention 하위 20%) ---
+    // Sort by CTR asc to find 20% threshold
+    const sortedByCtrAsc = [...targetList].sort((a, b) => a.ctr - b.ctr);
+    const ctrFailureThresholdIndex = Math.max(0, Math.ceil(targetList.length * 0.2) - 1);
+    const ctrFailureThreshold = sortedByCtrAsc[ctrFailureThresholdIndex]?.ctr || 999;
+
+    // Sort by Retention asc to find 20% threshold
+    const sortedByRetentionAsc = [...targetList].sort((a, b) => a.retention - b.retention);
+    const retentionFailureThresholdIndex = Math.max(0, Math.ceil(targetList.length * 0.2) - 1);
+    const retentionFailureThreshold = sortedByRetentionAsc[retentionFailureThresholdIndex]?.retention || 999;
+
+    const failureVids = targetList.filter(v => v.ctr <= ctrFailureThreshold || v.retention <= retentionFailureThreshold);
 
     const failureDnaPath = path.join(process.cwd(), '..', '_company', '_shared', 'failure_dna_db.json');
     const failureDb = {
-      failure_dna_list: bottomVids.map(v => {
+      failure_dna_list: failureVids.map(v => {
         let primaryCause = '설명 위주 전개로 인한 도입부 이탈 우려';
-        if (v.hook_score < v.visual_score && v.hook_score < 70) {
-          primaryCause = '첫 3초 후킹 흡입력 부족';
-        } else if (v.visual_score < v.hook_score && v.visual_score < 70) {
-          primaryCause = '비주얼 컷의 단조로움 및 불일치';
-        } else if (v.subtitle_score < 70) {
-          primaryCause = '자막 가독성 저하 및 레이아웃 불일치';
+        if (v.ctr <= ctrFailureThreshold && v.retention <= retentionFailureThreshold) {
+          primaryCause = 'CTR 및 시청지속시간 동시 부진';
+        } else if (v.ctr <= ctrFailureThreshold) {
+          primaryCause = '도입부 이탈 또는 후킹(CTR) 실패';
+        } else if (v.retention <= retentionFailureThreshold) {
+          primaryCause = '콘텐츠 전개 지루함으로 시청지속(Retention) 실패';
         }
         
         return {
           id: v.video_id,
           title: v.title,
           views: v.views,
+          ctr: v.ctr,
           avgRetention: v.retention,
           failureFactors: primaryCause,
           hook_score: v.hook_score,
@@ -1270,7 +1309,7 @@ function runDnaExtraction(list) {
     };
     fs.writeFileSync(failureDnaPath, JSON.stringify(failureDb, null, 2), 'utf-8');
     
-    console.log(`[DNA Engines] Extracted ${topCount} success DNA records and ${bottomCount} failure DNA records.`);
+    console.log(`[DNA Engines] Extracted ${successVids.length} success DNA records and ${failureVids.length} failure DNA records.`);
   } catch (e) {
     console.error('Failed to run DNA extraction:', e);
   }

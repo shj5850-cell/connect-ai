@@ -18,10 +18,10 @@
       "is_mock": true,
       "uses": 19,
       "avgViews": 14387.8,
-      "avgCtr": 9.32,
-      "avgConversionRate": 12,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
       "avgRoi": 24200.6,
-      "dna_influence_score": 87
+      "dna_influence_score": 37
     },
     {
       "video_id": "1780383183276",
@@ -247,11 +247,11 @@
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
       "uses": 8,
-      "avgViews": 65.1,
-      "avgCtr": 9.21,
-      "avgConversionRate": 12.5,
-      "avgRoi": 100,
-      "dna_influence_score": 51.7
+      "avgViews": 2187.5,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 12.5,
+      "dna_influence_score": 5
     },
     {
       "video_id": "1779519183276",
@@ -270,11 +270,11 @@
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
       "uses": 13,
-      "avgViews": 123.6,
-      "avgCtr": 9.46,
-      "avgConversionRate": 11.84,
-      "avgRoi": 192.3,
-      "dna_influence_score": 53
+      "avgViews": 1461.2,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 107.7,
+      "dna_influence_score": 5
     },
     {
       "video_id": "1779432783276",
@@ -293,11 +293,11 @@
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
       "uses": 14,
-      "avgViews": 607.4,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 728.7,
-      "dna_influence_score": 59.1
+      "avgViews": 1849.4,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 650.1,
+      "dna_influence_score": 12.4
     },
     {
       "video_id": "1779346383276",
@@ -315,12 +315,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1779259983276",
@@ -338,12 +338,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1779173583276",
@@ -361,12 +361,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1779087183276",
@@ -384,12 +384,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1779000783276",
@@ -407,12 +407,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1778914383276",
@@ -430,12 +430,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1778827983276",
@@ -453,12 +453,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": true,
-      "uses": 20,
-      "avgViews": 425.2,
-      "avgCtr": 6.9,
-      "avgConversionRate": 11.93,
-      "avgRoi": 510.1,
-      "dna_influence_score": 55.3
+      "uses": 30,
+      "avgViews": 1430.8,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 250,
+      "dna_influence_score": 5.4
     },
     {
       "video_id": "1780821586255",
@@ -476,12 +476,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": false,
-      "uses": 12,
-      "avgViews": 665.3,
-      "avgCtr": 6.75,
-      "avgConversionRate": 11.87,
-      "avgRoi": 783.4,
-      "dna_influence_score": 59.4
+      "uses": 22,
+      "avgViews": 1155.6,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 336.4,
+      "dna_influence_score": 6.6
     },
     {
       "video_id": "1780885410358",
@@ -499,12 +499,12 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": false,
-      "uses": 7,
-      "avgViews": 985.3,
-      "avgCtr": 6.31,
-      "avgConversionRate": 11.95,
-      "avgRoi": 1100.1,
-      "dna_influence_score": 63.8
+      "uses": 17,
+      "avgViews": 1407.5,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 358.9,
+      "dna_influence_score": 7.2
     },
     {
       "video_id": "1780892679094",
@@ -522,11 +522,11 @@
       "reason_for_registration": "A. Conversions > 0, B. Clicks >= 3, C. Subs Gained & Views >= 300, D. Comments >= 2 & Views >= 300, E. Money Score >= 70",
       "created_at": "2026-06-08T04:57:56.955Z",
       "is_mock": false,
-      "uses": 6,
-      "avgViews": 0,
+      "uses": 16,
+      "avgViews": 1064.4,
       "avgCtr": 0,
       "avgConversionRate": 0,
-      "avgRoi": 0,
+      "avgRoi": -100,
       "dna_influence_score": 5
     }
   ]

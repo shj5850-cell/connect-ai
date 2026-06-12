@@ -12,11 +12,11 @@
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
       "uses": 4,
-      "avgViews": 130.3,
-      "avgCtr": 9.21,
-      "avgConversionRate": 12.5,
-      "avgRoi": 200,
-      "dna_influence_score": 53.4
+      "avgViews": 2072,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 125,
+      "dna_influence_score": 5
     },
     {
       "id": "1779346383276",
@@ -30,11 +30,11 @@
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
       "uses": 4,
-      "avgViews": 130.3,
-      "avgCtr": 9.21,
-      "avgConversionRate": 12.5,
-      "avgRoi": 200,
-      "dna_influence_score": 53.4
+      "avgViews": 2072,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 125,
+      "dna_influence_score": 5
     },
     {
       "id": "1780821586255",
@@ -48,10 +48,10 @@
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": false,
       "uses": 2,
-      "avgViews": 0,
+      "avgViews": 1956.5,
       "avgCtr": 0,
       "avgConversionRate": 0,
-      "avgRoi": 0,
+      "avgRoi": -100,
       "dna_influence_score": 5
     },
     {
@@ -66,11 +66,11 @@
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
       "uses": 4,
-      "avgViews": 130.3,
-      "avgCtr": 9.21,
-      "avgConversionRate": 12.5,
-      "avgRoi": 200,
-      "dna_influence_score": 53.4
+      "avgViews": 2072,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 125,
+      "dna_influence_score": 5
     },
     {
       "id": "1779605583276",
@@ -84,11 +84,11 @@
       "added_at": "2026-06-08T04:57:56.952Z",
       "is_mock": true,
       "uses": 4,
-      "avgViews": 130.3,
-      "avgCtr": 9.21,
-      "avgConversionRate": 12.5,
-      "avgRoi": 200,
-      "dna_influence_score": 53.4
+      "avgViews": 2072,
+      "avgCtr": 0,
+      "avgConversionRate": 0,
+      "avgRoi": 125,
+      "dna_influence_score": 5
     }
   ]
 }
