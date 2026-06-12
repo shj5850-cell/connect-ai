@@ -79,7 +79,7 @@ function updateDnaInfluenceScores() {
       const list = db.success_dna_list || [];
       list.forEach(item => {
         const matchedIds = history
-          .filter(h => h.used_success_dna && h.used_success_dna.some(d => d.id === item.id))
+          .filter(h => h.youtubeVideoId !== 'DRY_RUN' && !h.isDryRun && h.used_success_dna && h.used_success_dna.some(d => d.id === item.id))
           .map(h => h.id);
         
         const stats = calculateStats(matchedIds);
@@ -104,7 +104,7 @@ function updateDnaInfluenceScores() {
       const list = db.revenue_dna_list || [];
       list.forEach(item => {
         const matchedIds = history
-          .filter(h => h.used_revenue_dna && h.used_revenue_dna.some(d => d.id === item.video_id))
+          .filter(h => h.youtubeVideoId !== 'DRY_RUN' && !h.isDryRun && h.used_revenue_dna && h.used_revenue_dna.some(d => d.id === item.video_id))
           .map(h => h.id);
         
         const stats = calculateStats(matchedIds);
@@ -129,7 +129,7 @@ function updateDnaInfluenceScores() {
       const list = db.failure_dna_list || [];
       list.forEach(item => {
         const matchedIds = history
-          .filter(h => h.used_failure_dna && h.used_failure_dna.some(d => d.id === item.id))
+          .filter(h => h.youtubeVideoId !== 'DRY_RUN' && !h.isDryRun && h.used_failure_dna && h.used_failure_dna.some(d => d.id === item.id))
           .map(h => h.id);
         
         const stats = calculateStats(matchedIds);
@@ -154,7 +154,7 @@ function updateDnaInfluenceScores() {
       const list = db.agent_lessons || [];
       list.forEach(item => {
         const matchedIds = history
-          .filter(h => h.used_agent_lessons && h.used_agent_lessons.some(l => l.lesson === item.lesson))
+          .filter(h => h.youtubeVideoId !== 'DRY_RUN' && !h.isDryRun && h.used_agent_lessons && h.used_agent_lessons.some(l => l.lesson === item.lesson))
           .map(h => h.id);
         
         const stats = calculateStats(matchedIds);

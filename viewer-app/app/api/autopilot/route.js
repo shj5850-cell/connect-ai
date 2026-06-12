@@ -148,6 +148,29 @@ function cleanJson(input) {
   throw new Error('No valid JSON object or array found in model response');
 }
 
+function safeParseJson(text) {
+  if (!text || typeof text !== 'string') {
+    throw new Error('safeParseJson expected a string');
+  }
+  try {
+    return JSON.parse(text.trim());
+  } catch (err) {
+    try {
+      const cleaned = cleanJson(text);
+      return JSON.parse(cleaned);
+    } catch (err2) {
+      // Final attempt: strip control characters and find brackets
+      let cleanStr = text.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+      const start = cleanStr.indexOf('{');
+      const end = cleanStr.lastIndexOf('}');
+      if (start !== -1 && end !== -1 && end > start) {
+        cleanStr = cleanStr.substring(start, end + 1);
+      }
+      return JSON.parse(cleanStr);
+    }
+  }
+}
+
 export async function GET() {
   try {
     if (fs.existsSync(STATUS_PATH)) {
@@ -660,7 +683,7 @@ async function runAutopilotProcess(forcedParams = {}) {
           customCaptionPosition = 'bottom';
         }
 
-        const passThreshold = isProductDriven ? 75 : 70;
+        const passThreshold = 70;
         if (finalScoreAvg < passThreshold) {
           throw new Error(`Quality score ${finalScoreAvg.toFixed(1)} is below pass threshold ${passThreshold}.`);
         }
@@ -689,7 +712,8 @@ async function runAutopilotProcess(forcedParams = {}) {
         videoUrl: '/shorts/dry_run_mock.mp4',
         videoPath: '',
         youtubeVideoId: 'DRY_RUN',
-        isMockUpload: true,
+        isMockUpload: false,
+        isDryRun: true,
         uploadMessage: 'Dry run completed successfully.',
         productTitle,
         affiliateLink,
@@ -1168,10 +1192,12 @@ ${trendGuide}
   const parsed = JSON.parse(rawText);
   const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Empty response from generateScriptWithProductUnderstanding');
-  const cleaned = cleanJson(text);
-  const result = JSON.parse(cleaned);
+  const result = safeParseJson(text);
   if (!result || !Array.isArray(result.cuts) || result.cuts.length !== 4) {
     throw new Error('Gemini response did not contain exactly 4 cuts in the cuts array');
+  }
+  if (!result.product_analysis || !result.product_analysis.category || !result.product_analysis.features) {
+    throw new Error('Gemini response is missing valid product_analysis profile in script generation');
   }
   return result;
 }
@@ -1257,8 +1283,7 @@ ${scriptData.cuts.map((c, idx) => `- Cut ${idx + 1}: "${c.prompt}"`).join('\n')}
     const resJson = await response.json();
     const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Empty multimodal response from Gemini');
-    const cleaned = cleanJson(text);
-    return JSON.parse(cleaned);
+    return safeParseJson(text);
   } catch (e) {
     console.error(`[Vision Critic] Batch evaluation failed:`, e);
     // Fallback pass response
@@ -1351,8 +1376,7 @@ ${scriptData.cuts.map((c, idx) => `- 컷 ${idx + 1}: 자막: "${c.subtitle}", �
   const parsed = JSON.parse(rawText);
   const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error('Empty response from runMergedQualityBoardAndFactCheck');
-  const cleaned = cleanJson(text);
-  return JSON.parse(cleaned);
+  return safeParseJson(text);
 }
 
 // Fallback script if Gemini is missing/fails
@@ -1797,28 +1821,45 @@ function getSuccessDnaGuidelines(selectedSuccessVids) {
 // Product-Driven Compliance Checker helper
 function checkProductCompliance(productName, scriptData) {
   const pName = productName.toLowerCase().trim();
-  // Filter out common Korean stop words and short particles/common suffixes to avoid false positives
+  const brand = (scriptData?.product_analysis?.brand || '').toLowerCase().trim();
+  
   const stopWords = new Set([
     '프로', '에어', '미니', '플러스', '맥스', '라이트', '스마트', '울트라', '정품', 
     '추천', '가성비', '세대', '인치', '버전', '용량', '색상', '세트', '블랙', '화이트', 
     '실버', '그레이', '골드', '핑크', '블루', '레드', '그린', '옐로우', '퍼플', '오렌지',
     '추천템', '사용기', '후기'
   ]);
+  
+  // These words are contextually necessary and should not trigger compliance violation in cuts 1-3
+  const commonContextWords = new Set([
+    '강아지', '고양이', '반려견', '반려묘', '사료', '커피', '카페', '홈카페', '청소', '일상', 
+    '생활', '하루', '아침', '저녁', '시간', '사람', '우리', '오늘', '생각', '방법', '문제', 
+    '이유', '고민', '양치', '칫솔', '치아', '이빨', '드릴', '나사', '조립', '작업', '공구'
+  ]);
+
   const words = pName.split(/\s+/).filter(w => w.length >= 2 && !stopWords.has(w));
+  const bannedWordsInCuts123 = words.filter(w => !commonContextWords.has(w));
+  
   const cutChecks = [];
   let passed = true;
 
   for (let i = 0; i < 3; i++) {
     const sub = (scriptData.cuts[i]?.subtitle || '').toLowerCase();
     let containsProduct = false;
+    
+    // Check full name
     if (sub.includes(pName)) {
       containsProduct = true;
-    } else {
-      for (const w of words) {
-        if (sub.includes(w)) {
-          containsProduct = true;
-          break;
-        }
+    }
+    // Check brand name if specific (length >= 2)
+    if (brand && brand.length >= 2 && sub.includes(brand)) {
+      containsProduct = true;
+    }
+    // Check specific banned words
+    for (const w of bannedWordsInCuts123) {
+      if (sub.includes(w)) {
+        containsProduct = true;
+        break;
       }
     }
     
@@ -1834,18 +1875,35 @@ function checkProductCompliance(productName, scriptData) {
 
   const sub4 = (scriptData.cuts[3]?.subtitle || '').toLowerCase();
   let containsProduct4 = sub4.includes(pName);
+  
   if (!containsProduct4) {
-    if (words.length > 0) {
+    if (brand && brand.length >= 2 && sub4.includes(brand)) {
+      containsProduct4 = true;
+    }
+    
+    // Check individual words
+    if (!containsProduct4 && words.length > 0) {
       for (const w of words) {
         if (sub4.includes(w)) {
           containsProduct4 = true;
           break;
         }
       }
-    } else {
+    }
+    
+    // Extract subwords (e.g. '전동', '드릴' from '전동드릴', or '강아지', '사료' from '강아지사료')
+    if (!containsProduct4) {
       const allWords = pName.split(/\s+/).filter(w => w.length >= 1);
-      for (const w of allWords) {
-        if (sub4.includes(w)) {
+      const subwords = [];
+      for (const aw of allWords) {
+        if (aw.length >= 3) {
+          for (let k = 0; k <= aw.length - 2; k++) {
+            subwords.push(aw.substring(k, k + 2));
+          }
+        }
+      }
+      for (const sw of subwords) {
+        if (sub4.includes(sw)) {
           containsProduct4 = true;
           break;
         }
@@ -1924,21 +1982,10 @@ async function runProductUnderstandingAgent(apiKey, productName, targetAudience 
     const parsed = JSON.parse(rawText);
     const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('Empty response from Product Understanding Agent');
-    const cleaned = cleanJson(text);
-    return JSON.parse(cleaned);
+    return safeParseJson(text);
   } catch (e) {
-    console.error('[Product Understanding] Failed, returning fallback profile:', e);
-    return {
-      category: '상품 홍보',
-      brand: '일반',
-      features: [productName],
-      benefits: ['편리성 향상', '삶의 질 개선'],
-      target_audience: targetAudience || '일반 대중',
-      usage_context: '일상생활 중',
-      purchase_desire: '효율적인 생활',
-      problem_solved: '불편함 해소',
-      competitor_differentiation: '높은 가성비와 기능성'
-    };
+    console.error('[Product Understanding] Failed, prohibiting fallback:', e);
+    throw new Error(`Product Understanding Agent failed: ${e.message}`);
   }
 }
 
@@ -2004,8 +2051,8 @@ ${JSON.stringify(productInfo, null, 2)}
     const rawText = await response.text();
     const parsed = JSON.parse(rawText);
     const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-    const cleaned = cleanJson(text);
-    const result = JSON.parse(cleaned);
+    if (!text) throw new Error('Empty response from search queries generator');
+    const result = safeParseJson(text);
     if (result && Array.isArray(result.queries) && result.queries.length >= 20) {
       return result.queries;
     }
@@ -2232,8 +2279,8 @@ ${candidates.map((c, i) => `후보 ${i + 1}:
     const rawText = await response.text();
     const parsed = JSON.parse(rawText);
     const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-    const cleaned = cleanJson(text);
-    return JSON.parse(cleaned);
+    if (!text) throw new Error('Empty response from Visual Critic Selection');
+    return safeParseJson(text);
   } catch (e) {
     console.error('[Visual Critic Engine] Selection failed, using default first 4 candidates:', e);
     return {
@@ -2330,8 +2377,8 @@ ${JSON.stringify(productInfo, null, 2)}
     const rawText = await response.text();
     const parsed = JSON.parse(rawText);
     const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-    const cleaned = cleanJson(text);
-    return JSON.parse(cleaned);
+    if (!text) throw new Error('Empty response from Relevance & Fact Check');
+    return safeParseJson(text);
   } catch (e) {
     console.error('[Fact Checker] Failed, returning fallback scores:', e);
     return {

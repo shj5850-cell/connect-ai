@@ -15,6 +15,7 @@ export default function ArchivePage() {
   const [reRendering, setReRendering] = useState(false);
   const [generatingCutIdx, setGeneratingCutIdx] = useState(null); // Loading index for AI generation
   const [errorMessage, setErrorMessage] = useState('');
+  const [activeSubTab, setActiveSubTab] = useState('actual'); // 'actual' or 'dry-run'
 
   // Fetch history list
   const fetchHistory = async () => {
@@ -189,195 +190,254 @@ export default function ArchivePage() {
       </header>
 
       {/* Main Grid List */}
-      {loading ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '5rem 0' }}>
-          <Loader2 className="animate-spin" size={40} color="var(--accent-color)" />
-          <p style={{ color: 'var(--text-secondary)' }}>아카이브 데이터를 로딩 중입니다...</p>
-        </div>
-      ) : history.length === 0 ? (
-        <div className="glass-panel" style={{ padding: '5rem 2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
-          <Film size={50} style={{ color: 'rgba(255,255,255,0.1)' }} />
-          <div style={{ maxWidth: '400px' }}>
-            <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '0.5rem' }}>보관된 영상이 없습니다</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
-              아직 오토파일럿이 한 번도 기동되지 않았거나 보관 파일이 비어 있습니다. 자동 운전을 시작하여 첫 비디오를 만들어보세요!
-            </p>
-          </div>
-          <Link href="/autopilot" className="btn" style={{ padding: '0.7rem 2rem', background: 'linear-gradient(135deg, #a78bfa 0%, #fb7185 100%)', fontWeight: 'bold' }}>
-            🚀 1클릭 자동 운전 하러 가기
-          </Link>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2rem' }}>
-          {history.map((item) => {
-            // Pick first cut image for thumbnail fallback
-            const firstCut = item.scriptData?.cuts?.[0];
-            const timestampDate = new Date(parseInt(item.id)).toLocaleString('ko-KR');
+      {(() => {
+        const actualHistory = history.filter(item => !item.isDryRun && item.youtubeVideoId !== 'DRY_RUN');
+        const dryRunHistory = history.filter(item => item.isDryRun || item.youtubeVideoId === 'DRY_RUN');
+        const displayedHistory = activeSubTab === 'actual' ? actualHistory : dryRunHistory;
 
-            return (
-              <div key={item.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '1rem', background: 'linear-gradient(180deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.03) 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                
-                {/* Visual Video Container */}
-                <div style={{ position: 'relative', width: '100%', aspectRatio: '9/16', maxHeight: '420px', borderRadius: '8px', overflow: 'hidden', background: '#000', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center' }}>
-                  {item.videoUrl ? (
-                    <video src={item.videoUrl} controls style={{ height: '100%', objectFit: 'contain' }} />
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>비디오 재생 불가</div>
-                  )}
-                </div>
-
-                {/* Video Info Details */}
-                <div style={{ padding: '1rem 0.25rem 0.25rem 0.25rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', flexGrow: 1 }}>
-                  
-                  <div>
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '0.4rem' }}>
-                      <span style={{ fontSize: '0.7rem', color: '#60a5fa', fontWeight: 'bold', background: 'rgba(96,165,250,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-                        📁 {item.category || '기타'}
-                      </span>
-                      <span style={{ fontSize: '0.7rem', color: '#fb7185', fontWeight: 'bold', background: 'rgba(251,113,133,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-                        {item.productTitle}
-                      </span>
-                    </div>
-                    <h3 style={{ fontSize: '1.05rem', color: 'white', marginTop: '0.25rem', marginBottom: '0.25rem', fontWeight: 600 }}>
-                      {item.scriptData?.title || '제목 없음'}
-                    </h3>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                      생성일: {timestampDate}
-                    </div>
-                  </div>
-
-                  {/* Diversity & Revenue Metrics Grid */}
-                  {(() => {
-                    const scores = item.preUploadAnalysis?.scores;
-                    const qualityScore = scores 
-                      ? Math.round((scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign) / 5) 
-                      : 75;
-                    const revenueScore = item.postUploadAnalysis?.money_score || scores?.hookStrength || 78;
-
-                    return (
-                      <>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧬 사용한 DNA</span>
-                            <span style={{ color: '#a78bfa', fontWeight: 700 }}>{item.style_dna || 'Motivation'}</span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🎨 사용한 스타일</span>
-                            <span style={{ color: '#fff', fontWeight: 600 }}>{item.used_style || 'Cinematic'}</span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⚡ 후킹 유형 (Hook Type)</span>
-                            <span style={{ color: '#60a5fa', fontWeight: 600 }}>{item.hook_type || '호기심형'}</span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⭐ Quality Score (품질 점수)</span>
-                            <span style={{ color: qualityScore >= 80 ? '#10b981' : '#fbbf24', fontWeight: 700 }}>{qualityScore}점</span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>💰 Revenue Score (수익 점수)</span>
-                            <span style={{ color: revenueScore >= 60 ? '#10b981' : '#fbbf24', fontWeight: 700 }}>{revenueScore}점</span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>📊 Diversity Score</span>
-                            <span style={{ color: (item.diversity_score || 80) >= 70 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
-                              {item.diversity_score || 80}%
-                            </span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🔍 Similarity Score</span>
-                            <span style={{ color: (item.similarity_score || 20) < 30 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
-                              {item.similarity_score || 20}%
-                            </span>
-                          </div>
-                          <div>
-                            <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧠 DNA 적용 유형</span>
-                            <span style={{ color: item.is_experiment ? '#a78bfa' : '#34d399', fontWeight: 'bold' }}>
-                              {item.is_experiment ? '🧪 자가 실험 DNA' : '🔥 Revenue DNA'}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* DNA Trace Info */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(0,0,0,0.15)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
-                          <div style={{ fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.25rem', marginBottom: '0.25rem', fontSize: '0.7rem', color: '#a78bfa' }}>🧬 DNA Trace (대본 생성 반영 현황)</div>
-                          <div>
-                            <span style={{ color: '#fbbf24', fontWeight: 600 }}>성공 DNA (Success DNA - 50%):</span>{' '}
-                            <span style={{ color: 'var(--text-secondary)' }}>
-                              {item.used_success_dna && item.used_success_dna.length > 0
-                                ? item.used_success_dna.map(x => x.title).join(', ')
-                                : '없음'}
-                            </span>
-                          </div>
-                          <div>
-                            <span style={{ color: '#fb7185', fontWeight: 600 }}>수익 DNA (Revenue DNA - 25%):</span>{' '}
-                            <span style={{ color: 'var(--text-secondary)' }}>
-                              {item.used_revenue_dna && item.used_revenue_dna.length > 0
-                                ? item.used_revenue_dna.map(x => x.title).join(', ')
-                                : '없음'}
-                            </span>
-                          </div>
-                          <div>
-                            <span style={{ color: '#f87171', fontWeight: 600 }}>실패 DNA (Failure DNA - 15%):</span>{' '}
-                            <span style={{ color: 'var(--text-secondary)' }}>
-                              {item.used_failure_dna && item.used_failure_dna.length > 0
-                                ? item.used_failure_dna.map(x => x.title).join(', ')
-                                : '없음'}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Upload Readiness Status Badge */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: qualityScore >= 80 ? '#10b981' : '#f87171' }} />
-                          <span style={{ fontSize: '0.8rem', color: 'white', fontWeight: 'bold' }}>
-                            업로드 가능 여부: {qualityScore >= 80 ? '업로드 가능 ✅' : '업로드 보류 ❌'}
-                          </span>
-                        </div>
-
-                        {/* YouTube Upload Status Badge */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)', marginTop: '-0.4rem' }}>
-                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.isMockUpload ? '#fbbf24' : '#10b981' }} />
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                            채널 업로드 상태: {item.isMockUpload ? '시뮬레이션 업로드 완료' : '실제 채널 업로드 완료'}
-                          </span>
-                        </div>
-                      </>
-                    );
-                  })()}
-
-
-                  {/* Action row */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
-                    <button 
-                      onClick={() => handleOpenEdit(item)}
-                      className="btn-secondary btn" 
-                      style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem' }}
-                    >
-                      <Edit3 size={13} /> <span>편집 & 재생성</span>
-                    </button>
-                    <a 
-                      href={item.videoUrl} 
-                      download={`shorts_${item.id}.mp4`}
-                      className="btn" 
-                      style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
-                    >
-                      <Download size={13} /> <span>다운로드</span>
-                    </a>
-                    <button
-                      onClick={() => handleDeleteAndHide(item.id)}
-                      className="btn"
-                      style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}
-                    >
-                      <Trash2 size={13} /> <span>삭제/숨김</span>
-                    </button>
-                  </div>
-
-                </div>
+        return (
+          <>
+            {/* Sub Tabs to separate Actual vs Dry Run */}
+            {!loading && history.length > 0 && (
+              <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1.5rem' }}>
+                <button 
+                  onClick={() => setActiveSubTab('actual')}
+                  className="btn-secondary btn"
+                  style={{ 
+                    background: activeSubTab === 'actual' ? 'rgba(255,255,255,0.04)' : 'transparent', 
+                    borderColor: activeSubTab === 'actual' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    fontWeight: activeSubTab === 'actual' ? 'bold' : 'normal',
+                    color: activeSubTab === 'actual' ? '#fff' : 'var(--text-secondary)',
+                    fontSize: '0.85rem',
+                    padding: '0.4rem 1.25rem',
+                    borderRadius: '6px',
+                    border: '1px solid transparent',
+                    cursor: 'pointer'
+                  }}
+                >
+                  🎬 실제 제작 영상 ({actualHistory.length})
+                </button>
+                <button 
+                  onClick={() => setActiveSubTab('dry-run')}
+                  className="btn-secondary btn"
+                  style={{ 
+                    background: activeSubTab === 'dry-run' ? 'rgba(255,255,255,0.04)' : 'transparent', 
+                    borderColor: activeSubTab === 'dry-run' ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    fontWeight: activeSubTab === 'dry-run' ? 'bold' : 'normal',
+                    color: activeSubTab === 'dry-run' ? '#fff' : 'var(--text-secondary)',
+                    fontSize: '0.85rem',
+                    padding: '0.4rem 1.25rem',
+                    borderRadius: '6px',
+                    border: '1px solid transparent',
+                    cursor: 'pointer'
+                  }}
+                >
+                  🧪 드라이 런 / 테스트 내역 ({dryRunHistory.length})
+                </button>
               </div>
-            );
-          })}
-        </div>
-      )}
+            )}
+
+            {loading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '5rem 0' }}>
+                <Loader2 className="animate-spin" size={40} color="var(--accent-color)" />
+                <p style={{ color: 'var(--text-secondary)' }}>아카이브 데이터를 로딩 중입니다...</p>
+              </div>
+            ) : history.length === 0 ? (
+              <div className="glass-panel" style={{ padding: '5rem 2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
+                <Film size={50} style={{ color: 'rgba(255,255,255,0.1)' }} />
+                <div style={{ maxWidth: '400px' }}>
+                  <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '0.5rem' }}>보관된 영상이 없습니다</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
+                    아직 오토파일럿이 한 번도 기동되지 않았거나 보관 파일이 비어 있습니다. 자동 운전을 시작하여 첫 비디오를 만들어보세요!
+                  </p>
+                </div>
+                <Link href="/autopilot" className="btn" style={{ padding: '0.7rem 2rem', background: 'linear-gradient(135deg, #a78bfa 0%, #fb7185 100%)', fontWeight: 'bold' }}>
+                  🚀 1클릭 자동 운전 하러 가기
+                </Link>
+              </div>
+            ) : displayedHistory.length === 0 ? (
+              <div className="glass-panel" style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                {activeSubTab === 'actual' ? '실제 제작된 영상 내역이 없습니다.' : '진행된 드라이 런/테스트 내역이 없습니다.'}
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '2rem' }}>
+                {displayedHistory.map((item) => {
+                  // Pick first cut image for thumbnail fallback
+                  const firstCut = item.scriptData?.cuts?.[0];
+                  const timestampDate = new Date(parseInt(item.id)).toLocaleString('ko-KR');
+
+                  return (
+                    <div key={item.id} className="glass-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '1rem', background: 'linear-gradient(180deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.03) 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      
+                      {/* Visual Video Container */}
+                      <div style={{ position: 'relative', width: '100%', aspectRatio: '9/16', maxHeight: '420px', borderRadius: '8px', overflow: 'hidden', background: '#000', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center' }}>
+                        {item.videoUrl ? (
+                          <video src={item.videoUrl} controls style={{ height: '100%', objectFit: 'contain' }} />
+                        ) : (
+                          <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text-secondary)' }}>비디오 재생 불가</div>
+                        )}
+                      </div>
+
+                      {/* Video Info Details */}
+                      <div style={{ padding: '1rem 0.25rem 0.25rem 0.25rem', display: 'flex', flexDirection: 'column', gap: '0.8rem', flexGrow: 1 }}>
+                        
+                        <div>
+                          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '0.4rem' }}>
+                            <span style={{ fontSize: '0.7rem', color: '#60a5fa', fontWeight: 'bold', background: 'rgba(96,165,250,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                              📁 {item.category || '기타'}
+                            </span>
+                            <span style={{ fontSize: '0.7rem', color: '#fb7185', fontWeight: 'bold', background: 'rgba(251,113,133,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                              {item.productTitle}
+                            </span>
+                            {item.isDryRun && (
+                              <span style={{ fontSize: '0.7rem', color: '#38bdf8', fontWeight: 'bold', background: 'rgba(56,189,248,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                                🧪 드라이 런
+                              </span>
+                            )}
+                          </div>
+                          <h3 style={{ fontSize: '1.05rem', color: 'white', marginTop: '0.25rem', marginBottom: '0.25rem', fontWeight: 600 }}>
+                            {item.scriptData?.title || '제목 없음'}
+                          </h3>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                            생성일: {timestampDate}
+                          </div>
+                        </div>
+
+                        {/* Diversity & Revenue Metrics Grid */}
+                        {(() => {
+                          const scores = item.preUploadAnalysis?.scores;
+                          const qualityScore = scores 
+                            ? Math.round((scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign) / 5) 
+                            : 75;
+                          const revenueScore = item.postUploadAnalysis?.money_score || scores?.hookStrength || 78;
+
+                          return (
+                            <>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.06)', fontSize: '0.8rem', backdropFilter: 'blur(10px)' }}>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧬 사용한 DNA</span>
+                                  <span style={{ color: '#a78bfa', fontWeight: 700 }}>{item.style_dna || 'Motivation'}</span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🎨 사용한 스타일</span>
+                                  <span style={{ color: '#fff', fontWeight: 600 }}>{item.used_style || 'Cinematic'}</span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⚡ 후킹 유형 (Hook Type)</span>
+                                  <span style={{ color: '#60a5fa', fontWeight: 600 }}>{item.hook_type || '호기심형'}</span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>⭐ Quality Score (품질 점수)</span>
+                                  <span style={{ color: qualityScore >= 80 ? '#10b981' : '#fbbf24', fontWeight: 700 }}>{qualityScore}점</span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>💰 Revenue Score (수익 점수)</span>
+                                  <span style={{ color: revenueScore >= 60 ? '#10b981' : '#fbbf24', fontWeight: 700 }}>{revenueScore}점</span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>📊 Diversity Score</span>
+                                  <span style={{ color: (item.diversity_score || 80) >= 70 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
+                                    {item.diversity_score || 80}%
+                                  </span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🔍 Similarity Score</span>
+                                  <span style={{ color: (item.similarity_score || 20) < 30 ? '#10b981' : '#fb7185', fontWeight: 700 }}>
+                                    {item.similarity_score || 20}%
+                                  </span>
+                                </div>
+                                <div>
+                                  <span style={{ color: 'var(--text-secondary)', display: 'block', fontSize: '0.7rem', marginBottom: '0.15rem' }}>🧠 DNA 적용 유형</span>
+                                  <span style={{ color: item.is_experiment ? '#a78bfa' : '#34d399', fontWeight: 'bold' }}>
+                                    {item.is_experiment ? '🧪 자가 실험 DNA' : '🔥 Revenue DNA'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* DNA Trace Info */}
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(0,0,0,0.15)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
+                                <div style={{ fontWeight: 'bold', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.25rem', marginBottom: '0.25rem', fontSize: '0.7rem', color: '#a78bfa' }}>🧬 DNA Trace (대본 생성 반영 현황)</div>
+                                <div>
+                                  <span style={{ color: '#fbbf24', fontWeight: 600 }}>성공 DNA (Success DNA - 50%):</span>{' '}
+                                  <span style={{ color: 'var(--text-secondary)' }}>
+                                    {item.used_success_dna && item.used_success_dna.length > 0
+                                      ? item.used_success_dna.map(x => x.title).join(', ')
+                                      : '없음'}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span style={{ color: '#fb7185', fontWeight: 600 }}>수익 DNA (Revenue DNA - 25%):</span>{' '}
+                                  <span style={{ color: 'var(--text-secondary)' }}>
+                                    {item.used_revenue_dna && item.used_revenue_dna.length > 0
+                                      ? item.used_revenue_dna.map(x => x.title).join(', ')
+                                      : '없음'}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span style={{ color: '#f87171', fontWeight: 600 }}>실패 DNA (Failure DNA - 15%):</span>{' '}
+                                  <span style={{ color: 'var(--text-secondary)' }}>
+                                    {item.used_failure_dna && item.used_failure_dna.length > 0
+                                      ? item.used_failure_dna.map(x => x.title).join(', ')
+                                      : '없음'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Upload Readiness Status Badge */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: qualityScore >= 80 ? '#10b981' : '#f87171' }} />
+                                <span style={{ fontSize: '0.8rem', color: 'white', fontWeight: 'bold' }}>
+                                  업로드 가능 여부: {qualityScore >= 80 ? '업로드 가능 ✅' : '업로드 보류 ❌'}
+                                </span>
+                              </div>
+
+                              {/* YouTube Upload Status Badge */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.6rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)', marginTop: '-0.4rem' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.isDryRun ? '#38bdf8' : (item.isMockUpload ? '#fbbf24' : '#10b981') }} />
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                  채널 업로드 상태: {item.isDryRun ? '드라이 런 (테스트 완료)' : (item.isMockUpload ? '시뮬레이션 업로드 완료' : '실제 채널 업로드 완료')}
+                                </span>
+                              </div>
+                            </>
+                          );
+                        })()}
+
+
+                        {/* Action row */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
+                          <button 
+                            onClick={() => handleOpenEdit(item)}
+                            className="btn-secondary btn" 
+                            style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem' }}
+                          >
+                            <Edit3 size={13} /> <span>편집 & 재생성</span>
+                          </button>
+                          <a 
+                            href={item.videoUrl} 
+                            download={`shorts_${item.id}.mp4`}
+                            className="btn" 
+                            style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}
+                          >
+                            <Download size={13} /> <span>다운로드</span>
+                          </a>
+                          <button
+                            onClick={() => handleDeleteAndHide(item.id)}
+                            className="btn"
+                            style={{ fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', padding: '0.6rem 0.4rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#f87171' }}
+                          >
+                            <Trash2 size={13} /> <span>삭제/숨김</span>
+                          </button>
+                        </div>
+
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {/* Slide-in Edit Modal */}
       {editingItem && (

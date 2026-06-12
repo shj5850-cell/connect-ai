@@ -87,19 +87,21 @@ export async function GET() {
         const db = JSON.parse(fs.readFileSync(intelDbPath, 'utf-8'));
         growthMetrics = db.agent_growth_metrics || {};
         
-        // Calculate average metrics on the fly
-        const totalDiv = history.reduce((acc, v) => acc + (v.diversity_score || 80), 0);
-        growthMetrics.diversity_score_average = history.length > 0
-          ? parseFloat((totalDiv / history.length).toFixed(1))
+        // Calculate average metrics on the fly using realHistory (excluding dry runs)
+        const realHistory = history.filter(v => !v.isDryRun && v.youtubeVideoId !== 'DRY_RUN');
+
+        const totalDiv = realHistory.reduce((acc, v) => acc + (v.diversity_score || 80), 0);
+        growthMetrics.diversity_score_average = realHistory.length > 0
+          ? parseFloat((totalDiv / realHistory.length).toFixed(1))
           : 80.0;
 
         // Novelty: unique styles in last 20 videos
-        const recent = history.slice(0, 20);
+        const recent = realHistory.slice(0, 20);
         const uniqueStyles = new Set(recent.map(v => v.used_style).filter(Boolean));
         growthMetrics.novelty_score_average = parseFloat(((uniqueStyles.size / 10) * 100).toFixed(1));
 
         // Experiment success rate: is_experiment === true and views >= 5000
-        const experiments = history.filter(v => v.is_experiment);
+        const experiments = realHistory.filter(v => v.is_experiment);
         if (experiments.length > 0) {
           const successfulExps = experiments.filter(v => (v.views || (v.postUploadAnalysis && v.postUploadAnalysis.views) || 0) >= 5000);
           growthMetrics.experiment_success_rate = parseFloat(((successfulExps.length / experiments.length) * 100).toFixed(1));
@@ -108,21 +110,21 @@ export async function GET() {
         }
 
         // Success DNA Reflection Rate: percentage of videos containing used_success_dna lists
-        const withSuccessDna = history.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
-        growthMetrics.success_dna_reflection_rate = history.length > 0
-          ? parseFloat(((withSuccessDna.length / history.length) * 100).toFixed(1))
+        const withSuccessDna = realHistory.filter(v => v.used_success_dna && v.used_success_dna.length > 0);
+        growthMetrics.success_dna_reflection_rate = realHistory.length > 0
+          ? parseFloat(((withSuccessDna.length / realHistory.length) * 100).toFixed(1))
           : 0.0;
 
         // Revenue DNA Reflection Rate: percentage of videos containing used_revenue_dna lists
-        const withRevenueDna = history.filter(v => v.used_revenue_dna && v.used_revenue_dna.length > 0);
-        growthMetrics.revenue_dna_reflection_rate = history.length > 0
-          ? parseFloat(((withRevenueDna.length / history.length) * 100).toFixed(1))
+        const withRevenueDna = realHistory.filter(v => v.used_revenue_dna && v.used_revenue_dna.length > 0);
+        growthMetrics.revenue_dna_reflection_rate = realHistory.length > 0
+          ? parseFloat(((withRevenueDna.length / realHistory.length) * 100).toFixed(1))
           : 0.0;
 
         // Failure DNA Dominance: percentage of videos containing used_failure_dna lists
-        const withFailureDna = history.filter(v => v.used_failure_dna && v.used_failure_dna.length > 0);
-        growthMetrics.failure_dna_dominance = history.length > 0
-          ? parseFloat(((withFailureDna.length / history.length) * 100).toFixed(1))
+        const withFailureDna = realHistory.filter(v => v.used_failure_dna && v.used_failure_dna.length > 0);
+        growthMetrics.failure_dna_dominance = realHistory.length > 0
+          ? parseFloat(((withFailureDna.length / realHistory.length) * 100).toFixed(1))
           : 0.0;
 
         // 1. Split revenue DNA counts

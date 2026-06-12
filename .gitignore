@@ -7,3 +7,6 @@ preview.html
 releases/
 .env
 *.bak.*
+scratch/
+viewer-app/public/shorts/cinema_images/
+viewer-app/public/shorts/autopilot_status.json
