@@ -43,6 +43,143 @@ export async function GET() {
   }
 }
 
+async function fetchGeminiWithRetry(url, options, maxRetries = 3) {
+  let attempt = 0;
+  const backoffs = [3000, 10000, 30000];
+  while (attempt < maxRetries) {
+    try {
+      const response = await fetch(url, options);
+      if (response.status === 429 || response.status === 503) {
+        attempt++;
+        const waitTime = backoffs[attempt - 1] || 15000;
+        console.warn(`[Gemini Blog API] Got status ${response.status} (Attempt ${attempt}/${maxRetries}). Sleeping ${waitTime/1000}s...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      return response;
+    } catch (err) {
+      attempt++;
+      if (attempt < maxRetries) {
+        const waitTime = backoffs[attempt - 1] || 5000;
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      throw err;
+    }
+  }
+  return fetch(url, options);
+}
+
+function cleanCandidateString(str) {
+  let result = '';
+  let inString = false;
+  let escapeNext = false;
+  
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (escapeNext) {
+      result += char;
+      escapeNext = false;
+      continue;
+    }
+    if (char === '\\') {
+      result += char;
+      escapeNext = true;
+      continue;
+    }
+    if (char === '"') {
+      inString = !inString;
+      result += char;
+      continue;
+    }
+    if (inString && (char === '\n' || char === '\r')) {
+      result += '\\n';
+      continue;
+    }
+    result += char;
+  }
+  
+  let cleaned = result.trim();
+  cleaned = cleaned.replace(/(^|[^\:])\/\/.*$/gm, '$1');
+  cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
+  cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
+  return cleaned;
+}
+
+function cleanJson(input) {
+  if (!input || typeof input !== 'string') {
+    throw new Error('cleanJson expected a string');
+  }
+
+  let text = input
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
+
+  const starts = [];
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{' || text[i] === '[') starts.push(i);
+  }
+
+  for (const start of starts) {
+    const open = text[start];
+    const close = open === '{' ? '}' : ']';
+    const stack = [];
+    let inString = false;
+    let escaped = false;
+
+    for (let i = start; i < text.length; i++) {
+      const ch = text[i];
+
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (ch === '\\') {
+        escaped = true;
+        continue;
+      }
+
+      if (ch === '"') {
+        inString = !inString;
+        continue;
+      }
+
+      if (inString) continue;
+
+      if (ch === '{' || ch === '[') {
+        stack.push(ch);
+      }
+
+      if (ch === '}' || ch === ']') {
+        const last = stack[stack.length - 1];
+        if (
+          (last === '{' && ch === '}') ||
+          (last === '[' && ch === ']')
+        ) {
+          stack.pop();
+        } else {
+          break;
+        }
+
+        if (stack.length === 0) {
+          const candidate = text.slice(start, i + 1);
+          const cleanedCandidate = cleanCandidateString(candidate);
+          try {
+            JSON.parse(cleanedCandidate);
+            return cleanedCandidate;
+          } catch (err) {
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  throw new Error('No valid JSON object or array found in model response');
+}
+
 // POST: Generate a new draft
 export async function POST(req) {
   try {
@@ -94,7 +231,7 @@ export async function POST(req) {
   "cta": "전환 유도 CTA 텍스트"
 }`;
 
-    const response = await fetch(
+    const response = await fetchGeminiWithRetry(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiKey}`,
       {
         method: 'POST',
@@ -103,7 +240,7 @@ export async function POST(req) {
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 2548,
+            maxOutputTokens: 8192,
             responseMimeType: 'application/json'
           }
         })
@@ -116,11 +253,15 @@ export async function POST(req) {
 
     const resJson = await response.json();
     const text = resJson.candidates?.[0]?.content?.parts?.[0]?.text;
+    console.log("=== DEBUG: RAW GEMINI TEXT ===");
+    console.log(text);
+    console.log("=== END DEBUG ===");
     if (!text) {
       throw new Error('Gemini returned empty response for blog generation.');
     }
 
-    const parsedContent = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim());
+    const cleanedText = cleanJson(text);
+    const parsedContent = JSON.parse(cleanedText);
 
     // Save to blog_drafts.json
     let drafts = [];

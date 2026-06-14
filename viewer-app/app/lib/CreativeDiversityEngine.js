@@ -256,6 +256,132 @@ function selectBestHookCandidate(candidates, recentHooks) {
   return bestCandidate;
 }
 
+function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage) {
+  const kwLower = (keyword || '').toLowerCase();
+  const kwTokens = kwLower.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').split(/\s+/).filter(w => w.length > 1);
+  
+  // Extract English Category
+  const category_mapping = {
+    "소고기": "beef",
+    "칫솔": "toothbrush",
+    "강아지 사료": "dog food",
+    "전동드릴": "power drill",
+    "에스프레소 머신": "espresso machine",
+    "청소기": "vacuum cleaner",
+    "러닝화": "running shoes",
+    "영양제": "supplements",
+    "홍삼": "red ginseng",
+    "커피": "coffee"
+  };
+  
+  let engCat = "";
+  for (const [k_kr, k_en] of Object.entries(category_mapping)) {
+    if (kwLower.includes(k_kr.toLowerCase()) || k_kr.toLowerCase().includes(kwLower)) {
+      engCat = k_en;
+      break;
+    }
+  }
+  if (!engCat) {
+    if (/^[a-zA-Z\s]+$/.test(keyword)) {
+      engCat = keyword;
+    } else {
+      engCat = "product";
+    }
+  }
+  
+  const getSceneVisualTokens = (scene) => {
+    const parts = [];
+    if (scene.imageKeyword) parts.push(scene.imageKeyword);
+    if (Array.isArray(scene.imageSearchKeywords)) parts.push(...scene.imageSearchKeywords);
+    if (Array.isArray(scene.videoSearchKeywords)) parts.push(...scene.videoSearchKeywords);
+    if (scene.keywords) parts.push(scene.keywords);
+    if (scene.searchKeyword) parts.push(scene.searchKeyword);
+    if (scene.prompt) parts.push(scene.prompt);
+    if (scene.description) parts.push(scene.description);
+    if (scene.visualSource) parts.push(scene.visualSource);
+    
+    const text = parts.join(' ').toLowerCase();
+    const clean = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ');
+    return clean.split(/\s+/).filter(w => w.length > 0);
+  };
+  
+  // 1. Product Match (40% max)
+  let matchCount = 0;
+  scenes.forEach(scene => {
+    const visualTokens = getSceneVisualTokens(scene);
+    let matched = kwTokens.some(kt => visualTokens.includes(kt));
+    if (!matched && engCat) {
+      matched = visualTokens.some(vt => vt.includes(engCat.toLowerCase()) || engCat.toLowerCase().includes(vt));
+    }
+    if (matched) matchCount++;
+  });
+  const productMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 40) : 0;
+  
+  // 2. Usage Context Match (25% max)
+  const usageVerbs = [
+    'brushing', 'eating', 'drilling', 'cooking', 'cleaning', 'running', 'applying', 'working', 
+    'holding', 'operating', 'using', 'pouring', 'drinking', 'chewing', 'serving', 'frying', 
+    'slicing', 'cutting', 'active', 'workout', 'fixing', 'screwing', 'washing', 'making', 
+    'brewing', 'swallowing',
+    '굽', '먹', '닦', '양치', '청소', '조립', '뚫', '마시', '추출', '신', '달리', 
+    '복용', '섭취', '작동', '조절', '사용', '리뷰', '추천', '고치', '박', '자르', 
+    '끓', '조리', '운동', '걸어'
+  ];
+  
+  let usageMatchCount = 0;
+  scenes.forEach(scene => {
+    const text = [
+      scene.narration, scene.caption, scene.subtitle, scene.visualSource,
+      scene.prompt, scene.description, scene.keywords, scene.imageKeyword
+    ].join(' ').toLowerCase();
+    
+    const hasUsage = usageVerbs.some(verb => text.includes(verb));
+    if (hasUsage) {
+      usageMatchCount++;
+    }
+  });
+  const usageContextMatchScore = scenes.length > 0 ? Math.round((usageMatchCount / scenes.length) * 25) : 0;
+  
+  // 3. Script Match (15% max)
+  const scriptText = (script || scenes.map(s => s.narration || s.caption || s.subtitle || '').join(' ')).toLowerCase();
+  const hasDigits = /\d+/.test(scriptText);
+  const specUnits = ['g', 'v', 'aw', 'pa', '원', '%', 'kcal', 'mg', '밀리그램', '그램', '볼트', '암페어', '압력', '스펙', '성분', '무료배송', '할인', '특가', '원료', '함량', '특징', '보장', '인증', '식약처', 'ml', 'l', 'kg', '만 원', '만원'];
+  const hasUnits = specUnits.some(u => scriptText.includes(u));
+  
+  let scriptMatchScore = 0;
+  if (hasDigits && hasUnits) {
+    scriptMatchScore = 15;
+  } else if (hasDigits || hasUnits) {
+    scriptMatchScore = 8;
+  }
+  
+  // 4. Asset Match (20% max)
+  let assetMatchScore = 0;
+  if (hasDirectImage) {
+    let actualImageCount = 0;
+    scenes.forEach((_, idx) => {
+      if (idx === 0 || idx === scenes.length - 1 || idx % 2 === 0) {
+        actualImageCount++;
+      }
+    });
+    const proportion = actualImageCount / scenes.length;
+    assetMatchScore = Math.round(proportion * 20);
+  } else {
+    assetMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 20) : 0;
+  }
+  
+  const total = productMatchScore + usageContextMatchScore + scriptMatchScore + assetMatchScore;
+  return {
+    total,
+    breakdown: {
+      productMatchScore,
+      usageContextMatchScore,
+      scriptMatchScore,
+      assetMatchScore
+    }
+  };
+}
+
 module.exports = {
   STYLE_DNA_LIST,
   HOOK_LIBRARY,
@@ -270,6 +396,7 @@ module.exports = {
   selectWeightedCategory,
   selectBestHookCandidate,
   tokenize,
-  calculateJaccard
+  calculateJaccard,
+  calculateProductRelevanceScore
 };
 

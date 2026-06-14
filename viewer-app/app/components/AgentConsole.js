@@ -8,7 +8,7 @@ export default function AgentConsole() {
   const [status, setStatus] = useState('idle'); // 'idle', 'running', 'completed', 'error'
   const [message, setMessage] = useState('대기 중');
   const [logs, setLogs] = useState('');
-  const [selectedModel, setSelectedModel] = useState('qwen2.5-coder:3b');
+  const [selectedModel, setSelectedModel] = useState('qwen2.5-coder:1.5b');
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(false);
   
@@ -135,6 +135,7 @@ export default function AgentConsole() {
                 cursor: status === 'running' ? 'not-allowed' : 'pointer'
               }}
             >
+              <option value="qwen2.5-coder:1.5b">qwen2.5-coder:1.5b (경량형 - 900MB)</option>
               <option value="qwen2.5-coder:3b">qwen2.5-coder:3b (추천 - 1.9GB)</option>
               <option value="myungchul-coder:latest">myungchul-coder:latest (1.9GB)</option>
             </select>

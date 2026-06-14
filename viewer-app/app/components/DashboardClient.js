@@ -89,6 +89,25 @@ export default function DashboardClient({
   // Secondary Dashboard Tabs State
   const [activeTab, setActiveTab] = useState('goals-sessions'); // 'goals-sessions' or 'live-agents'
 
+  // States for Local LLM & VRAM System Monitor
+  const [sysStatus, setSysStatus] = useState(null);
+  const [loadingSys, setLoadingSys] = useState(true);
+
+  const fetchSysStatus = async () => {
+    setLoadingSys(true);
+    try {
+      const res = await fetch('/api/system-status');
+      if (res.ok) {
+        const json = await res.json();
+        setSysStatus(json);
+      }
+    } catch (e) {
+      console.error('Failed to fetch system status:', e);
+    } finally {
+      setLoadingSys(false);
+    }
+  };
+
   const fetchStatus = async () => {
     try {
       const res = await fetch('/api/autopilot');
@@ -121,6 +140,13 @@ export default function DashboardClient({
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [statusData.status]);
+
+  // Poll system status every 10s
+  useEffect(() => {
+    fetchSysStatus();
+    const interval = setInterval(fetchSysStatus, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleStartAutopilot = async () => {
     if (triggering || statusData.status === 'running') return;
@@ -224,6 +250,86 @@ export default function DashboardClient({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
+      {/* 🖥️ Local AI Environment & GPU VRAM Monitor Panel */}
+      <section className="glass-panel" style={{ padding: '1.25rem 1.5rem', border: '1px solid rgba(96, 165, 250, 0.15)', background: 'linear-gradient(145deg, rgba(255,255,255,0.01) 0%, rgba(96, 165, 250, 0.02) 100%)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Cpu size={22} color="#60a5fa" style={{ filter: 'drop-shadow(0 0 4px rgba(96,165,250,0.3))' }} />
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'white', margin: 0 }}>로컬 AI 환경 및 GPU 상태 모니터</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', margin: 0 }}>
+                {sysStatus?.gpu?.available ? `${sysStatus.gpu.name} 활성화됨` : 'GPU 정보 감지 중...'}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            {/* Ollama Status */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(0,0,0,0.2)', padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '0.8rem' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: sysStatus?.llmServers?.ollama?.status === 'online' ? '#10b981' : '#64748b' }}></span>
+              <span style={{ fontWeight: 600, color: sysStatus?.llmServers?.ollama?.status === 'online' ? 'white' : 'var(--text-secondary)' }}>Ollama (11434)</span>
+              {sysStatus?.llmServers?.ollama?.status === 'online' && sysStatus.llmServers.ollama.models?.length > 0 && (
+                <span style={{ fontSize: '0.7rem', color: '#10b981', background: 'rgba(16,185,129,0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px', marginLeft: '0.2rem' }}>
+                  {sysStatus.llmServers.ollama.models[0]}
+                </span>
+              )}
+            </div>
+
+            {/* LM Studio Status */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(0,0,0,0.2)', padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '0.8rem' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: sysStatus?.llmServers?.lmStudio?.status === 'online' ? '#10b981' : '#64748b' }}></span>
+              <span style={{ fontWeight: 600, color: sysStatus?.llmServers?.lmStudio?.status === 'online' ? 'white' : 'var(--text-secondary)' }}>LM Studio (1234)</span>
+            </div>
+
+            {/* Refresh Button */}
+            <button 
+              onClick={fetchSysStatus} 
+              disabled={loadingSys} 
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '0.35rem', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="상태 새로고침"
+            >
+              <RefreshCw size={14} className={loadingSys ? 'animate-spin' : ''} />
+            </button>
+          </div>
+        </div>
+
+        {/* VRAM Progress Bar */}
+        {sysStatus?.gpu?.available && (
+          <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'grid', gridTemplateColumns: '1fr auto', gap: '1.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', width: '100%' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>GPU VRAM 사용량</span>
+                <span style={{ color: sysStatus.gpu.vram.percentage > 85 ? '#f87171' : 'white', fontWeight: 600 }}>
+                  {sysStatus.gpu.vram.used} MiB / {sysStatus.gpu.vram.total} MiB ({sysStatus.gpu.vram.percentage}%)
+                </span>
+              </div>
+              <div style={{ width: '100%', height: '8px', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ 
+                  width: `${sysStatus.gpu.vram.percentage}%`, 
+                  height: '100%', 
+                  background: sysStatus.gpu.vram.percentage > 85 
+                    ? 'linear-gradient(90deg, #f87171 0%, #ef4444 100%)' 
+                    : 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%)',
+                  borderRadius: '4px',
+                  transition: 'width 0.4s ease-out'
+                }} />
+              </div>
+            </div>
+            
+            {/* Recommendations Tooltip Box */}
+            <div style={{ background: 'rgba(0,0,0,0.15)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)', fontSize: '0.7rem', display: 'flex', flexDirection: 'column', gap: '0.1rem', minWidth: '180px' }}>
+              <div><span style={{ color: 'var(--text-secondary)' }}>권장 모델 크기:</span> <span style={{ color: '#60a5fa', fontWeight: 600 }}>{sysStatus.recommendations.maxModelSize}</span></div>
+              <div><span style={{ color: 'var(--text-secondary)' }}>컨텍스트 한계:</span> <span style={{ color: '#a78bfa', fontWeight: 600 }}>{sysStatus.recommendations.contextLimit} tokens</span></div>
+              {sysStatus.recommendations.vramWarning && (
+                <div style={{ color: '#f87171', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.2rem', marginTop: '0.15rem' }}>
+                  ⚠️ VRAM 임계치 초과 (타 GUI 종료 권장)
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* 🚀 Main Autopilot Console Section (Central Focus) */}
       <section className="glass-panel" style={{ padding: '2rem', border: '1px solid rgba(251, 113, 133, 0.15)', background: 'linear-gradient(145deg, rgba(255,255,255,0.01) 0%, rgba(251, 113, 133, 0.02) 100%)' }}>
         
@@ -432,20 +538,23 @@ export default function DashboardClient({
               {statusData.upload_mode === 'product-driven' ? (
                 <div className="glass-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', borderLeft: '4px solid #a78bfa', background: 'rgba(0,0,0,0.1)' }}>
                   <h4 style={{ color: 'white', fontSize: '0.9rem', margin: 0, fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <Sparkles size={14} color="#fb7185" /> 사전 검수 평가 로그 (Quality Board)
+                    <Sparkles size={14} color="#fb7185" /> 상품 관련성 검수 로그 (Product Relevance Board)
                   </h4>
                   
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.8rem' }}>
                     <div style={{ background: 'rgba(0,0,0,0.3)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>품질 평가 점수</span>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: statusData.quality_score >= 75 ? '#10b981' : '#f87171', marginTop: '0.1rem' }}>
-                        {statusData.quality_score}점 <span style={{ fontSize: '0.7rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>/ 75점</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>상품 관련성 점수 (PRS)</span>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: statusData.product_relevance_score >= 85 ? '#10b981' : '#f87171', marginTop: '0.1rem' }}>
+                        {statusData.product_relevance_score}점 <span style={{ fontSize: '0.7rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>/ 85점 이상</span>
+                      </div>
+                      <div style={{ fontSize: '0.65rem', color: statusData.product_relevance_score >= 90 ? '#10b981' : '#fbbf24', marginTop: '0.15rem' }}>
+                        {statusData.product_relevance_score >= 90 ? '✓ 자동 업로드 승인' : '⚠ 수동 승인 필요'}
                       </div>
                     </div>
                     <div style={{ background: 'rgba(0,0,0,0.3)', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>도입부 유사도</span>
-                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: (statusData.similarity_score || 0) <= 60 ? '#10b981' : '#f87171', marginTop: '0.1rem' }}>
-                        {statusData.similarity_score || 0}% <span style={{ fontSize: '0.7rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>/ 60%</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>종합 품질 점수</span>
+                      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: statusData.quality_score >= 70 ? '#10b981' : '#f87171', marginTop: '0.1rem' }}>
+                        {statusData.quality_score}점 <span style={{ fontSize: '0.7rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>/ 70점 이상</span>
                       </div>
                     </div>
                   </div>
@@ -456,7 +565,7 @@ export default function DashboardClient({
                         <span style={{ fontWeight: 600, color: 'white' }}>제목:</span> {statusData.scriptData?.title} #Shorts
                       </div>
                       <button
-                        onClick={() => handleApproveAndUpload(statusData.quality_score < 75)}
+                        onClick={() => handleApproveAndUpload(statusData.product_relevance_score < 90)}
                         disabled={uploading}
                         className="btn"
                         style={{ 
@@ -468,13 +577,13 @@ export default function DashboardClient({
                           alignItems: 'center', 
                           justifyContent: 'center', 
                           gap: '0.4rem',
-                          background: statusData.quality_score >= 75 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                          background: statusData.product_relevance_score >= 90 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                           border: 'none',
                           cursor: 'pointer'
                         }}
                       >
                         {uploading ? <Loader2 className="animate-spin" size={14} /> : <Video size={14} />}
-                        {statusData.quality_score >= 75 ? '승인 및 유튜브 업로드' : '검수 무시 및 수동 업로드'}
+                        {statusData.product_relevance_score >= 90 ? '자동 승인 및 업로드 실행' : '수동 검수 승인 및 업로드 실행'}
                       </button>
                     </div>
                   ) : (

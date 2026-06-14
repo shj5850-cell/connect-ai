@@ -3,6 +3,7 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { searchYoutubeMarket, extractTrendDNA, evaluateScriptNovelty } from '../../lib/trendEngine';
+import { calculateProductRelevanceScore } from '../../lib/CreativeDiversityEngine';
 
 function parseSentences(text) {
   if (!text) return [];
@@ -366,240 +367,103 @@ ${sentences.map((s, idx) => `${idx + 1}. ${s}`).join('\n')}
         };
       }
     } else {
-      // Trend Engine YouTube Search & DNA Extraction (Runs only when trendEngineActive is true and not bypassed)
-      if (trendEngineActive && !bypassTrendEngine) {
-        console.log(`[Trend Engine] Running YouTube market research for "${keyword}"...`);
-        const searchRes = await searchYoutubeMarket(keyword);
-        if (searchRes.success && searchRes.data && searchRes.data.length > 0) {
-          console.log(`[Trend Engine] Extracted ${searchRes.data.length} unique search items. Running Gemini DNA extraction...`);
-          trendDNA = await extractTrendDNA(keyword, searchRes.data, false);
-        } else if (!searchRes.success) {
-          trendEngineStatus = searchRes.reason;
-          console.warn(`[Trend Engine] Market research failed: ${searchRes.reason}`);
-        } else {
-          console.warn(`[Trend Engine] No search items returned for keyword: "${keyword}"`);
-        }
-      }
-
-      // 1단계: 상품 분석 AI (Product Analysis AI)
-      console.log(`[Phase 1] Starting Product Analysis AI for keyword: "${keyword}"...`);
-      const productAnalysisSystemPrompt = `당신은 세계 최고 수준의 상품 마케팅 분석가이자 카피라이터 AI입니다.
-주어진 상품 또는 키워드에 대해, 시장성, 핵심 소구점(USP), 타겟 오디언스 페르소나, 그리고 고객이 겪는 페인 포인트를 분석하여 마케팅 전략과 강력한 후크 메시지를 수립해야 합니다.
+      // 1단계: 상품 이해 AI (Product Understanding AI) - Call 1
+      console.log(`[Phase 1] Starting Product Understanding AI for keyword: "${keyword}"...`);
+      const productUnderstandingSystemPrompt = `당신은 세계 최고 수준의 상품 마케팅 분석가 AI입니다.
+주어진 상품 또는 키워드에 대해, 제품 카테고리, 제품 고유의 핵심 스펙(성분 함량, 기술 등), 구매 연령대/성별 페르소나, 사용 상황 및 빈도, 그리고 사용자가 겪는 핵심 페인 포인트를 분석하여 Product Understanding JSON을 작성하십시오.
 반드시 아래 JSON 스키마 형식으로만 응답해야 합니다. 다른 텍스트는 포함하지 마십시오.
 
 출력 JSON 스키마:
 {
-  "productAnalysis": {
-    "usp": "상품의 핵심 USP 3가지 요약 (각각 명확하고 한 줄 분량)",
-    "targetAudience": "주 타겟층 연령대 및 시청자 페르소나 설명",
-    "painPoints": "이 타겟 고객들이 일상에서 느끼는 구체적인 불편함 또는 요구사항",
+  "productUnderstanding": {
+    "category": "상품 카테고리 (예: '소고기', '칫솔', '영양제', '전동드릴')",
+    "keySpecifications": "핵심 스펙 및 특징 (예: '진세노사이드 11mg', '18V 파워 토크', '1++ 한우')",
+    "targetAudience": "주 시청 타겟층 페르소나 설명",
+    "painPoints": "이 타겟 고객들이 일상에서 겪는 구체적인 페인 포인트",
+    "usageContext": "제품을 사용하는 구체적인 시간/장소/상황 (예: '욕실에서 아침 양치질할 때', '차고지에서 가구 조립할 때')",
+    "buyingRationale": "제품을 구매해야 하는 이유와 가성비 혜택",
     "hookPoints": [
-      "후킹 앵글 1: 시청자를 경고/충격으로 끌어들이는 문구 (예: '아직도 X하고 계신가요? 당장 멈추세요!')",
-      "후킹 앵글 2: 호기심을 유발하는 문구 (예: '대부분 모르는 X의 비밀')",
-      "후킹 앵글 3: 이득/해결책을 제시하는 문구 (예: 'X 하나로 인생의 질을 2배 올리는 방법')"
+      "후킹 문장 1 (USP 기반 경고/충격형)",
+      "후킹 문장 2 (호기심 유발형)",
+      "후킹 문장 3 (이득/해결책 제시형)"
     ]
   }
 }`;
 
-      const productAnalysisUserPrompt = `[분석할 상품 키워드]
+      const productUnderstandingUserPrompt = `[분석할 상품 키워드]
 키워드: ${keyword}`;
 
       try {
-        productAnalysis = await callGemini(productAnalysisSystemPrompt, productAnalysisUserPrompt);
-        console.log('[Phase 1] Successfully completed Product Analysis AI:', productAnalysis);
+        const geminiRes = await callGemini(productUnderstandingSystemPrompt, productUnderstandingUserPrompt);
+        productAnalysis = geminiRes.productUnderstanding;
+        if (!productAnalysis || !productAnalysis.category) {
+          throw new Error("Product understanding output is invalid or missing category.");
+        }
+        console.log('[Phase 1] Successfully completed Product Understanding:', productAnalysis);
       } catch (e) {
-        console.error('[Phase 1] Product Analysis AI Failed. Using default mock values:', e);
-        productAnalysis = {
-          productAnalysis: {
-            usp: `${keyword}의 핵심 성능과 가성비, 그리고 편의성`,
-            targetAudience: `효율성을 추구하는 현대인 및 해당 제품이 필요한 구매 타겟군`,
-            painPoints: `불필요한 시간 낭비와 비효율적인 일상 속 소소한 문제점`,
-            hookPoints: [
-              `아직도 ${keyword} 없이 사시나요? 당장 멈추고 이거 보세요!`,
-              `대부분 모르는 ${keyword}의 대단한 비밀 1가지`,
-              `${keyword} 하나로 삶의 질을 2배 이상 올리는 방법`
-            ]
-          }
-        };
+        console.error('[Phase 1] Product Understanding Failed. Aborting pipeline.', e);
+        return NextResponse.json(
+          { success: false, error: `상품 이해(Product Understanding) 단계가 실패하여 대본 생성이 차단되었습니다. 상세 오류: ${e.message}` },
+          { status: 400 }
+        );
       }
 
-      // 2단계: 장면 기획 AI (Scene Planning AI) - 3회 반려 루프 적용
-      console.log(`[Phase 2] Starting Scene Planning AI with Rejection Loop...`);
-      let generationAttempts = 0;
-      const maxAttempts = 3;
-      let passSimilarityCheck = false;
-      let rejectedAttempts = [];
-
-      while (generationAttempts < maxAttempts && !passSimilarityCheck) {
-        generationAttempts++;
-        console.log(`[Phase 2] Generation attempt ${generationAttempts} of ${maxAttempts}...`);
-
-        let trendInstructions = '';
-        if (trendDNA) {
-          trendInstructions = `
-[YouTube Trend Analysis & Gap Opportunities]
-실제 유튜브 상위 노출 영상들로부터 정교하게 도출된 트렌드 DNA 분석 데이터입니다:
-- 제목 패턴: ${JSON.stringify(trendDNA.dna?.titlePatterns)}
-- 오프닝 훅 스타일: ${JSON.stringify(trendDNA.dna?.hookPatterns)}
-- 시장 과포화 표현 (대본 및 제목에 아래 표현들을 절대로 포함하지 마십시오):
-  ${(trendDNA.saturation?.overusedPhrases || []).map(p => `- "${p.phrase}" (포화율: ${(p.rate * 100).toFixed(0)}%)`).join('\n')}
-- 추천 틈새 장르/유형: ${trendDNA.gapOpportunity?.recommendedType}
-- 추천 이유: ${trendDNA.gapOpportunity?.reason}
-
-지시사항:
-1. 유튜브 검색에서 확인된 상위 노출 영상들의 매력적인 제목 패턴(예: 궁금증 유발, 숫자 활용)과 훅 스타일(예: 오프닝 3초 충격/반전 구조)의 흥행 공식을 철저하게 공부하고 벤치마킹하여 따라 만드십시오.
-2. 다만, 이미 흔해서 진부해진 "시장 과포화 표현"들은 철저히 필터링하고 제외하여 단어를 신선하게 바꿉니다.
-3. 기존 성공 전략의 장점(공부한 패턴)을 흡수하되, 추천하는 틈새 장르/유형인 "${trendDNA.gapOpportunity?.recommendedType}"에 맞춰 새롭게 재해석하여 독창적이고 차별화된 결과물로 고도화하십시오.
-`;
-        }
-
-        let feedbackFromRejected = '';
-        if (rejectedAttempts.length > 0) {
-          feedbackFromRejected = `
-[이전 실패 시안 정보]
-이전 시도에서 기존 유튜브 영상들과의 유사성 검사(시장 중복)로 인해 탈락한 대본들입니다. 아래 대본들과 유사한 오프닝 훅, 대본 구조, 흐름을 반복해서는 안 됩니다:
-${rejectedAttempts.map((rej, idx) => `
-- 탈락 시안 #${idx + 1}:
-  * 제목: ${rej.title}
-  * 오프닝 훅: ${rej.hook}
-  * 대본: ${rej.script}
-  * 반려 사유: Hook 유사도 ${rej.hookSimilarity}%, 신규성 점수 ${rej.noveltyScore}/100. ${rej.advice}
-`).join('\n')}
-`;
-        }
-
-        const scenePlanningSystemPrompt = `당신은 세계 최고의 유튜브 쇼츠 편집 감독이자 시나리오 작가입니다.
-제공된 상품 정보와 마케팅 분석 결과를 바탕으로, 시청자의 이탈을 방지하고 끝까지 보게 만드는 스토리 기반의 쇼츠 연출안과 대본을 작성해야 합니다.
-${trendInstructions}
-${feedbackFromRejected}
+      // 2단계: 장면 및 대본 기획 AI (Scene Planning AI) - Call 2
+      console.log(`[Phase 2] Starting Scene Planning AI...`);
+      const scenePlanningSystemPrompt = `당신은 유튜브 쇼츠 편집 감독이자 시나리오 작가입니다.
+제공된 상품 이해 데이터(Product Understanding)를 바탕으로, 시청자의 이탈을 방지하고 끝까지 보게 만드는 쇼츠 대본과 씬 구성을 작성하십시오.
 
 반드시 아래 JSON 스키마 형식으로만 응답해야 합니다. 다른 텍스트는 포함하지 마십시오.
 
 출력 JSON 스키마:
 {
-  "analysis": {
-    "hookPattern": "상위 쇼츠들의 후킹 패턴 요약",
-    "avgDuration": "평균 영상 길이 (예: 30초~45초)",
-    "transitionSpeed": "장면 전환 속도 및 주기",
-    "captionStyle": "자막 스타일 (예: 캡컷 스타일, 노란색/흰색 강조 등)",
-    "voiceTone": "보이스 톤 유형 (신뢰감, 강한 에너지, 긴장감, 차분함, 몰입감 중 택1)",
-    "bgmType": "BGM 유형 (비트감, 미스터리, 잔잔함 등)",
-    "retentionTriggers": "시청 지속시간을 높이는 핵심 요소",
-    "commentTriggers": "댓글 참여를 유도하는 요소",
-    "likeShareTriggers": "좋아요와 공유를 유도하는 요소",
-    "algorithmStrategy": "알고리즘 친화적인 전개 방식"
-  },
-  "strategy": "바이럴 분석을 바탕으로 한 제작 전략",
-  "titles": ["후킹용 추천 쇼츠 제목 1 (10자 내외)", "추천 제목 2", "추천 제목 3", "추천 제목 4", "추천 제목 5", "추천 제목 6", "추천 제목 7", "추천 제목 8", "추천 제목 9", "추천 제목 10"],
-  "script": "전체 영상의 스토리라인 기반 나레이션 통합 대본",
-  "bgmRecommendation": "구체적인 BGM 곡 분위기 및 템포 스타일 추천",
-  "uploadDescription": "유튜브 업로드용 설명글란 내용 (링크 삽입 자리 확보)",
-  "hashtags": ["해시태그1", "해시태그2", "해시태그3", "해시태그4"],
-  "expectedReaction": "시청자들의 예상 반응 및 댓글 모음",
-  "retentionPoints": "3초 이탈률 최소화 및 시청 유지율 극대화를 위한 핵심 포인트",
+  "strategy": "제작 전략",
+  "titles": ["추천 쇼츠 제목 1 (10자 내외)", "추천 제목 2", "추천 제목 3"],
+  "script": "전체 영상의 나레이션 통합 대본",
+  "bgmRecommendation": "BGM 분위기 추천",
+  "uploadDescription": "유튜브 업로드용 설명글",
+  "hashtags": ["해시태그1", "해시태그2"],
   "scenes": [
     {
       "sceneNumber": 1,
-      "imageKeyword": "해당 장면을 설명하는 Unsplash/Pexels 검색용 영어 키워드 1-2단어 (예: 'smartphone', 'stressed worker', 'office')",
-      "visualSource": "장면 영상 소스 상세 연출 설명 (e.g., '좌절하는 직장인의 바스트 샷')",
-      "editingInstruction": "장면 편집 지시 (e.g., 'Zoom In, Speed Ramp')",
-      "caption": "화면에 표시할 짧고 강렬한 자막 (한 문장 최대 12자 이내)",
-      "narration": "이 장면에 해당하는 실제 한글 TTS 나레이션 대본 (영어나 특수문자가 없어야 하며, 발음하는 대로 작성해야 함. 괄호나 연출 지시문 제외)"
+      "imageKeyword": "Unsplash/Pexels 검색용 구체적인 영어 키워드 1-2개. 상품 및 사용 상황과 100% 매치되는 단어여야 함. (예: 실제 상품 이미지의 경우 'toothbrush closeup', 사용 장면의 경우 'brushing teeth')",
+      "visualSource": "장면 연출 설명",
+      "editingInstruction": "장면 편집 지시 (e.g., 'Zoom In')",
+      "caption": "화면에 표시할 자막 (한 문장 최대 12자 이내)",
+      "narration": "TTS 나레이션 대본 (3~4단어로 매우 짧게)"
     }
   ]
 }
 
 주의사항:
-1. 장면 개수 규칙: 전체 영상은 최소 15개 이상, 최대 30개 이하의 장면(scenes)으로 세분화해야 합니다. 상품의 사용법, 장점, 페인포인트 극복 과정, 후킹, 엔딩 유도를 논리적이고 빠른 템포의 스토리로 구성하세요.
-2. 1개 장면이 2초 이상 지속되면 시청자가 지루해하므로, 장면의 narration 길이는 최대 3~4단어로 매우 짧아야 합니다.
-3. 자막(caption)은 12자 이내로 눈길을 사로잡는 문구로 작성하세요.`;
+1. 장면 개수 규칙: 전체 영상은 최소 15개 이상, 최대 30개 이하의 장면(scenes)으로 세분화해야 합니다.
+2. 각 장면의 imageKeyword는 상품 관련성 검증을 위해 무조건 관련 카테고리 어휘 및 제품 묘사 위주로 매핑하십시오. 일반적인 숲, 밤하늘, 강 등의 쌩뚱맞은 스톡 이미지가 검색되지 않게 하십시오.
+3. 이미지 수집 우선순위를 따르십시오: 1순위 실제 상품 이미지, 2순위 실제 사용 장면, 3순위 카테고리 관련 B-roll.
+4. 자막(caption)은 12자 이내로 간결해야 합니다.`;
 
-        const scenePlanningUserPrompt = `[상품 키워드]
-키워드: ${keyword}
+      const scenePlanningUserPrompt = `[상품 이해 데이터]
+카테고리: ${productAnalysis.category}
+핵심 스펙: ${productAnalysis.keySpecifications}
+주 타겟층: ${productAnalysis.targetAudience}
+페인 포인트: ${productAnalysis.painPoints}
+사용 상황: ${productAnalysis.usageContext}
+구매 이유: ${productAnalysis.buyingRationale}
+추천 훅: ${productAnalysis.hookPoints.join(', ')}
 
-[마케팅 분석 결과]
-USP: ${productAnalysis.productAnalysis.usp}
-주 타겟층: ${productAnalysis.productAnalysis.targetAudience}
-페인 포인트: ${productAnalysis.productAnalysis.painPoints}
-추천 훅: ${productAnalysis.productAnalysis.hookPoints.join(', ')}
+이 상품 분석 결과를 기반으로 스토리라인이 속도감 있게 흘러가고, 총 15개에서 30개 사이의 장면으로 구성된 쇼츠 시나리오를 구성해 주세요.`;
 
-이 분석 결과를 기반으로 스토리라인이 살아있고, 총 15개에서 30개 사이의 장면으로 촘촘히 쪼개진 속도감 있는 쇼츠 시나리오를 구성해 주세요.`;
-
-        try {
-          shortsPlan = await callGemini(scenePlanningSystemPrompt, scenePlanningUserPrompt);
-          console.log(`[Phase 2] Scene planning successfully generated ${shortsPlan.scenes?.length} scenes.`);
-        } catch (e) {
-          console.error(`[Phase 2] Scene Planning AI draft generation failed:`, e);
-          if (generationAttempts >= maxAttempts) {
-            throw e;
-          }
-          continue;
-        }
-
-        // Novelty check if Trend Engine is active
-        if (trendEngineActive && trendDNA) {
-          console.log(`[Trend Engine] Evaluating similarity and novelty scores...`);
-          noveltyResult = await evaluateScriptNovelty(shortsPlan, trendDNA);
-          
-          if (noveltyResult) {
-            console.log(`[Trend Engine] Scores calculated -> Hook Similarity: ${noveltyResult.hookSimilarity}%, Novelty Score: ${noveltyResult.noveltyScore}`);
-            
-            // Check rejection rule: Hook Similarity > 70% OR Novelty Score < 50
-            if (noveltyResult.hookSimilarity > 70 || noveltyResult.noveltyScore < 50) {
-              console.warn(`[Trend Engine] Attempt ${generationAttempts} REJECTED.`);
-              
-              const scriptSnippet = shortsPlan.script || (shortsPlan.scenes ? shortsPlan.scenes.map(s => s.narration).join(' ') : '');
-              const title = shortsPlan.titles && shortsPlan.titles.length > 0 ? shortsPlan.titles[0] : (shortsPlan.title || '');
-              const hook = shortsPlan.scenes && shortsPlan.scenes.length > 0 ? shortsPlan.scenes[0].caption : '';
-
-              rejectedAttempts.push({
-                title,
-                hook,
-                script: scriptSnippet,
-                hookSimilarity: noveltyResult.hookSimilarity,
-                noveltyScore: noveltyResult.noveltyScore,
-                advice: noveltyResult.realityCheck?.advice || '시장 유사성 임계값 도달'
-              });
-            } else {
-              console.log(`[Trend Engine] Attempt ${generationAttempts} APPROVED.`);
-              passSimilarityCheck = true;
-            }
-          } else {
-            console.warn(`[Trend Engine] Evaluation failed to return results. Defaulting to approve.`);
-            passSimilarityCheck = true; // Proceed if evaluator fails
-          }
-        } else {
-          passSimilarityCheck = true; // Skip validation check
-        }
+      try {
+        shortsPlan = await callGemini(scenePlanningSystemPrompt, scenePlanningUserPrompt);
+        console.log(`[Phase 2] Scene planning successfully generated ${shortsPlan.scenes?.length} scenes.`);
+      } catch (e) {
+        console.error(`[Phase 2] Scene Planning AI draft generation failed:`, e);
+        return NextResponse.json(
+          { success: false, error: `대본 및 장면 기획 단계가 실패하여 렌더링이 차단되었습니다. 상세 오류: ${e.message}` },
+          { status: 500 }
+        );
       }
 
-      // If all attempts failed the similarity/novelty threshold, enter manual approval state (do NOT render video)
-      if (trendEngineActive && trendDNA && !passSimilarityCheck) {
-        console.warn(`[Trend Engine] Rejection loop failed after ${maxAttempts} attempts. Holding for manual review.`);
-        
-        // Merge last evaluation details to the plan
-        shortsPlan.productAnalysis = productAnalysis.productAnalysis;
-        shortsPlan.trendAnalysis = noveltyResult;
-        shortsPlan.trendEngineStatus = 'MARKET_REDUNDANCY_WARNING';
-
-        return NextResponse.json({
-          success: true,
-          status: 'manual_approval_pending',
-          reason: 'MARKET_REDUNDANCY_WARNING',
-          message: '유튜브 시장 중복 위험이 존재합니다. 대본의 신규성이 부족하여 수동 승인 보류 상태로 대기합니다.',
-          trendAnalysis: noveltyResult,
-          shortsPlan: shortsPlan,
-          keyword: keyword,
-          voice: voice,
-          bgmType: bgmType,
-          templateStyle: templateStyle,
-          affiliateLink: affiliateLink,
-          pexelsApiKey: pexelsApiKey,
-          pixabayApiKey: pixabayApiKey
-        });
-      }
-
-      // 11. 장면 수 부족 시 AI가 추가 장면 생성 (Programmatic Fallback Check)
+      // 장면 수 부족 시 추가 장면 생성 (Programmatic Fallback Check)
       if (!shortsPlan.scenes || shortsPlan.scenes.length < 15) {
         console.log(`[Scene Expansion] Current scene count: ${shortsPlan.scenes?.length || 0}. Expanding programmatically to reach at least 15 scenes...`);
         let finalScenes = shortsPlan.scenes ? [...shortsPlan.scenes] : [];
@@ -659,17 +523,58 @@ USP: ${productAnalysis.productAnalysis.usp}
         }));
       }
 
-      shortsPlan.productAnalysis = productAnalysis.productAnalysis;
-      if (noveltyResult) {
-        shortsPlan.trendAnalysis = noveltyResult;
-      }
-      shortsPlan.trendEngineStatus = trendEngineStatus;
+      shortsPlan.productAnalysis = productAnalysis;
+      shortsPlan.trendEngineStatus = 'BYPASSED_FOR_EFFICIENCY';
     }
 
     // Append affiliate link to script if provided
     if (affiliateLink && affiliateLink.trim()) {
       shortsPlan.script += `\n🛒 구매 좌표: ${affiliateLink}`;
     }
+
+    // Product Relevance Score (PRS) Validation (Hard Business Rule)
+    const hasDirectImage = !!(directImagePath || directImageUrl || imageSourceMode === 'direct' || imageSourceMode === 'direct_only');
+    const prsResult = calculateProductRelevanceScore(
+      keyword,
+      shortsPlan.script,
+      shortsPlan.scenes || [],
+      hasDirectImage
+    );
+    console.log(`[Product Relevance Engine] Score computed -> PRS: ${prsResult.total}/100`, prsResult.breakdown);
+
+    if (prsResult.total < 80) {
+      console.warn(`[Product Relevance Engine] Generation ABORTED. Score (${prsResult.total}) below 80.`);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `상품 관련성 점수(PRS)가 생성 즉시 중단 기준(80점 미만)인 ${prsResult.total}점으로 판독되어 작업이 중단되었습니다.`,
+          breakdown: prsResult.breakdown
+        },
+        { status: 400 }
+      );
+    }
+
+    if (prsResult.total < 85) {
+      console.warn(`[Product Relevance Engine] Rendering BLOCKED. Score (${prsResult.total}) below 85.`);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `상품 관련성 점수(PRS)가 렌더링 금지 기준(85점 미만)인 ${prsResult.total}점으로 판독되어 비디오 렌더링이 금지되었습니다.`,
+          breakdown: prsResult.breakdown
+        },
+        { status: 400 }
+      );
+    }
+
+    const requiresManualApproval = prsResult.total < 90;
+    const uploadMessage = requiresManualApproval
+      ? `영상이 생성되었습니다. 수동 승인이 필요합니다 (PRS: ${prsResult.total}).`
+      : `영상이 생성되었습니다. 자동 업로드가 허용됩니다 (PRS: ${prsResult.total}).`;
+
+    console.log(`[Product Relevance Engine] Generation APPROVED. PRS: ${prsResult.total} | Requires Manual Approval: ${requiresManualApproval}`);
+    shortsPlan.productRelevanceScore = prsResult.total;
+    shortsPlan.requiresManualApproval = requiresManualApproval;
+    shortsPlan.uploadMessage = uploadMessage;
 
     // Prepare temp config for Python script
     const timestamp = Date.now();
@@ -786,7 +691,10 @@ USP: ${productAnalysis.productAnalysis.usp}
                   scenes: shortsPlan.scenes,
                   productAnalysis: shortsPlan.productAnalysis,
                   trendAnalysis: shortsPlan.trendAnalysis || noveltyResult,
-                  trendEngineStatus: shortsPlan.trendEngineStatus || trendEngineStatus
+                  trendEngineStatus: shortsPlan.trendEngineStatus || trendEngineStatus,
+                  productRelevanceScore: shortsPlan.productRelevanceScore,
+                  requiresManualApproval: shortsPlan.requiresManualApproval,
+                  uploadMessage: shortsPlan.uploadMessage
                 })
               );
             }
@@ -822,7 +730,10 @@ USP: ${productAnalysis.productAnalysis.usp}
               scenes: shortsPlan.scenes,
               productAnalysis: shortsPlan.productAnalysis,
               trendAnalysis: shortsPlan.trendAnalysis || noveltyResult,
-              trendEngineStatus: shortsPlan.trendEngineStatus || trendEngineStatus
+              trendEngineStatus: shortsPlan.trendEngineStatus || trendEngineStatus,
+              productRelevanceScore: shortsPlan.productRelevanceScore,
+              requiresManualApproval: shortsPlan.requiresManualApproval,
+              uploadMessage: shortsPlan.uploadMessage
             })
           );
         }

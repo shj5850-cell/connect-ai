@@ -22,12 +22,16 @@ function updateDnaInfluenceScores() {
     
     function hasRealMetrics(h) {
       if (h.isDryRun || h.youtubeVideoId === 'DRY_RUN') return false;
-      let countMetrics = 0;
-      if (h.views > 0) countMetrics++;
-      if (h.ctr > 0) countMetrics++;
-      if (h.watch_time > 0 || h.retention > 0) countMetrics++;
-      if (h.affiliate_clicks > 0 || h.clicks > 0) countMetrics++;
-      return countMetrics >= 2;
+      if (h.isMockUpload || h.isMock || !h.youtubeVideoId || h.youtubeVideoId === 'MOCK_VIDEO_ID') return false;
+      
+      const views = h.views || 0;
+      const clicks = h.clicks || h.affiliate_clicks || 0;
+      const conversions = h.conversions || h.affiliate_conversions || 0;
+      
+      if (views === 0 && clicks === 0 && conversions === 0) {
+        return false;
+      }
+      return true;
     }
     
     // Helper to calculate statistics for a given set of matching video IDs

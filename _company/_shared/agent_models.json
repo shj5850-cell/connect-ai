@@ -1,12 +1,12 @@
 {
-  "ceo": "qwen2.5-coder:3b",
-  "secretary": "myungchul-coder:latest",
-  "youtube": "myungchul-coder:latest",
-  "researcher": "myungchul-coder:latest",
-  "business": "myungchul-coder:latest",
-  "writer": "myungchul-coder:latest",
-  "editor": "myungchul-coder:latest",
-  "designer": "myungchul-coder:latest",
-  "developer": "myungchul-coder:latest",
-  "instagram": "myungchul-coder:latest"
+  "ceo": "qwen2.5-coder:1.5b",
+  "secretary": "qwen2.5-coder:1.5b",
+  "youtube": "qwen2.5-coder:1.5b",
+  "researcher": "qwen2.5-coder:1.5b",
+  "business": "qwen2.5-coder:1.5b",
+  "writer": "qwen2.5-coder:1.5b",
+  "editor": "qwen2.5-coder:1.5b",
+  "designer": "qwen2.5-coder:1.5b",
+  "developer": "qwen2.5-coder:1.5b",
+  "instagram": "qwen2.5-coder:1.5b"
 }

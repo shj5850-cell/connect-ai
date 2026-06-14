@@ -87,9 +87,10 @@ export async function GET() {
         const db = JSON.parse(fs.readFileSync(intelDbPath, 'utf-8'));
         growthMetrics = db.agent_growth_metrics || {};
         
-        // Calculate average metrics on the fly using realHistory (excluding dry runs and videos without at least 2 real metrics)
+        // Calculate average metrics on the fly using realHistory (excluding mock and dry runs)
         const realHistory = history.filter(v => {
           if (v.isDryRun || v.youtubeVideoId === 'DRY_RUN') return false;
+          if (v.isMockUpload || v.isMock || !v.youtubeVideoId || v.youtubeVideoId === 'MOCK_VIDEO_ID') return false;
           let countMetrics = 0;
           if (v.views > 0) countMetrics++;
           if (v.ctr > 0) countMetrics++;

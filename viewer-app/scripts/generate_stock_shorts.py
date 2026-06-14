@@ -508,6 +508,102 @@ async def generate_all_scenes_tts(scenes, voice_gender, temp_dir):
         tasks.append(generate_scene_tts(txt_clean, voice_gender, dest_path))
     await asyncio.gather(*tasks)
 
+def classify_keywords(kws):
+    usage_verbs = ["brushing", "eating", "drilling", "cooking", "cleaning", "running", "applying", 
+                   "working", "holding", "operating", "using", "pouring", "drinking", "chewing", 
+                   "serving", "frying", "slicing", "cutting", "active", "workout", "fixing", "screwing", "washing"]
+    
+    tier2_kws = []
+    tier3_kws = []
+    tier4_kws = []
+    
+    for kw in kws:
+        if not kw or not kw.strip():
+            continue
+        kw_lower = kw.strip().lower()
+        if any(verb in kw_lower for verb in usage_verbs):
+            tier2_kws.append(kw.strip())
+        elif not any(x in kw_lower for x in ["abstract", "background", "landscape", "pattern", "glowing", "concept", "light"]):
+            tier3_kws.append(kw.strip())
+        else:
+            tier4_kws.append(kw.strip())
+            
+    return tier2_kws, tier3_kws, tier4_kws
+
+def search_and_download_asset(kws, pexels_key, pixabay_key, temp_dir, scene_idx, slot_duration, used_urls, temp_paths, media_type="video"):
+    if media_type == "video":
+        for kw in kws:
+            if not kw or not kw.strip():
+                continue
+            video_pool = []
+            if pexels_key:
+                video_pool.extend(search_pexels_videos(kw, pexels_key))
+            if pixabay_key:
+                video_pool.extend(search_pixabay_videos(kw, pixabay_key))
+            
+            # Filter already used
+            video_pool = [v for v in video_pool if v not in used_urls]
+            if video_pool:
+                selected_url = video_pool[0]
+                print(f"📥 Found Tier Video for '{kw}': {selected_url}")
+                temp_mp4 = os.path.join(temp_dir, f"video_s{scene_idx}_{hash(kw)%1000}.mp4")
+                try:
+                    download_file(selected_url, temp_mp4)
+                    raw_clip = VideoFileClip(temp_mp4).without_audio()
+                    if raw_clip.duration < slot_duration:
+                        loops = int(math.ceil(slot_duration / raw_clip.duration))
+                        timed_clip = concatenate_videoclips([raw_clip] * loops).subclip(0, slot_duration)
+                    else:
+                        timed_clip = raw_clip.subclip(0, slot_duration)
+                    
+                    processed_clip = crop_and_resize_video(timed_clip)
+                    used_urls.add(selected_url)
+                    temp_paths.append(temp_mp4)
+                    metadata = {"scene_idx": scene_idx, "url": selected_url, "type": "video", "keyword": kw}
+                    return processed_clip, metadata
+                except Exception as e:
+                    print(f"⚠️ Video download/process failed for {selected_url}: {e}")
+    
+    elif media_type == "image":
+        for kw in kws:
+            if not kw or not kw.strip():
+                continue
+            image_pool = []
+            image_pool.extend(scrape_unsplash_images([kw], max_images=5))
+            if pixabay_key:
+                image_pool.extend(search_pixabay_images(kw, pixabay_key))
+                
+            # Filter already used
+            image_pool = [img for img in image_pool if img not in used_urls]
+            if image_pool:
+                selected_url = image_pool[0]
+                print(f"📥 Found Tier Image for '{kw}': {selected_url}")
+                temp_jpg = os.path.join(temp_dir, f"img_s{scene_idx}_{hash(kw)%1000}.jpg")
+                try:
+                    download_url = selected_url
+                    if "unsplash.com" in download_url:
+                        download_url = download_url + "?w=1080&h=1920&q=85&auto=format&fit=crop"
+                    
+                    download_file(download_url, temp_jpg)
+                    if crop_and_format_image(temp_jpg, temp_jpg):
+                        img_clip = set_clip_duration(ImageClip(temp_jpg), slot_duration)
+                        try:
+                            if scene_idx % 2 == 0:
+                                img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
+                            else:
+                                img_clip = img_clip.resize(lambda t: 1.04 - 0.04 * t)
+                        except Exception as zoom_err:
+                            print(f"⚠️ Zoom effect failed: {zoom_err}")
+                        
+                        used_urls.add(selected_url)
+                        temp_paths.append(temp_jpg)
+                        metadata = {"scene_idx": scene_idx, "url": selected_url, "type": "image", "keyword": kw}
+                        return img_clip, metadata
+                except Exception as e:
+                    print(f"⚠️ Image download/process failed for {selected_url}: {e}")
+    
+    return None, None
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python generate_stock_shorts.py <config_json_path>")
@@ -599,22 +695,70 @@ def main():
             image_kws = scene.get("imageSearchKeywords", [])
             if not isinstance(image_kws, list):
                 image_kws = [image_kws] if image_kws else []
-            if not image_kws:
-                legacy_kw = scene.get("imageKeyword", "").strip()
-                image_kws = [legacy_kw] if legacy_kw else [keyword or "abstract"]
-                
+            
             clip_added = False
             formatted_media_clip = None
             
-            # Check for direct image override logic (e.g. show product cover image)
-            is_direct_override = (
-                image_source_mode == "direct" and 
-                (direct_image_path or direct_image_url) and 
-                (idx == 0 or idx % 5 == 0)
-            )
+            # Combine and deduplicate keywords for classification
+            all_scene_kws = []
+            for kw in video_kws + image_kws:
+                if kw and kw.strip() and kw.strip() not in all_scene_kws:
+                    all_scene_kws.append(kw.strip())
             
-            if is_direct_override:
-                print(f"Using direct local product image upload/URL.")
+            # Fallback mappings for robust category/usage mapping
+            category_mapping = {
+                "소고기": "beef",
+                "칫솔": "toothbrush",
+                "강아지 사료": "dog food",
+                "전동드릴": "power drill",
+                "에스프레소 머신": "espresso machine",
+                "청소기": "vacuum cleaner",
+                "러닝화": "running shoes",
+                "영양제": "supplements",
+                "홍삼": "red ginseng",
+                "커피": "coffee"
+            }
+            
+            eng_cat = ""
+            for k_kr, k_en in category_mapping.items():
+                if k_kr in keyword or keyword in k_kr:
+                    eng_cat = k_en
+                    break
+            
+            if not eng_cat:
+                if re.match(r'^[a-zA-Z\s]+$', keyword):
+                    eng_cat = keyword
+                else:
+                    eng_cat = "product"
+            
+            # Classify keywords into tiers
+            tier2_kws, tier3_kws, tier4_kws = classify_keywords(all_scene_kws)
+            
+            # Populate fallback keywords for each tier if they are empty
+            if not tier2_kws:
+                tier2_kws = [f"using {eng_cat}", f"{eng_cat} usage", f"{eng_cat} action"]
+            if not tier3_kws:
+                tier3_kws = [eng_cat, f"{eng_cat} product", f"{eng_cat} details"]
+            if not tier4_kws:
+                tier4_kws = ["lifestyle", "workspace", "abstract"]
+                
+            # Determine if we should use Tier 1 (Actual Product Image)
+            caption_text = scene.get("caption") or scene.get("narration") or ""
+            has_product_mention = False
+            if keyword:
+                has_product_mention = keyword in caption_text or any(part in caption_text for part in re.split(r'\s+', keyword) if len(part) > 1)
+            
+            # Tier 1 Condition: if direct product image exists, use it for intro, outro, matching mentions, or every 3rd scene
+            use_tier1 = False
+            if direct_image_path or direct_image_url:
+                if image_source_mode == "direct_only":
+                    use_tier1 = True
+                else:
+                    use_tier1 = (idx == 0 or idx == len(scenes) - 1 or idx % 2 == 0 or has_product_mention)
+            
+            # --- Tier 1: Actual Product Image ---
+            if use_tier1:
+                print(f"[{idx+1}] Tier 1: Using actual product image.")
                 target_source = direct_image_path if (direct_image_path and os.path.exists(direct_image_path)) else direct_image_url
                 dest_jpg = os.path.join(temp_dir, f"direct_scene_{idx}.jpg")
                 
@@ -627,7 +771,7 @@ def main():
                             print(f"⚠️ Zoom effect failed: {zoom_err}")
                         formatted_media_clip = img_clip
                         temp_paths.append(dest_jpg)
-                        collected_assets_metadata.append({"url": "local_upload", "type": "image", "keyword": "direct_upload"})
+                        collected_assets_metadata.append({"scene_idx": idx, "url": "local_upload", "type": "image", "keyword": "direct_upload", "tier": 1})
                         clip_added = True
                 elif target_source.startswith("http"):
                     try:
@@ -640,97 +784,78 @@ def main():
                                 print(f"⚠️ Zoom effect failed: {zoom_err}")
                             formatted_media_clip = img_clip
                             temp_paths.append(dest_jpg)
-                            collected_assets_metadata.append({"url": target_source, "type": "image", "keyword": "direct_url"})
+                            collected_assets_metadata.append({"scene_idx": idx, "url": target_source, "type": "image", "keyword": "direct_url", "tier": 1})
                             clip_added = True
                     except Exception as e:
                         print(f"⚠️ Failed to download direct image URL: {e}")
             
-            # Prioritize Pexels/Pixabay stock videos
+            # --- Tier 2: Actual Usage Scene ---
             if not clip_added:
-                for video_kw in video_kws:
-                    if not video_kw.strip():
-                        continue
-                    video_pool = []
-                    if pexels_api_key:
-                        video_pool.extend(search_pexels_videos(video_kw, pexels_api_key))
-                    if pixabay_api_key:
-                        video_pool.extend(search_pixabay_videos(video_kw, pixabay_api_key))
-                        
-                    # Filter already used
-                    video_pool = [v for v in video_pool if v not in used_urls]
-                    
-                    if video_pool:
-                        selected_video_url = video_pool[0]
-                        print(f"Downloading unique stock video for '{video_kw}': {selected_video_url}")
-                        temp_mp4 = os.path.join(temp_dir, f"video_s{idx}.mp4")
-                        
-                        try:
-                            download_file(selected_video_url, temp_mp4)
-                            raw_video_clip = VideoFileClip(temp_mp4)
-                            raw_video_clip = raw_video_clip.without_audio()
-                            if raw_video_clip.duration < slot_duration:
-                                loops_needed = int(math.ceil(slot_duration / raw_video_clip.duration))
-                                timed_clip = concatenate_videoclips([raw_video_clip] * loops_needed).subclip(0, slot_duration)
-                            else:
-                                timed_clip = raw_video_clip.subclip(0, slot_duration)
-                                
-                            formatted_media_clip = crop_and_resize_video(timed_clip)
-                            used_urls.add(selected_video_url)
-                            temp_paths.append(temp_mp4)
-                            collected_assets_metadata.append({"scene_idx": idx, "url": selected_video_url, "type": "video", "keyword": video_kw})
-                            clip_added = True
-                            break
-                        except Exception as e:
-                            print(f"⚠️ Video processing failed for {selected_video_url}: {e}")
-                            
-            # Fallback to Unsplash / Pixabay stock images
+                print(f"[{idx+1}] Tier 2: Searching for actual usage scenes.")
+                # Search video first, then image
+                clip, meta = search_and_download_asset(
+                    tier2_kws, pexels_api_key, pixabay_api_key, temp_dir, idx, slot_duration, used_urls, temp_paths, media_type="video"
+                )
+                if clip:
+                    formatted_media_clip = clip
+                    meta["tier"] = 2
+                    collected_assets_metadata.append(meta)
+                    clip_added = True
+                else:
+                    clip, meta = search_and_download_asset(
+                        tier2_kws, pexels_api_key, pixabay_api_key, temp_dir, idx, slot_duration, used_urls, temp_paths, media_type="image"
+                    )
+                    if clip:
+                        formatted_media_clip = clip
+                        meta["tier"] = 2
+                        collected_assets_metadata.append(meta)
+                        clip_added = True
+            
+            # --- Tier 3: Category B-roll ---
             if not clip_added:
-                for image_kw in image_kws:
-                    if not image_kw.strip():
-                        continue
-                    image_pool = []
-                    image_pool.extend(scrape_unsplash_images([image_kw], max_images=5))
-                    if pixabay_api_key:
-                        image_pool.extend(search_pixabay_images(image_kw, pixabay_api_key))
-                        
-                    # Filter already used
-                    image_pool = [img for img in image_pool if img not in used_urls]
-                    
-                    if image_pool:
-                        selected_image_url = image_pool[0]
-                        print(f"Downloading unique stock image for '{image_kw}': {selected_image_url}")
-                        temp_jpg = os.path.join(temp_dir, f"img_s{idx}.jpg")
-                        
-                        try:
-                            download_url = selected_image_url
-                            if "unsplash.com" in download_url:
-                                download_url = download_url + "?w=1080&h=1920&q=85&auto=format&fit=crop"
-                                
-                            download_file(download_url, temp_jpg)
-                            if crop_and_format_image(temp_jpg, temp_jpg):
-                                img_clip = set_clip_duration(ImageClip(temp_jpg), slot_duration)
-                                try:
-                                    if idx % 2 == 0:
-                                        img_clip = img_clip.resize(lambda t: 1.0 + 0.04 * t)
-                                    else:
-                                        img_clip = img_clip.resize(lambda t: 1.04 - 0.04 * t)
-                                except Exception as zoom_err:
-                                    print(f"⚠️ Zoom effect failed: {zoom_err}")
-                                    
-                                formatted_media_clip = img_clip
-                                used_urls.add(selected_image_url)
-                                temp_paths.append(temp_jpg)
-                                collected_assets_metadata.append({"scene_idx": idx, "url": selected_image_url, "type": "image", "keyword": image_kw})
-                                clip_added = True
-                                break
-                            else:
-                                raise Exception("Image cropping failed")
-                        except Exception as e:
-                            print(f"⚠️ Image processing failed for {selected_image_url}: {e}")
-                    
+                print(f"[{idx+1}] Tier 3: Searching for category B-roll.")
+                clip, meta = search_and_download_asset(
+                    tier3_kws, pexels_api_key, pixabay_api_key, temp_dir, idx, slot_duration, used_urls, temp_paths, media_type="video"
+                )
+                if clip:
+                    formatted_media_clip = clip
+                    meta["tier"] = 3
+                    collected_assets_metadata.append(meta)
+                    clip_added = True
+                else:
+                    clip, meta = search_and_download_asset(
+                        tier3_kws, pexels_api_key, pixabay_api_key, temp_dir, idx, slot_duration, used_urls, temp_paths, media_type="image"
+                    )
+                    if clip:
+                        formatted_media_clip = clip
+                        meta["tier"] = 3
+                        collected_assets_metadata.append(meta)
+                        clip_added = True
+            
+            # --- Tier 4: General Stock Image ---
+            if not clip_added:
+                print(f"[{idx+1}] Tier 4: Searching for general stock image/video.")
+                clip, meta = search_and_download_asset(
+                    tier4_kws, pexels_api_key, pixabay_api_key, temp_dir, idx, slot_duration, used_urls, temp_paths, media_type="video"
+                )
+                if clip:
+                    formatted_media_clip = clip
+                    meta["tier"] = 4
+                    collected_assets_metadata.append(meta)
+                    clip_added = True
+                else:
+                    clip, meta = search_and_download_asset(
+                        tier4_kws, pexels_api_key, pixabay_api_key, temp_dir, idx, slot_duration, used_urls, temp_paths, media_type="image"
+                    )
+                    if clip:
+                        formatted_media_clip = clip
+                        meta["tier"] = 4
+                        collected_assets_metadata.append(meta)
+                        clip_added = True
+            
             # If still empty, use general fallback Unsplash placeholders
             if not clip_added:
-                print("⚠️ No unique search images found. Using fallback category placeholders...")
+                print(f"[{idx+1}] General Fallback: Using fallback placeholders.")
                 placeholder_pool = [
                     f"https://images.unsplash.com/photo-{img_id}" for img_id in [
                         "1504674900247-0877df9cc836", "1512917774080-9991f1c4c750", 
@@ -744,7 +869,7 @@ def main():
                     
                 selected_image_url = image_pool[0]
                 print(f"Downloading unique stock image: {selected_image_url}")
-                temp_jpg = os.path.join(temp_dir, f"img_s{idx}.jpg")
+                temp_jpg = os.path.join(temp_dir, f"img_s{idx}_fallback.jpg")
                 
                 try:
                     download_url = selected_image_url
@@ -765,7 +890,7 @@ def main():
                         formatted_media_clip = img_clip
                         used_urls.add(selected_image_url)
                         temp_paths.append(temp_jpg)
-                        collected_assets_metadata.append({"scene_idx": idx, "url": selected_image_url, "type": "image", "keyword": "fallback"})
+                        collected_assets_metadata.append({"scene_idx": idx, "url": selected_image_url, "type": "image", "keyword": "fallback", "tier": 4})
                         clip_added = True
                     else:
                         raise Exception("Image cropping failed")
@@ -774,14 +899,14 @@ def main():
                     
             # Ultimate fallback clip (black clip or static placeholder) in case everything failed
             if not clip_added:
-                print("⚠️ Ultimate fallback clip generated (black screen).")
+                print(f"[{idx+1}] Ultimate Fallback: Black screen.")
                 dummy_jpg = os.path.join(temp_dir, f"dummy_s{idx}.jpg")
                 img = Image.new("RGB", (1080, 1920), (18, 18, 18))
                 img.save(dummy_jpg)
                 img_clip = set_clip_duration(ImageClip(dummy_jpg), slot_duration)
                 formatted_media_clip = img_clip
                 temp_paths.append(dummy_jpg)
-                collected_assets_metadata.append({"scene_idx": idx, "url": "ultimate_fallback", "type": "image", "keyword": "fallback"})
+                collected_assets_metadata.append({"scene_idx": idx, "url": "ultimate_fallback", "type": "image", "keyword": "fallback", "tier": 4})
 
             # PIL Subtitle Rendering and Overlaying with Template Style
             caption_text = scene.get("caption") or scene.get("narration") or ""

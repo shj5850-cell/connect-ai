@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { runPythonScript } from '@/app/lib/pythonRunner';
 import { exec } from 'child_process';
-import { HOOK_LIBRARY, VISUAL_STYLES, SHOT_PATTERNS, STYLE_DNA_LIST, calculateSimilarity, antiCloneModify } from '../../lib/CreativeDiversityEngine';
+import { HOOK_LIBRARY, VISUAL_STYLES, SHOT_PATTERNS, STYLE_DNA_LIST, calculateSimilarity, antiCloneModify, calculateProductRelevanceScore } from '../../lib/CreativeDiversityEngine';
 import { searchYoutubeMarket, extractTrendDNA } from '../../lib/trendEngine';
 
 const STATUS_PATH = path.join(process.cwd(), 'public', 'shorts', 'autopilot_status.json');
@@ -659,13 +659,23 @@ async function runAutopilotProcess(forcedParams = {}) {
         const scores = preUploadAnalysis.scores;
         const scoreSum = scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign;
         finalScoreAvg = scoreSum / 5.0;
-        relevanceScore = preUploadAnalysis.relevance_score || 85;
+        const prsResult = calculateProductRelevanceScore(
+          productTitle,
+          scriptData.cuts.map(c => c.subtitle).join(' '),
+          scriptData.cuts || [],
+          !!(forcedParams.directImageUrl || forcedParams.directImagePath)
+        );
+        relevanceScore = prsResult.total;
         factScore = preUploadAnalysis.fact_score || 90;
 
         console.log(`[Autopilot] Quality Score: ${finalScoreAvg.toFixed(1)} | Relevance Score: ${relevanceScore} | Fact Score: ${factScore}`);
 
         if (relevanceScore < 80) {
-          throw new Error(`Product Relevance Score ${relevanceScore} is below 80 threshold.`);
+          throw new Error(`Product Relevance Score ${relevanceScore} is below 80 threshold. Generation aborted.`);
+        }
+
+        if (relevanceScore < 85) {
+          throw new Error(`Product Relevance Score ${relevanceScore} is below 85 threshold. Rendering blocked.`);
         }
 
         let recentRecords = [];
@@ -851,12 +861,19 @@ async function runAutopilotProcess(forcedParams = {}) {
     console.log('[Autopilot] Video rendered successfully!');
     updateStatus('youtube_upload', '5단계: 유튜브 채널로 쇼츠 비디오 자동 전송 중...', 90);
 
-    // 5. YouTube Upload status setup - By default OFF for Product-Driven, Auto for General Autopilot if score >= 80
+    // 5. YouTube Upload status setup - PRS >= 90 required for auto upload
     let youtubeVideoId = 'MOCK_VIDEO_ID';
     let isMockUpload = true;
     let uploadMsg = '시뮬레이션 완료: 데모 모드로 업로드 처리를 완료했습니다.';
 
-    if (isProductDriven) {
+    const requiresManualApproval = relevanceScore < 90;
+
+    if (requiresManualApproval) {
+      youtubeVideoId = 'PENDING_APPROVAL';
+      isMockUpload = true;
+      uploadMsg = `영상이 생성되었습니다. 수동 승인이 필요합니다 (PRS: ${relevanceScore}).`;
+      console.log(`[Autopilot] Bypassing automatic upload due to manual approval constraint (PRS: ${relevanceScore}).`);
+    } else if (isProductDriven) {
       youtubeVideoId = 'PENDING_APPROVAL';
       isMockUpload = true;
       uploadMsg = '영상이 생성되었습니다. 유튜브 업로드 승인을 대기 중입니다.';
@@ -930,6 +947,7 @@ async function runAutopilotProcess(forcedParams = {}) {
       video_style: isProductDriven ? forcedParams.videoStyle : usedStyle,
       ad_score: isProductDriven ? (scriptData.ad_score || 0) : 0,
       quality_score: Math.round(finalScoreAvg),
+      product_relevance_score: relevanceScore,
       upload_mode: isProductDriven ? 'product-driven' : 'archetype',
       pinned_comment_status: isProductDriven ? 'pending' : 'not_attempted',
       compliance: isProductDriven ? checkProductCompliance(forcedParams.productName, scriptData) : { passed: true, cutChecks: [] }

@@ -72,61 +72,21 @@ export async function GET() {
         }
       }
 
-      // 2. Generate stats (simulate realistic organic growth if mock or if real metrics are missing)
+      // 2. No simulation. If mock or if real metrics are missing, metrics remain 0/empty.
       if (isMock || !fetchedReal) {
-        // Growth simulation based on timestamp
-        const createdTime = new Date(item.created_at || Date.now()).getTime();
-        const ageInHours = Math.max(1, (Date.now() - createdTime) / (1000 * 60 * 60));
-        
-        // Base performance profiles: Some high-performers, some low
-        // Seed random using video ID to keep it deterministic per video but varied
-        const seed = parseInt(videoId.slice(-4)) || 500;
-        const isHighPerformer = seed % 5 === 0; // 20% chance of high performance
-        const isLowPerformer = seed % 5 === 1;  // 20% chance of low performance
-
-        let hourlyViews = 5;
-        if (isHighPerformer) hourlyViews = 80;
-        else if (isLowPerformer) hourlyViews = 1;
-
-        // Views grow organically but tapers off after 48 hours
-        const activeHours = Math.min(48, ageInHours);
-        const decayHours = Math.max(0, ageInHours - 48);
-        const simulatedViews = Math.floor(
-          (activeHours * hourlyViews) + (decayHours * hourlyViews * 0.05)
-        );
-
-        views = Math.max(views, simulatedViews);
-        
-        // CTR simulation
-        let ctr = 6.5; // average
-        if (isHighPerformer) ctr = 12.8;
-        else if (isLowPerformer) ctr = 3.2;
-        // Small fluctuation
-        ctr += (seed % 10) / 20 - 0.25; 
-        item.ctr = Math.max(1.5, Math.min(25, ctr));
-
-        // Retention simulation
-        let retention = 45; // average
-        if (isHighPerformer) retention = 78;
-        else if (isLowPerformer) retention = 18;
-        retention += (seed % 8) - 4;
-        item.retention = Math.max(10, Math.min(95, retention));
-
-        // Likes & Comments
-        likes = Math.floor(views * (isHighPerformer ? 0.04 : 0.015));
-        comments = Math.floor(views * (isHighPerformer ? 0.01 : 0.002));
-
-        // Watch time & Impressions
-        item.average_view_duration = Math.floor(duration * (item.retention / 100));
-        item.watch_time = Math.floor(views * item.average_view_duration);
-        item.impressions = Math.floor(views / (item.ctr / 100));
-
-        // Shares & Subscribers
-        item.shares = Math.floor(likes * 0.12);
-        item.subscribers_gained = Math.floor(views * (isHighPerformer ? 0.012 : 0.002));
+        views = 0;
+        likes = 0;
+        comments = 0;
+        item.ctr = 0;
+        item.retention = 0;
+        item.average_view_duration = 0;
+        item.watch_time = 0;
+        item.impressions = 0;
+        item.shares = 0;
+        item.subscribers_gained = 0;
       } else {
-        // Real statistics, we still need to provide CTR, watch time, etc.
-        // Let's use reasonable defaults/estimates for metrics not in Data API
+        // Real statistics fetched from YouTube API.
+        // We still estimate CTR/Retention for internal dashboard display (not available via public Data API).
         const seed = parseInt(videoId.slice(-4)) || 500;
         item.ctr = item.ctr || (5.5 + (seed % 5));
         item.retention = item.retention || (40 + (seed % 30));
