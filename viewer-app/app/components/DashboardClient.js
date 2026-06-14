@@ -673,7 +673,8 @@ export default function DashboardClient({
               fontSize: '0.9rem',
               padding: '0.5rem 1.25rem',
               borderRadius: '6px',
-              border: '1px solid transparent',
+              borderWidth: '1px',
+              borderStyle: 'solid',
               cursor: 'pointer'
             }}
           >
@@ -690,7 +691,8 @@ export default function DashboardClient({
               fontSize: '0.9rem',
               padding: '0.5rem 1.25rem',
               borderRadius: '6px',
-              border: '1px solid transparent',
+              borderWidth: '1px',
+              borderStyle: 'solid',
               cursor: 'pointer'
             }}
           >

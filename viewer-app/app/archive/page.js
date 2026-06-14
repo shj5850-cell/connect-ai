@@ -211,7 +211,8 @@ export default function ArchivePage() {
                     fontSize: '0.85rem',
                     padding: '0.4rem 1.25rem',
                     borderRadius: '6px',
-                    border: '1px solid transparent',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
                     cursor: 'pointer'
                   }}
                 >
@@ -228,7 +229,8 @@ export default function ArchivePage() {
                     fontSize: '0.85rem',
                     padding: '0.4rem 1.25rem',
                     borderRadius: '6px',
-                    border: '1px solid transparent',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
                     cursor: 'pointer'
                   }}
                 >
