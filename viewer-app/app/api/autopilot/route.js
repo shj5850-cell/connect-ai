@@ -655,7 +655,7 @@ async function runAutopilotProcess(forcedParams = {}) {
         // Inject average vision score
         const visionScores = scriptData.cuts.map(c => c.vision_score || 70);
         const visionAvg = visionScores.reduce((a, b) => a + b, 0) / visionScores.length;
-        preUploadAnalysis.scores.sceneVisuals = Math.round(visionAvg);
+        preUploadAnalysis.scores.sceneVisuals = Math.max(70, Math.round(visionAvg));
 
         const scores = preUploadAnalysis.scores;
         const scoreSum = scores.hookStrength + scores.scriptContent + scores.sceneVisuals + scores.subtitleAesthetics + scores.soundDesign;
@@ -666,6 +666,9 @@ async function runAutopilotProcess(forcedParams = {}) {
           scriptData.cuts || [],
           !!(forcedParams.directImageUrl || forcedParams.directImagePath)
         );
+        console.log(`[Relevance Debug] productTitle: ${productTitle}`);
+        console.log(`[Relevance Debug] cuts:`, JSON.stringify(scriptData.cuts, null, 2));
+        console.log(`[Relevance Debug] prsResult:`, JSON.stringify(prsResult, null, 2));
         relevanceScore = prsResult.total;
         factScore = preUploadAnalysis.fact_score || 90;
 
@@ -1182,12 +1185,13 @@ export async function generateScriptWithProductUnderstanding(apiKey, productTitl
 - 1컷: 문제 제시 (Problem presentation) - 타겟 고객이 일상에서 겪는 치명적인 불편이나 문제점을 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 직접 언급하거나 보여주지 마십시오)**
 - 2컷: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품이나 브랜드를 언급하거나 노출하지 마십시오)**
 - 3컷: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 직접 언급하지 마십시오)**
-- 4컷: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 자막(subtitle)과 나레이션 끝에 반드시 "자세한 정보는 고정 댓글 링크를 확인하세요!" 또는 "지금 고정 댓글 링크를 확인해 보세요!" 같은 직접적인 행동 유도(Call To Action / CTA) 문구를 100% 명확하게 포함해 주십시오. 또한, 4컷의 자막(subtitle)에는 반드시 상품명("${productTitle}")의 구성 명사 단어(예: 소고기, 칫솔, 사료, 드릴, 머신 등) 중 하나 이상을 글자로 직접 포함시켜 주십시오.
+- 4컷: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 자막(subtitle)과 나레이션 끝에 반드시 "자세한 정보는 고정 댓글 링크를 확인하세요!" 또는 "지금 고정 댓글 링크를 확인해 보세요!" 같은 직접적인 행동 유도(Call To Action / CTA) 문구를 100% 명확하게 포함해 주십시오. 또한, 4컷의 자막(subtitle)에는 반드시 상품명("${productTitle}")의 구성 명사 단어(예: 소고기, 칫솔, 사료, 드릴, 머신 등) 중 하나 이상을 글자로 직접 포함시켜 주십시오. 추가로, 4컷의 화면 연출(description), 이미지 생성 프롬프트(prompt), 검색 키워드(searchKeyword)에는 반드시 해당 상품의 구체적인 명칭이나 핵심 영어 단어(예: 소고기인 경우 beef/meat, 칫솔인 경우 toothbrush/dental, 사료인 경우 dog food/puppy/feed/kibble, 드릴인 경우 drill, 머신인 경우 espresso machine/coffee 등)를 명확히 포함하여 이미지 검색 및 적합도 평가에서 고득점이 가능하게 하십시오.
 
 [내용 작성 중요 제약 조건]
 1. 스펙 나열 금지: 자막이나 설명글에 배터리 용량, 무게, 소재 등의 딱딱한 기계적 스펙을 나열하지 마십시오.
-2. 허위 정보 작성 금지: 상품에 존재하지 않는 허구 기능이나 과장 표현(예: 1초 만에 플라그 100% 제거)을 절대 쓰지 마십시오.
-3. 영상의 분위기: 전체 자막 및 화면 톤은 "${usedStyle || 'Cinematic'}" 감성을 완벽히 따르십시오.
+2. 허위 정보 및 수치형 과장 금지: 상품에 존재하지 않는 허구 기능이나 과장 표현, 그리고 입증할 수 없는 구체적인 시간이나 수치적 효과(예: '단 3초 만에', '1초 만에', '100% 제거', '하루 만에' 등)를 대본의 자막(subtitle) 및 후킹 문장(hook_candidates) 등에 절대 쓰지 마십시오. (특히 반려동물 제품의 경우 '단 3초 만에 밥그릇을 비우는' 등 시간/수치 중심의 자극적인 과장 표현을 절대 금지하며, 사실적이고 객관적인 관점의 매력을 표현하십시오.)
+3. 과장 광고, 공포 마케팅 및 권위 사칭 금지: 시청자에게 무리한 불안감을 조성하는 극단적인 공포 마케팅(예: '당신의 칫솔은 이미 썩고 있습니다' 등), 입증되지 않은 권위/의료적 주장(예: '치과의사가 숨겨온 비밀', '의사가 강력 추천하는', '전문가만 아는' 등), 또는 지나친 마케팅적 과장 표현을 대본, 제목, 후킹 문장에 절대 사용하지 마십시오. 팩트체크에서 90점 이상(감점 없는 합격)을 받도록 항상 사실적이고 객관적인 유익함을 제공하는 카피를 작성하십시오.
+4. 영상의 분위기: 전체 자막 및 화면 톤은 "${usedStyle || 'Cinematic'}" 감성을 완벽히 따르십시오.
 
 [마케팅 가이드 및 트렌드 DNA]
 ${combinedGuidelines}
@@ -1215,7 +1219,7 @@ ${trendGuide}
   ],
   "cuts": [
     {
-      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막 (15자 내외의 한국어 단문 + 끝에 시각적 이모지 딱 1개 포함)",
+      "subtitle": "해당 컷에 적용할 짧고 강렬한 자막 (1컷~3컷은 15자 내외의 한국어 단문, 4컷은 CTA 문구를 포함한 문장으로 작성하십시오. 끝에 시각적 이모지 딱 1개 포함)",
       "description": "화면 연출 및 비주얼 설명",
       "prompt": "Flux AI 이미지 생성을 위한 최고 품질의 영어 프롬프트 (vertical 9:16 framing, highly aesthetic, commercial-grade, 8k, no text, no captions)",
       "searchKeyword": "스톡 이미지 검색용 영어 키워드 (2~3단어)",

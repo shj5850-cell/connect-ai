@@ -332,6 +332,11 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
         engCatSynonyms.some(syn => vt.includes(syn) || syn.includes(vt))
       );
     }
+    if (!lastMatched) {
+      const textToCheck = [lastCut.subtitle, lastCut.narration, lastCut.caption].join(' ').toLowerCase();
+      lastMatched = kwTokens.some(kt => textToCheck.includes(kt)) || 
+                    (engCatSynonyms.length > 0 && engCatSynonyms.some(syn => textToCheck.includes(syn)));
+    }
     if (lastMatched) {
       productMatchScore = 40;
     } else {
@@ -375,12 +380,14 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
   const specUnits = [
     'g', 'v', 'aw', 'pa', '원', '%', 'kcal', 'mg', '밀리그램', '그램', '볼트', '암페어', '압력', '스펙', '성분', 
     '무료배송', '할인', '특가', '원료', '함량', '특징', '보장', '인증', '식약처', 'ml', 'l', 'kg', '만 원', '만원',
-    '댓글', '링크', '확인', '정보', '추천', '꿀팁', '꿀템'
+    '댓글', '링크', '확인', '정보', '추천', '꿀팁', '꿀템', '아래', '더보기', '설명', '더 알아보기', '보러가기'
   ];
   const hasUnits = specUnits.some(u => scriptText.includes(u));
+  const containsProductKeywords = kwTokens.some(kt => scriptText.includes(kt)) || 
+                                  (engCatSynonyms.length > 0 && engCatSynonyms.some(syn => scriptText.includes(syn)));
   
   let scriptMatchScore = 0;
-  if (hasDigits || hasUnits) {
+  if (hasDigits || hasUnits || containsProductKeywords) {
     scriptMatchScore = 15;
   }
   
@@ -405,6 +412,11 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
         lastMatched = visualTokens.some(vt => 
           engCatSynonyms.some(syn => vt.includes(syn) || syn.includes(vt))
         );
+      }
+      if (!lastMatched) {
+        const textToCheck = [lastCut.subtitle, lastCut.narration, lastCut.caption].join(' ').toLowerCase();
+        lastMatched = kwTokens.some(kt => textToCheck.includes(kt)) || 
+                      (engCatSynonyms.length > 0 && engCatSynonyms.some(syn => textToCheck.includes(syn)));
       }
       if (lastMatched) {
         assetMatchScore = 20;

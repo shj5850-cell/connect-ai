@@ -70,5 +70,29 @@
     "product_name": "강아지 사료",
     "error_message": "Autopilot loop failed after 0 attempts. Last error: Product Relevance Score 79 is below 80 threshold. Generation aborted.",
     "category": "상품 홍보"
+  },
+  {
+    "timestamp": "2026-06-15T02:44:32.197Z",
+    "product_name": "소고기",
+    "error_message": "Autopilot loop failed after 0 attempts. Last error: Product Relevance Score 66 is below 80 threshold. Generation aborted.",
+    "category": "상품 홍보"
+  },
+  {
+    "timestamp": "2026-06-15T02:46:13.247Z",
+    "product_name": "강아지 사료",
+    "error_message": "Autopilot loop failed after 0 attempts. Last error: Product Relevance Score 79 is below 80 threshold. Generation aborted.",
+    "category": "상품 홍보"
+  },
+  {
+    "timestamp": "2026-06-15T02:55:31.582Z",
+    "product_name": "칫솔",
+    "error_message": "Autopilot loop failed after 0 attempts. Last error: Product Relevance Score 73 is below 80 threshold. Generation aborted.",
+    "category": "상품 홍보"
+  },
+  {
+    "timestamp": "2026-06-15T02:56:29.548Z",
+    "product_name": "강아지 사료",
+    "error_message": "Autopilot loop failed after 0 attempts. Last error: Quality score 69.6 is below pass threshold 70.",
+    "category": "상품 홍보"
   }
 ]
