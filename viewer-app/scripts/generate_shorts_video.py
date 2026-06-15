@@ -8,6 +8,8 @@ import re
 import math
 import random
 
+import asyncio
+
 # Reconfigure stdout/stderr to UTF-8 to prevent cp949 encoding errors on Windows
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -16,11 +18,11 @@ if hasattr(sys.stderr, 'reconfigure'):
 
 # Self-installing packages
 def ensure_packages():
-    required_packages = ["gTTS", "moviepy", "pillow", "numpy"]
+    required_packages = ["edge-tts", "moviepy", "pillow", "numpy"]
     for pkg in required_packages:
         try:
-            if pkg == "gTTS":
-                import gtts
+            if pkg == "edge-tts":
+                import edge_tts
             elif pkg == "moviepy":
                 import moviepy
             elif pkg == "pillow":
@@ -37,7 +39,25 @@ def ensure_packages():
 
 ensure_packages()
 
-from gtts import gTTS
+import edge_tts
+async def generate_scene_tts(text, dest_path):
+    communicate = edge_tts.Communicate(text, "ko-KR-SunHiNeural")
+    await communicate.save(dest_path)
+
+async def generate_all_sentences_tts(sentences, temp_dir):
+    tasks = []
+    temp_audio_paths = []
+    for idx, sentence in enumerate(sentences):
+        txt_clean = re.sub(r'\[.*?\]', '', sentence)
+        txt_clean = re.sub(r'\(.*?\)', '', txt_clean).strip()
+        if not txt_clean:
+            txt_clean = "계속해서 확인해 보시죠"
+        sub_audio_path = os.path.join(temp_dir, f"tts_{idx}.mp3")
+        temp_audio_paths.append(sub_audio_path)
+        tasks.append(generate_scene_tts(txt_clean, sub_audio_path))
+    await asyncio.gather(*tasks)
+    return temp_audio_paths
+
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 # Font cache directory
@@ -361,20 +381,26 @@ def main():
 
     print(f"🗣️ Found {len(sentences)} sentences. Generating individual TTS and subtitles...")
     
+    # Concurrently generate neural TTS using edge-tts
+    try:
+        temp_audio_paths = asyncio.run(generate_all_sentences_tts(sentences, temp_dir))
+    except Exception as e:
+        print(f"❌ edge-tts synthesis failed: {e}")
+        sys.exit(1)
+        
     audio_clips = []
     subtitle_clips = []
     temp_paths = [template_frame_path, raw_img_path, portrait_img_path]
+    temp_paths.extend(temp_audio_paths)
     
-    current_time = 0.0
+    video = None
+    final_audio = None
+    portrait_clip = None
     
     try:
+        current_time = 0.0
         for idx, sentence in enumerate(sentences):
-            # Generate gTTS for this sentence
-            print(f"   [{idx+1}/{len(sentences)}] Processing: {sentence}")
-            sub_audio_path = os.path.join(temp_dir, f"tts_{idx}.mp3")
-            tts = gTTS(text=sentence, lang='ko')
-            tts.save(sub_audio_path)
-            temp_paths.append(sub_audio_path)
+            sub_audio_path = temp_audio_paths[idx]
             
             # Load as AudioFileClip to get its duration
             raw_audio_clip = AudioFileClip(sub_audio_path)
@@ -464,19 +490,36 @@ def main():
             preset="ultrafast",
             threads=os.cpu_count() or 4
         )
-        
-        # Close all clips
-        video.close()
-        final_audio.close()
-        portrait_clip.close()
-        for ac in audio_clips:
-            ac.close()
-        for sc in subtitle_clips:
-            sc.close()
-            
         print(f"🎉 Video successfully generated at: {output_path}")
         
-        # Cleanup temporary files
+    except Exception as e:
+        print(f"❌ Video rendering failed: {e}")
+        sys.exit(1)
+        
+    finally:
+        # Close all clips
+        if video:
+            try:
+                video.close()
+            except Exception: pass
+        if final_audio:
+            try:
+                final_audio.close()
+            except Exception: pass
+        if portrait_clip:
+            try:
+                portrait_clip.close()
+            except Exception: pass
+        for ac in audio_clips:
+            try:
+                ac.close()
+            except Exception: pass
+        for sc in subtitle_clips:
+            try:
+                sc.close()
+            except Exception: pass
+            
+        # Cleanup temporary files and directory
         for p in temp_paths:
             try:
                 if os.path.exists(p):
@@ -484,18 +527,11 @@ def main():
             except Exception:
                 pass
         try:
-            os.rmdir(temp_dir)
+            if os.path.exists(temp_dir):
+                import shutil
+                shutil.rmtree(temp_dir)
         except Exception:
             pass
-            
-    except Exception as e:
-        print(f"❌ Video rendering failed: {e}")
-        # Clean up whatever we can
-        for ac in audio_clips:
-            try:
-                ac.close()
-            except Exception: pass
-        sys.exit(1)
 
 if __name__ == "__main__":
     main()

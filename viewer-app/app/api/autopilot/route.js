@@ -209,13 +209,14 @@ async function runAutopilotProcess(forcedParams = {}) {
   console.log('[Autopilot] Started Autopilot loop with forced params:', JSON.stringify(forcedParams));
   updateStatus('product_matching', '1단계: 수익성 극대화 상품 분석 및 매칭 중...', 10);
 
+  let productTitle = '';
+  let selectedCategory = null;
+
   try {
     const revenueDnaDbPath = path.join(process.cwd(), '..', '_company', '_shared', 'revenue_dna_db.json');
     const isProductDriven = forcedParams.isProductDriven === true;
-    let productTitle = '';
     let affiliateLink = '';
     let keyword = '';
-    let selectedCategory = null;
     let targetAudience = '';
     let videoStyle = '';
     let isExperiment = false;
@@ -1100,20 +1101,22 @@ async function fetchGeminiWithRetry(url, options, maxRetries = 3) {
       const response = await fetch(url, { ...options, signal: controller.signal });
       clearTimeout(timeoutId);
       
-      if (response.status === 429) {
-        try {
-          const bodyText = await response.clone().text();
-          const lowerBody = bodyText.toLowerCase();
-          if (lowerBody.includes("quota exceeded") || lowerBody.includes("resource_exhausted") || lowerBody.includes("exceeded your current quota")) {
-            console.warn("[Gemini API] Daily quota limit exceeded (RESOURCE_EXHAUSTED). Skipping retries to fail fast.");
-            return response;
+      if (response.status === 429 || response.status === 503 || response.status === 504 || response.status === 500) {
+        if (response.status === 429) {
+          try {
+            const bodyText = await response.clone().text();
+            const lowerBody = bodyText.toLowerCase();
+            if (lowerBody.includes("quota exceeded") || lowerBody.includes("resource_exhausted") || lowerBody.includes("exceeded your current quota")) {
+              console.warn("[Gemini API] Daily quota limit exceeded (RESOURCE_EXHAUSTED). Skipping retries to fail fast.");
+              return response;
+            }
+          } catch (err) {
+            // Ignore
           }
-        } catch (err) {
-          // Ignore
         }
         const waitTime = backoffs[attempt] || 45000;
         attempt++;
-        console.warn(`[Gemini API] Got 429 Rate Limit (Attempt ${attempt}/${maxRetries}). Sleeping ${waitTime/1000} seconds before retry...`);
+        console.warn(`[Gemini API] Got ${response.status} status (Attempt ${attempt}/${maxRetries}). Sleeping ${waitTime/1000} seconds before retry...`);
         await new Promise(resolve => setTimeout(resolve, waitTime));
         continue;
       }
@@ -1179,7 +1182,7 @@ export async function generateScriptWithProductUnderstanding(apiKey, productTitl
 - 1컷: 문제 제시 (Problem presentation) - 타겟 고객이 일상에서 겪는 치명적인 불편이나 문제점을 제시합니다. **(⚠️ 절대 1컷에서 상품명, 브랜드, 상품 이미지를 직접 언급하거나 보여주지 마십시오)**
 - 2컷: 공감 (Empathy) - 그 문제로 인해 겪는 답답함과 어려움에 격하게 공감합니다. **(⚠️ 절대 2컷에서 상품이나 브랜드를 언급하거나 노출하지 마십시오)**
 - 3컷: 해결 암시 (Imply solution) - 이 문제를 아주 쉽게 해결할 수 있는 신박한 방법이나 실마리가 있음을 넌지시 암시합니다. **(⚠️ 절대 3컷에서 구체적인 상품명이나 브랜드를 직접 언급하지 마십시오)**
-- 4컷: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 상세한 정보는 고정댓글 링크에서 바로 확인하라는 행동 유도(Call To Action)를 전합니다.
+- 4컷: 상품 공개 (Product reveal) - 드디어 해결책인 "${productTitle}" 상품을 전격 공개하며, 자막(subtitle)과 나레이션 끝에 반드시 "자세한 정보는 고정 댓글 링크를 확인하세요!" 또는 "지금 고정 댓글 링크를 확인해 보세요!" 같은 직접적인 행동 유도(Call To Action / CTA) 문구를 100% 명확하게 포함해 주십시오. 또한, 4컷의 자막(subtitle)에는 반드시 상품명("${productTitle}")의 구성 명사 단어(예: 소고기, 칫솔, 사료, 드릴, 머신 등) 중 하나 이상을 글자로 직접 포함시켜 주십시오.
 
 [내용 작성 중요 제약 조건]
 1. 스펙 나열 금지: 자막이나 설명글에 배터리 용량, 무게, 소재 등의 딱딱한 기계적 스펙을 나열하지 마십시오.
@@ -1967,6 +1970,32 @@ function checkProductCompliance(productName, scriptData) {
       }
       for (const sw of subwords) {
         if (sub4.includes(sw)) {
+          containsProduct4 = true;
+          break;
+        }
+      }
+    }
+
+    // Synonym compliance backup check
+    if (!containsProduct4) {
+      const compliance_category_mapping = {
+        "소고기": ["beef", "steak", "meat", "한우", "갈비", "등심", "안심", "스테이크", "우삼겹", "고기"],
+        "칫솔": ["toothbrush", "brush", "teeth", "칫솔", "양치", "치아", "이빨"],
+        "강아지 사료": ["dog", "pet", "food", "puppy", "사료", "강아지", "개", "애견"],
+        "전동드릴": ["drill", "tool", "screw", "드릴", "나사", "조립", "공구", "드라이버"],
+        "에스프레소 머신": ["espresso", "coffee", "machine", "에스프레소", "커피", "머신", "카페"]
+      };
+      
+      let matchedSyns = [];
+      for (const [k_kr, synList] of Object.entries(compliance_category_mapping)) {
+        if (pName.includes(k_kr.toLowerCase()) || k_kr.toLowerCase().includes(pName)) {
+          matchedSyns = synList;
+          break;
+        }
+      }
+      
+      for (const syn of matchedSyns) {
+        if (sub4.includes(syn.toLowerCase())) {
           containsProduct4 = true;
           break;
         }

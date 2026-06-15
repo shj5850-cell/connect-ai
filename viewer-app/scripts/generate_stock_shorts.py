@@ -971,10 +971,27 @@ def main():
         print(f"\n🎉 Story-based Shorts video successfully created at: {output_path}")
         print(f"__ASSETS__:{json.dumps(collected_assets_metadata)}")
         
+    except Exception as e:
+        print(f"❌ Video compilation failure: {e}")
+        sys.exit(1)
+        
+    finally:
+        # Close all open moviepy handles
+        if 'final_video' in locals() and final_video:
+            try:
+                final_video.close()
+            except Exception: pass
+        if 'scene_clips' in locals() and scene_clips:
+            for c in scene_clips:
+                try:
+                    c.close()
+                except Exception: pass
+                
         # Cleanup temporary files
         for p in temp_paths:
             try:
-                os.remove(p)
+                if os.path.exists(p):
+                    os.remove(p)
             except Exception:
                 pass
         for scene in scenes:
@@ -985,21 +1002,11 @@ def main():
                 except Exception:
                     pass
         try:
-            os.rmdir(temp_dir)
+            if os.path.exists(temp_dir):
+                import shutil
+                shutil.rmtree(temp_dir)
         except Exception:
             pass
-            
-    except Exception as e:
-        print(f"❌ Video compilation failure: {e}")
-        # Make sure we clean up what we can
-        for scene in scenes:
-            ap = scene.get("audio_path")
-            if ap and os.path.exists(ap):
-                try:
-                    os.remove(ap)
-                except Exception:
-                    pass
-        sys.exit(1)
 
 if __name__ == "__main__":
     main()

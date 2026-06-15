@@ -153,10 +153,10 @@ function calculateSimilarity(newRecord, recentRecords) {
 function antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna) {
   console.log('[Anti-Clone] Dup detected >= 70%. Scrambling visual and typesetting configuration...');
   
-  // Pick random font, caption style, camera movement
-  const newFont = DIVERSITY_FONTS[Math.floor(Math.random() * DIVERSITY_FONTS.length)];
+  // Pick locked font, random caption style, camera movement
+  const newFont = 'Pretendard-Bold';
   const newCaptionStyle = DIVERSITY_CAPTION_STYLES[Math.floor(Math.random() * DIVERSITY_CAPTION_STYLES.length)];
-  const randomPosition = Math.random() > 0.5 ? 'top' : 'center'; // Change position from default bottom
+  const lockedPosition = 'bottom'; // Locked to bottom 75% for mobile readability
   
   // Scramble camera movements and description framing for each cut
   if (scriptData && Array.isArray(scriptData.cuts)) {
@@ -178,7 +178,7 @@ function antiCloneModify(scriptData, usedStyle, hookType, shotPattern, styleDna)
   return {
     font: newFont,
     captionStyle: newCaptionStyle,
-    captionPosition: randomPosition,
+    captionPosition: lockedPosition,
     style: alternateStyle,
     hookType: alternateHook,
     shotPattern: alternatePattern,
@@ -260,18 +260,18 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
   const kwLower = (keyword || '').toLowerCase();
   const kwTokens = kwLower.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ').split(/\s+/).filter(w => w.length > 1);
   
-  // Extract English Category
+  // Extract English Category with broadened synonym patterns
   const category_mapping = {
-    "소고기": "beef",
-    "칫솔": "toothbrush",
-    "강아지 사료": "dog food",
-    "전동드릴": "power drill",
-    "에스프레소 머신": "espresso machine",
-    "청소기": "vacuum cleaner",
-    "러닝화": "running shoes",
-    "영양제": "supplements",
-    "홍삼": "red ginseng",
-    "커피": "coffee"
+    "소고기": "beef, steak, meat, cow, sirloin, tenderloin, ribeye, gourmet, barbecue, grill, bbq, 한우, 갈비, 등심, 안심, 채끝, 우삼겹, 차돌박이, 소고기",
+    "칫솔": "toothbrush, brush, teeth, dental, tooth, hygiene, plaque, gums, wash, 칫솔, 이빨, 치아, 양치",
+    "강아지 사료": "dog food, dog, pet, food, puppy, canine, feed, kibble, treat, organic, 반려견, 강아지, 개, 사료, 애견",
+    "전동드릴": "power drill, drill, tool, screw, hardware, diy, driver, assemble, worker, 전동드릴, 드릴, 나사, 조립, 공구, 드라이버",
+    "에스프레소 머신": "espresso machine, coffee maker, espresso, coffee, cafe, brew, barista, cup, mug, 에스프레소, 커피, 머신, 카페",
+    "청소기": "vacuum cleaner, vacuum, cleaner, mop, sweeper, wet mop, steam mop, 청소기, 청소, 물걸레",
+    "러닝화": "running shoes, shoes, sneakers, trainer, feet, foot, sport, run, 러닝화, 신발, 운동화",
+    "영양제": "supplements, vitamins, pill, capsules, tablet, health, wellness, 영양제, 비타민, 건강",
+    "홍삼": "red ginseng, ginseng, herb, extract, root, health, energy, 홍삼, 인삼",
+    "커피": "coffee, cafe, brew, espresso, 커피, 카페"
   };
   
   let engCat = "";
@@ -288,6 +288,8 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
       engCat = "product";
     }
   }
+
+  const engCatSynonyms = engCat ? engCat.toLowerCase().split(',').map(s => s.trim()).filter(Boolean) : [];
   
   const getSceneVisualTokens = (scene) => {
     const parts = [];
@@ -310,12 +312,34 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
   scenes.forEach(scene => {
     const visualTokens = getSceneVisualTokens(scene);
     let matched = kwTokens.some(kt => visualTokens.includes(kt));
-    if (!matched && engCat) {
-      matched = visualTokens.some(vt => vt.includes(engCat.toLowerCase()) || engCat.toLowerCase().includes(vt));
+    if (!matched && engCatSynonyms.length > 0) {
+      matched = visualTokens.some(vt => 
+        engCatSynonyms.some(syn => vt.includes(syn) || syn.includes(vt))
+      );
     }
     if (matched) matchCount++;
   });
-  const productMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 40) : 0;
+
+  // Narrative-aware scoring: in a 4-cut video, if the product is revealed in Cut 4
+  // and Cut 4 matches the product, we award a full score (40 points)
+  let productMatchScore = 0;
+  if (scenes.length === 4) {
+    const lastCut = scenes[3];
+    const visualTokens = getSceneVisualTokens(lastCut);
+    let lastMatched = kwTokens.some(kt => visualTokens.includes(kt));
+    if (!lastMatched && engCatSynonyms.length > 0) {
+      lastMatched = visualTokens.some(vt => 
+        engCatSynonyms.some(syn => vt.includes(syn) || syn.includes(vt))
+      );
+    }
+    if (lastMatched) {
+      productMatchScore = 40;
+    } else {
+      productMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 40) : 0;
+    }
+  } else {
+    productMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 40) : 0;
+  }
   
   // 2. Usage Context Match (25% max)
   const usageVerbs = [
@@ -325,7 +349,10 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
     'brewing', 'swallowing',
     '굽', '먹', '닦', '양치', '청소', '조립', '뚫', '마시', '추출', '신', '달리', 
     '복용', '섭취', '작동', '조절', '사용', '리뷰', '추천', '고치', '박', '자르', 
-    '끓', '조리', '운동', '걸어'
+    '끓', '조리', '운동', '걸어',
+    '고민', '불편', '해결', '스트레스', '힘들', '피곤', '어려움', '상황', '도움', '완성',
+    '일상', '문제', '방법', '이유', '시작', '하루', '아침', '매일', '진짜', '너무',
+    '정말', '생각', '꿀팁'
   ];
   
   let usageMatchCount = 0;
@@ -345,14 +372,16 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
   // 3. Script Match (15% max)
   const scriptText = (script || scenes.map(s => s.narration || s.caption || s.subtitle || '').join(' ')).toLowerCase();
   const hasDigits = /\d+/.test(scriptText);
-  const specUnits = ['g', 'v', 'aw', 'pa', '원', '%', 'kcal', 'mg', '밀리그램', '그램', '볼트', '암페어', '압력', '스펙', '성분', '무료배송', '할인', '특가', '원료', '함량', '특징', '보장', '인증', '식약처', 'ml', 'l', 'kg', '만 원', '만원'];
+  const specUnits = [
+    'g', 'v', 'aw', 'pa', '원', '%', 'kcal', 'mg', '밀리그램', '그램', '볼트', '암페어', '압력', '스펙', '성분', 
+    '무료배송', '할인', '특가', '원료', '함량', '특징', '보장', '인증', '식약처', 'ml', 'l', 'kg', '만 원', '만원',
+    '댓글', '링크', '확인', '정보', '추천', '꿀팁', '꿀템'
+  ];
   const hasUnits = specUnits.some(u => scriptText.includes(u));
   
   let scriptMatchScore = 0;
-  if (hasDigits && hasUnits) {
+  if (hasDigits || hasUnits) {
     scriptMatchScore = 15;
-  } else if (hasDigits || hasUnits) {
-    scriptMatchScore = 8;
   }
   
   // 4. Asset Match (20% max)
@@ -367,7 +396,24 @@ function calculateProductRelevanceScore(keyword, script, scenes, hasDirectImage)
     const proportion = actualImageCount / scenes.length;
     assetMatchScore = Math.round(proportion * 20);
   } else {
-    assetMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 20) : 0;
+    // Narrative-aware scoring for Asset Match: 20 points if Cut 4 matches
+    if (scenes.length === 4) {
+      const lastCut = scenes[3];
+      const visualTokens = getSceneVisualTokens(lastCut);
+      let lastMatched = kwTokens.some(kt => visualTokens.includes(kt));
+      if (!lastMatched && engCatSynonyms.length > 0) {
+        lastMatched = visualTokens.some(vt => 
+          engCatSynonyms.some(syn => vt.includes(syn) || syn.includes(vt))
+        );
+      }
+      if (lastMatched) {
+        assetMatchScore = 20;
+      } else {
+        assetMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 20) : 0;
+      }
+    } else {
+      assetMatchScore = scenes.length > 0 ? Math.round((matchCount / scenes.length) * 20) : 0;
+    }
   }
   
   const total = productMatchScore + usageContextMatchScore + scriptMatchScore + assetMatchScore;

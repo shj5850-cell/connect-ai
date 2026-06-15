@@ -15,7 +15,7 @@
     {
       "agent": "designer",
       "task": "memory.md",
-      "date": "2026-06-12",
+      "date": "2026-06-14",
       "content": "# 🎨 Designer (Lead Designer) 개인 메모리\n\n_Designer 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 패턴이 누적됩니다._\n\n## 학습 기록\n\n- [2026-05-31] 최신 디자인 비주얼 확인 → 산출물 sessions/2026-05-31T03-46/designer.md\n- [2026-06-01] 마케팅 디자인 브리프를 작성하고 썸네일·브랜드 비주얼을 생성합니다. → 산출물 sessions/2026-06-01T03-07/designer.md\n- [2026-06-01] 추적된 데이터를 바탕으로..."
     },
     {
@@ -813,6 +813,11 @@
       "agent": "CEO",
       "decision": "추후에 현빈은 원하는 디지털 서비스를 사용하여 웹사이트의 기능을 개선하도록 합니다.",
       "date": "2026-06-14"
+    },
+    {
+      "agent": "CEO",
+      "decision": "레오와 현빈이 각각 레오의 세계 주제와 요약 내용으로 새 제품을 발표하는 광고를 작성",
+      "date": "2026-06-14"
     }
   ],
   "agent_lessons": [
@@ -894,15 +899,15 @@
       "name": "walkthrough.md",
       "type": "documentation",
       "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\299a854c-358e-48e1-96f2-612799ab2e1e\\walkthrough.md",
-      "size": 5043,
-      "updated_at": "2026-06-14T05:31:42.119Z"
+      "size": 7209,
+      "updated_at": "2026-06-14T06:06:48.167Z"
     },
     {
       "name": "task.md",
       "type": "task_tracker",
       "path": "C:\\Users\\user\\.gemini\\antigravity-ide\\brain\\299a854c-358e-48e1-96f2-612799ab2e1e\\task.md",
-      "size": 1457,
-      "updated_at": "2026-06-14T05:31:45.121Z"
+      "size": 2276,
+      "updated_at": "2026-06-14T05:43:42.712Z"
     },
     {
       "name": "quality_board_veto.log",
@@ -943,7 +948,7 @@
   "agent_skill_scores": {
     "ceo": {
       "score": 100,
-      "completed_tasks": 156,
+      "completed_tasks": 157,
       "lessons_learned": 0,
       "success_patterns_found": 3,
       "failure_patterns_avoided": 1,
@@ -966,8 +971,8 @@
       "roi_contribution": 75
     },
     "developer": {
-      "score": 92,
-      "completed_tasks": 14,
+      "score": 100,
+      "completed_tasks": 25,
       "lessons_learned": 0,
       "success_patterns_found": 1,
       "failure_patterns_avoided": 1,
