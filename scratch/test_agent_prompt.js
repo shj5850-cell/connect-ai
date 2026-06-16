@@ -5,7 +5,7 @@ const axios = require('axios');
 const agentId = 'secretary'; // let's test 영숙 (secretary)
 const companyDir = 'c:\\Users\\user\\Desktop\\명철\\개발\\_company';
 const ollamaUrl = 'http://127.0.0.1:11434';
-const modelName = 'myungchul-coder:latest';
+const modelName = 'qwen2.5-coder:1.5b';
 
 function getAgentGoal(id) {
     try {

@@ -2019,7 +2019,7 @@ async function _quickLLMCall(systemPrompt: string, userMsg: string, maxTokens = 
         const r = await axios.post(apiUrl, body, { timeout: tmo });
         return r.data?.choices?.[0]?.message?.content?.toString().trim() || '';
     }
-    const body = { model: defaultModel, messages, stream: false, options: { num_predict: maxTokens, temperature: 0.2 } };
+    const body = { model: defaultModel, messages, stream: false, options: { num_ctx: 8192, num_predict: maxTokens, temperature: 0.2 } };
     const r = await axios.post(apiUrl, body, { timeout: tmo });
     return r.data?.message?.content?.toString().trim() || '';
 }
@@ -20423,6 +20423,33 @@ ${catalog.map((c, i) => `${i + 1}. agent=${c.agentId} tool=${c.tool} — ${c.des
                     const lower = prompt.toLowerCase();
                     if (/매출|수익|결제|paypal|revenue|매상|매월|이번 달|이번달|월 매출|페이팔|돈|얼마 벌/.test(lower)) {
                         shortcut = await this._tryRevenueShortcut(prompt);
+                    }
+                }
+                /* YouTube 자격증명 미설정 시 LLM 호출 우회 shortcut — 작은 로컬 LLM이
+                   실패 프롬프트 지침을 복잡하게 인용하며 OOM/Timeout 나는 문제 해결 */
+                if (!shortcut && t.agent === 'youtube') {
+                    const jsonPath = path.join(getCompanyDir(), '_agents', 'youtube', 'tools', 'youtube_account.json');
+                    let apiKey = '';
+                    let channelId = '';
+                    if (fs.existsSync(jsonPath)) {
+                        try {
+                            const cfg = JSON.parse(fs.readFileSync(jsonPath, 'utf-8') || '{}');
+                            apiKey = String(cfg.YOUTUBE_API_KEY || '').trim();
+                            channelId = (String(cfg.MY_CHANNEL_ID || '').trim() || String(cfg.MY_CHANNEL_HANDLE || '').trim());
+                        } catch (e) {}
+                    }
+                    if (!apiKey || !channelId) {
+                        shortcut = `📺 레오: 사장님, YouTube Data API 키 또는 채널 ID가 비어 있어 채널을 분석할 수 없어요.
+
+📋 **해결 단계**:
+1. 헤더 우측 "👥 직원 에이전트 보기" 버튼을 누르거나 명령 팔레트에서 외부 연결 설정 열기.
+2. 📺 YouTube 카드 ⚙️ 아이콘 클릭.
+3. 발급받은 YouTube API 키와 내 채널 ID(예: UC...) 입력 후 저장.
+4. 저장 완료 후 다시 요청하시면 실시간 채널 통계와 트렌드를 가져와 정밀 분석해 드립니다.
+
+📊 평가: 대기 — YouTube 자격증명 입력 후 재시도.
+📝 다음 단계: 대기 — 사장님의 YouTube API 키와 채널 ID 설정 입력 필요.
+`;
                     }
                 }
                 if (shortcut) {

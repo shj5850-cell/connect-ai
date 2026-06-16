@@ -1,12 +1,12 @@
 {
-  "ceo": "qwen2.5-coder:1.5b",
-  "secretary": "qwen2.5-coder:1.5b",
-  "youtube": "qwen2.5-coder:1.5b",
-  "researcher": "qwen2.5-coder:1.5b",
-  "business": "qwen2.5-coder:1.5b",
-  "writer": "qwen2.5-coder:1.5b",
-  "editor": "qwen2.5-coder:1.5b",
-  "designer": "qwen2.5-coder:1.5b",
-  "developer": "qwen2.5-coder:1.5b",
-  "instagram": "qwen2.5-coder:1.5b"
+  "ceo": "qwen2.5-coder:3b",
+  "secretary": "qwen2.5-coder:3b",
+  "youtube": "qwen2.5-coder:3b",
+  "researcher": "qwen2.5-coder:3b",
+  "business": "qwen2.5-coder:3b",
+  "writer": "qwen2.5-coder:3b",
+  "editor": "qwen2.5-coder:3b",
+  "designer": "qwen2.5-coder:3b",
+  "developer": "qwen2.5-coder:3b",
+  "instagram": "qwen2.5-coder:3b"
 }
